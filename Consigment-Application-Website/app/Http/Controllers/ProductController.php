@@ -12,7 +12,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::with('category')->get();
+        return view('products.index', compact('products'));
     }
 
     /**
@@ -20,7 +21,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        return view('products.create', compact('categories'));
     }
 
     /**
@@ -28,7 +30,26 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $product = new Product($request->only(['name', 'description', 'price', 'stock', 'category_id']));
+
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images/products'), $imageName);
+            $product->image = $imageName;
+        }
+
+        $product->save();
+
+        return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     /**
@@ -36,7 +57,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        return view('products.show', compact('product'));
     }
 
     /**
@@ -44,7 +65,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        $categories = Category::all();
+        return view('products.edit', compact('product', 'categories'));
     }
 
     /**
@@ -52,7 +74,26 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $product->fill($request->only(['name', 'description', 'price', 'stock', 'category_id']));
+
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images/products'), $imageName);
+            $product->image = $imageName;
+        }
+
+        $product->save();
+
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     /**
@@ -60,6 +101,17 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+    }
+
+    public function apiIndex()
+    {
+        return response()->json(Product::with('category')->get());
+    }
+
+    public function apiShow($id)
+    {
+        return response()->json(Product::with('category')->findOrFail($id));
     }
 }
