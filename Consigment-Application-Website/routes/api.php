@@ -9,4 +9,4 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::get('/products', [ProductController::class, 'apiIndex']);
-Route::get('/products/{id}', [ProductController::class, 'apiShow']); 
+Route::get('/api/products/{product}', [ProductController::class, 'apiShow']);

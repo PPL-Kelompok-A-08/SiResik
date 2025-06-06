@@ -3,16 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')->get();
+        $query = Product::with('category');
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                  ->orWhereHas('category', function($cat) use ($search) {
+                      $cat->where('name', 'like', "%$search%") ;
+                  });
+            });
+        }
+        $perPage = $request->get('perPage', 10);
+        $products = $query->latest()->paginate($perPage);
         return view('products.index', compact('products'));
     }
 
@@ -30,26 +44,47 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        $product = new Product($request->only(['name', 'description', 'price', 'stock', 'category_id']));
-
-        if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('images/products'), $imageName);
-            $product->image = $imageName;
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        $product->save();
+        $data = $request->all();
 
-        return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
+        // Pastikan folder upload ada
+        $uploadPath = storage_path('app/public/products');
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            try {
+                $image->move(storage_path('app/public/products'), $imageName);
+                $data['image'] = 'products/' . $imageName;
+            } catch (\Exception $e) {
+                \Log::error('Gagal upload gambar: ' . $e->getMessage());
+                return redirect()->back()
+                    ->withErrors(['image' => 'Gagal upload gambar. Pastikan folder storage bisa ditulis.'])
+                    ->withInput();
+            }
+        }
+
+        Product::create($data);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product created successfully.');
     }
 
     /**
@@ -74,26 +109,51 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        $product->fill($request->only(['name', 'description', 'price', 'stock', 'category_id']));
-
-        if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('images/products'), $imageName);
-            $product->image = $imageName;
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        $product->save();
+        $data = $request->all();
 
-        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
+        // Pastikan folder upload ada
+        $uploadPath = storage_path('app/public/products');
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($product->image) {
+                Storage::delete('public/' . $product->image);
+            }
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            try {
+                $image->move(storage_path('app/public/products'), $imageName);
+                $data['image'] = 'products/' . $imageName;
+            } catch (\Exception $e) {
+                \Log::error('Gagal upload gambar: ' . $e->getMessage());
+                return redirect()->back()
+                    ->withErrors(['image' => 'Gagal upload gambar. Pastikan folder storage bisa ditulis.'])
+                    ->withInput();
+            }
+        }
+
+        $product->update($data);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product updated successfully.');
     }
 
     /**
@@ -101,17 +161,30 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        if ($product->image) {
+            Storage::delete('public/' . $product->image);
+        }
+
         $product->delete();
-        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product deleted successfully.');
     }
 
+    /**
+     * API: Get all products
+     */
     public function apiIndex()
     {
-        return response()->json(Product::with('category')->get());
+        $products = Product::with('category')->latest()->get();
+        return response()->json($products);
     }
 
-    public function apiShow($id)
+    /**
+     * API: Get specific product
+     */
+    public function apiShow(Product $product)
     {
-        return response()->json(Product::with('category')->findOrFail($id));
+        return response()->json($product->load('category'));
     }
 }
