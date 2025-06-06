@@ -74,7 +74,7 @@ class ProductController extends Controller
                 $image->move(storage_path('app/public/products'), $imageName);
                 $data['image'] = 'products/' . $imageName;
             } catch (\Exception $e) {
-                \Log::error('Gagal upload gambar: ' . $e->getMessage());
+                Log::error('Gagal upload gambar: ' . $e->getMessage());
                 return redirect()->back()
                     ->withErrors(['image' => 'Gagal upload gambar. Pastikan folder storage bisa ditulis.'])
                     ->withInput();
@@ -143,7 +143,7 @@ class ProductController extends Controller
                 $image->move(storage_path('app/public/products'), $imageName);
                 $data['image'] = 'products/' . $imageName;
             } catch (\Exception $e) {
-                \Log::error('Gagal upload gambar: ' . $e->getMessage());
+                Log::error('Gagal upload gambar: ' . $e->getMessage());
                 return redirect()->back()
                     ->withErrors(['image' => 'Gagal upload gambar. Pastikan folder storage bisa ditulis.'])
                     ->withInput();
