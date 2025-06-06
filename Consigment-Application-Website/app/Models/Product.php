@@ -30,6 +30,7 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+<<<<<<< Updated upstream
 
     /**
      * Get the reviews for the product.
@@ -47,3 +48,10 @@ class Product extends Model
         return $this->reviews()->avg('rating');
     }
 }
+=======
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+}
+>>>>>>> Stashed changes

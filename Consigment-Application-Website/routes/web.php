@@ -4,16 +4,39 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+<<<<<<< Updated upstream
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\WishlistController;
+=======
+use Illuminate\Support\Facades\Route;
+use App\Models\Product; // <-- TAMBAHKAN IMPORT INI
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+>>>>>>> Stashed changes
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+// === ROUTE DASHBOARD YANG DIUBAH ===
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    // Ambil semua produk, dan sertakan data penjualnya (user)
+    $products = Product::with('user')->latest()->get();
+    
+    // Kirim data products ke view
+    return view('dashboard', compact('products'));
+
 })->middleware(['auth', 'verified'])->name('dashboard');
+// ===================================
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -29,3 +52,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+

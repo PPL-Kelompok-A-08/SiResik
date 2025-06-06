@@ -45,6 +45,7 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
+<<<<<<< Updated upstream
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -62,8 +63,47 @@ class ProductController extends Controller
         Product::create($validated);
 
         return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
+=======
+{
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'required|numeric|min:0',
+        'stock' => 'required|integer|min:0',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'category_id' => 'required|exists:categories,id',
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+>>>>>>> Stashed changes
     }
 
+    $data = $request->all();
+
+    // ... (kode upload gambar Anda sudah benar)
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
+        try {
+            $image->move(storage_path('app/public/products'), $imageName);
+            $data['image'] = 'products/' . $imageName;
+        } catch (\Exception $e) {
+            // ... (error handling Anda)
+        }
+    }
+    
+    // === TAMBAHKAN BARIS INI UNTUK MENYIMPAN ID PENJUAL ===
+    $data['user_id'] = auth()->id();
+    // =======================================================
+
+    Product::create($data);
+
+    return redirect()->route('products.index')
+        ->with('success', 'Product created successfully.');
+}
     /**
      * Display the specified resource.
      */
