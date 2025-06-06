@@ -46,6 +46,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -74,10 +75,25 @@ class ProductController extends Controller
         'category_id' => 'required|exists:categories,id',
     ]);
 
+=======
+{
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'required|numeric|min:0',
+        'stock' => 'required|integer|min:0',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'category_id' => 'required|exists:categories,id',
+    ]);
+
+>>>>>>> Stashed changes
     if ($validator->fails()) {
         return redirect()->back()
             ->withErrors($validator)
             ->withInput();
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 

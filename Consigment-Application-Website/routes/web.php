@@ -21,6 +21,9 @@ use App\Models\Product; // <-- TAMBAHKAN IMPORT INI
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 Route::get('/', function () {
