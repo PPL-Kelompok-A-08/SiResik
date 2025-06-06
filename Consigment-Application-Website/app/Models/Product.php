@@ -21,6 +21,7 @@ class Product extends Model
         'stock',
         'category_id', // Pastikan kolom ini ada di tabel database Anda
         'image',
+        'user_id',
     ];
 
     /**
@@ -30,8 +31,8 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
+
+
 
     /**
      * Get the reviews for the product.
@@ -47,17 +48,11 @@ class Product extends Model
     public function averageRating()
     {
         return $this->reviews()->avg('rating');
-=======
-    public function user()
-    {
-        return $this->belongsTo(User::class);
->>>>>>> Stashed changes
     }
-}
-=======
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+
 }
->>>>>>> Stashed changes
