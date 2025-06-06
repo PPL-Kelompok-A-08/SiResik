@@ -2,64 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Wishlist;
 use Illuminate\Http\Request;
+use App\Models\Wishlist;
+use App\Models\Product;
 
 class WishlistController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $wishlists = Wishlist::with('product')->where('user_id', auth()->id())->get();
+        return view('wishlists.index', compact('wishlists'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(Product $product)
     {
-        //
+        $exists = Wishlist::where('user_id', auth()->id())
+                    ->where('product_id', $product->id)
+                    ->exists();
+
+        if ($exists) {
+            return back()->with('error', 'Produk sudah ada di wishlist.');
+        }
+
+        Wishlist::create([
+            'user_id' => auth()->id(),
+            'product_id' => $product->id,
+        ]);
+
+        return back()->with('success', 'Produk ditambahkan ke wishlist.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Wishlist $wishlist)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Wishlist $wishlist)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Wishlist $wishlist)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Wishlist $wishlist)
     {
-        //
+        if ($wishlist->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $wishlist->delete();
+        return back()->with('success', 'Produk dihapus dari wishlist.');
     }
 }
+
