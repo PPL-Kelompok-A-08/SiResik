@@ -48,7 +48,7 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium py-2.5 px-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center">
+                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center">
                                 Apply Filters
                             </button>
                         </form>
