@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
@@ -32,8 +33,6 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-
-
     /**
      * Get the reviews for the product.
      */
@@ -49,10 +48,19 @@ class Product extends Model
     {
         return $this->reviews()->avg('rating');
     }
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
-
+    
+    // --- TAMBAHKAN FUNGSI DI BAWAH INI ---
+    /**
+     * The users that have wishlisted this product.
+     */
+    public function wishlistedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'product_user_wishlist')->withTimestamps();
+    }
+    // ------------------------------------
 }
