@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+// ... use statements
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+// Tambahkan ini
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -21,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone_number',
     ];
 
     /**
@@ -45,8 +48,21 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // --- GANTI FUNGSI DI BAWAH INI ---
+    /*
     public function wishlists()
     {
-        return $this->belongsToMany(Product::class, 'wishlists')->withTimestamps();
+        return $this->hasMany(Wishlist::class);
+    }
+    */
+
+    // --- DENGAN FUNGSI YANG BENAR INI ---
+    /**
+     * The products that the user has added to their wishlist.
+     */
+    public function wishlist(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_user_wishlist')->withTimestamps();
     }
 }

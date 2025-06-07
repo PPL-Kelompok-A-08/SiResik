@@ -1,95 +1,98 @@
-@extends('layouts.dashboard')
+<x-app-layout>
+    {{-- Ini adalah slot untuk bagian header halaman --}}
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Kelola Produk') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="bg-white rounded-lg shadow p-6">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <h2 class="text-2xl font-bold text-gray-800">Produk</h2>
-        <a href="{{ route('products.create') }}" class="bg-white border border-blue-500 text-blue-600 font-semibold px-4 py-2 rounded-lg hover:bg-blue-50 transition flex items-center md:ml-auto">
-            <span class="text-xl mr-2">+</span> Tambah Produk
-        </a>
-    </div>
-    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-4">
-        <div class="flex items-center gap-2">
-            <form method="GET" action="" class="flex items-center gap-2">
-                <label for="perPage" class="text-gray-700 text-sm">Show</label>
-                <select name="perPage" id="perPage" onchange="this.form.submit()" class="border rounded px-2 py-1 text-sm">
-                    <option value="5" {{ request('perPage') == 5 ? 'selected' : '' }}>5</option>
-                    <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ request('perPage') == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
-                </select>
-                <span class="text-gray-700 text-sm ml-1">entries</span>
-            </form>
-        </div>
-        <div class="flex-1 flex justify-center md:justify-end">
-            <form method="GET" action="" class="flex items-center gap-2 w-full md:w-auto">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search produk..." class="border rounded px-3 py-1 text-sm w-full md:w-64">
-                <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">Search</button>
-            </form>
-        </div>
-    </div>
-    @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <span class="block sm:inline">{{ session('success') }}</span>
-        </div>
-    @endif
-    <div class="overflow-x-auto">
-        <table class="min-w-full bg-white border rounded-lg">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-4 py-2 border">No</th>
-                    <th class="px-4 py-2 border">Foto</th>
-                    <th class="px-4 py-2 border">Nama</th>
-                    <th class="px-4 py-2 border">Kategori</th>
-                    <th class="px-4 py-2 border">Deskripsi</th>
-                    <th class="px-4 py-2 border">Harga</th>
-                    <th class="px-4 py-2 border">Stok</th>
-                    <th class="px-4 py-2 border">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($products as $index => $product)
-                <tr class="text-center">
-                    <td class="px-4 py-2 border">{{ $loop->iteration + ($products->currentPage() - 1) * $products->perPage() }}</td>
-                    <td class="px-4 py-2 border">
-                        @if($product->image)
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-16 h-16 object-cover rounded mx-auto">
-                        @else
-                            <div class="w-16 h-16 bg-gray-200 flex items-center justify-center rounded mx-auto text-gray-400">Foto</div>
-                        @endif
-                    </td>
-                    <td class="px-4 py-2 border font-semibold">{{ $product->name }}</td>
-                    <td class="px-4 py-2 border">{{ $product->category->name ?? '-' }}</td>
-                    <td class="px-4 py-2 border text-left">{{ Str::limit($product->description, 60) }}</td>
-                    <td class="px-4 py-2 border font-semibold text-blue-700">Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-                    <td class="px-4 py-2 border">{{ $product->stock }}</td>
-                    <td class="px-4 py-2 border">
-                        <div class="flex flex-col space-y-1 items-center">
-                            <a href="{{ route('products.show', $product) }}" class="bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 text-sm mb-1">Detail</a>
-                            <a href="{{ route('products.edit', $product) }}" class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded hover:bg-yellow-200 text-sm mb-1">Ubah</a>
-                            <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 text-sm">Hapus</button>
-                            </form>
+    {{-- Ini adalah slot utama yang akan mengisi {{ $slot }} di layout --}}
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    
+                    {{-- Menampilkan pesan sukses dari session --}}
+                    @if (session('success'))
+                        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                            <span class="block sm:inline">{{ session('success') }}</span>
                         </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="8" class="px-4 py-8 text-center text-gray-500">Belum ada produk.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    <div class="mt-4">
-        {{ $products->appends(request()->query())->links() }}
-    </div>
-    <form action="{{ route('wishlist.add', $product->id) }}" method="POST">
-    @csrf
-    <button class="btn btn-outline-secondary">🤍</button>
-</form>
+                    @endif
 
-</div>
-@endsection 
+                    <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
+                        {{-- Tombol Tambah Produk --}}
+                        <a href="{{ route('products.create') }}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 sm:mb-0">
+                            + Tambah Produk
+                        </a>
+
+                        {{-- Form Pencarian --}}
+                        <form method="GET" action="{{ route('products.index') }}" class="flex items-center">
+                            <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}" class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                            <button type="submit" class="ml-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                Search
+                            </button>
+                        </form>
+                    </div>
+
+
+                    {{-- Tabel Produk --}}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stok</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse ($products as $key => $product)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $products->firstItem() + $key }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        @if($product->image)
+                                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-16 h-16 object-cover rounded">
+                                        @else
+                                            <span class="text-xs text-gray-500">No Image</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $product->name }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $product->category->name ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 truncate" style="max-width: 150px;">{{ $product->description }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp{{ number_format($product->price, 0, ',', '.') }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $product->stock }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="{{ route('products.edit', $product) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</a>
+                                        <form action="{{ route('products.destroy', $product) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Hapus produk ini?')">Hapus</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                        Belum ada produk.
+                                    </td>
+                                </tr>
+                            @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {{-- Pagination Links --}}
+                    <div class="mt-4">
+                        {{ $products->links() }}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>
