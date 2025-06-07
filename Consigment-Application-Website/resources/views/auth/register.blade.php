@@ -1,7 +1,6 @@
 <x-guest-layout>
-    <h1 class="text-2xl font-bold text-center mb-6">Register</h1>
-    <form method="POST" action="{{ route('register') }}">
-
+    {{-- Tambahkan enctype="multipart/form-data" di sini untuk mengizinkan upload file --}}
+    <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
         @csrf
 
         <!-- Name -->
@@ -55,7 +54,7 @@
 
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?Sign In') }}
+                {{ __('Already registered?') }}
             </a>
 
             <x-primary-button class="ms-4">
