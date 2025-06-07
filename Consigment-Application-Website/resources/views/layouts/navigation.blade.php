@@ -15,9 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Marketplace') }}
                     </x-nav-link>
-                    {{-- Anda bisa menambahkan link lain di sini, seperti link ke halaman produk admin --}}
+                    
                     <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index') || request()->routeIs('products.create') || request()->routeIs('products.edit')">
                         {{ __('Kelola Produk') }}
+                    </x-nav-link>
+                    
+                    {{-- Link Wishlist Baru --}}
+                    <x-nav-link :href="route('wishlists.index')" :active="request()->routeIs('wishlists.index')">
+                        {{ __('Wishlist') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -86,8 +91,12 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Marketplace') }}
             </x-responsive-nav-link>
-             <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
+            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                 {{ __('Kelola Produk') }}
+            </x-responsive-nav-link>
+            {{-- Link Wishlist Baru untuk Tampilan Responsif --}}
+            <x-responsive-nav-link :href="route('wishlists.index')" :active="request()->routeIs('wishlists.index')">
+                {{ __('Wishlist') }}
             </x-responsive-nav-link>
         </div>
 

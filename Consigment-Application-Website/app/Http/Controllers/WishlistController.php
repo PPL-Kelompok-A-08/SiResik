@@ -17,8 +17,8 @@ class WishlistController extends Controller
     public function store(Product $product)
     {
         $exists = Wishlist::where('user_id', auth()->id())
-                    ->where('product_id', $product->id)
-                    ->exists();
+                          ->where('product_id', $product->id)
+                          ->exists();
 
         if ($exists) {
             return back()->with('error', 'Produk sudah ada di wishlist.');
@@ -41,5 +41,27 @@ class WishlistController extends Controller
         $wishlist->delete();
         return back()->with('success', 'Produk dihapus dari wishlist.');
     }
-}
 
+    /**
+     * Add or remove a product from the user's wishlist.
+     */
+    public function toggle(Product $product)
+    {
+        $wishlistItem = Wishlist::where('user_id', auth()->id())
+                                ->where('product_id', $product->id)
+                                ->first();
+
+        if ($wishlistItem) {
+            // Jika produk sudah ada di wishlist, hapus.
+            $wishlistItem->delete();
+            return back()->with('success', 'Produk dihapus dari wishlist.');
+        } else {
+            // Jika belum ada, tambahkan.
+            Wishlist::create([
+                'user_id' => auth()->id(),
+                'product_id' => $product->id,
+            ]);
+            return back()->with('success', 'Produk ditambahkan ke wishlist.');
+        }
+    }
+}

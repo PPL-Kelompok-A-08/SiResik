@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // TAMBAHKAN BARIS INI
-            $table->string('phone_number')->nullable()->after('email');
+            // Menambahkan kolom setelah kolom 'email'
+            $table->string('nim')->unique()->nullable()->after('email');
+            $table->string('phone_number')->nullable()->after('nim');
+            $table->string('ktm_photo_path')->nullable()->after('phone_number');
         });
     }
 
@@ -23,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropColumn(['nim', 'phone_number', 'ktm_photo_path']);
         });
     }
 };
