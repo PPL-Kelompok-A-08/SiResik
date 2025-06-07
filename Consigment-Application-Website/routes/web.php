@@ -4,14 +4,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CategoryController;
-<<<<<<< Updated upstream
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\WishlistController;
-=======
-use Illuminate\Support\Facades\Route;
-use App\Models\Product; // <-- TAMBAHKAN IMPORT INI
+use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,42 +18,45 @@ use App\Models\Product; // <-- TAMBAHKAN IMPORT INI
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// === ROUTE DASHBOARD YANG DIUBAH ===
-Route::get('/dashboard', function () {
-    // Ambil semua produk, dan sertakan data penjualnya (user)
-    $products = Product::with('user')->latest()->get();
-    
-    // Kirim data products ke view
-    return view('dashboard', compact('products'));
+// === ROUTE DASHBOARD MARKETPLACE YANG SUDAH DIPERBAIKI ===
+Route::get('/dashboard', function (Request $request) {
+    // Mulai query untuk mengambil produk beserta data penjualnya
+    $query = Product::with('user');
 
+    // Terapkan filter jika ada input pencarian
+    if ($request->filled('search')) {
+        $query->where('name', 'like', '%' . $request->search . '%');
+    }
+
+    // Terapkan filter jika ada kategori yang dipilih
+    if ($request->filled('category')) {
+        $query->where('category_id', $request->category);
+    }
+    
+    // Ambil data produk dengan paginasi dan urutkan dari yang terbaru
+    $products = $query->latest()->paginate(12);
+    
+    // Ambil semua kategori untuk ditampilkan di sidebar filter
+    $categories = Category::all();
+
+    // Kirim semua data yang dibutuhkan ke view 'dashboard'
+    return view('dashboard', compact('products', 'categories'));
+    
 })->middleware(['auth', 'verified'])->name('dashboard');
-// ===================================
+// ========================================================
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::resource('products', ProductController::class);
-    Route::resource('categories', CategoryController::class);
-    Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
-    Route::post('/wishlist/{product}', [WishlistController::class, 'store'])->name('wishlist.store');
-    Route::delete('/wishlist/{wishlist}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
-    
 });
 
 Route::resource('products', ProductController::class);
 Route::resource('categories', CategoryController::class);
 
 require __DIR__.'/auth.php';
-

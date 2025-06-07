@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log; // Pastikan Log di-import jika digunakan
 
 class ProductController extends Controller
 {
@@ -14,21 +16,25 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = \App\Models\Product::query();
-
-        // Filter berdasarkan pencarian nama produk
-        if ($request->search) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+        // === UBAH BAGIAN INI ===
+        // Mulai query dengan mengambil produk milik user yang login saja
+        $query = Product::with('category')->where('user_id', auth()->id()); 
+        // ========================
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                  ->orWhereHas('category', function($cat) use ($search) {
+                      $cat->where('name', 'like', "%$search%");
+                  });
+            });
         }
-
-        // Filter berdasarkan kategori
-        if ($request->category) {
-            $query->where('category_id', $request->category);
-        }
-
-        $products = $query->latest()->get();
-        $categories = \App\Models\Category::all();
-
+    
+        $perPage = $request->get('perPage', 10);
+        $products = $query->latest()->paginate($perPage);
+        $categories = Category::all(); // Tetap ambil semua kategori untuk filter
+    
         return view('products.index', compact('products', 'categories'));
     }
 
@@ -45,89 +51,63 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id', // <-- Tambahan validasi
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $data = $request->all();
+
+        // Tambahkan ID user yang sedang login
+        $data['user_id'] = auth()->id();
+
+        // Pastikan folder upload ada
+        $uploadPath = storage_path('app/public/products');
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            try {
+                $image->move(storage_path('app/public/products'), $imageName);
+                $data['image'] = 'products/' . $imageName;
+            } catch (\Exception $e) {
+                Log::error('Gagal upload gambar: ' . $e->getMessage());
+                return redirect()->back()
+                    ->withErrors(['image' => 'Gagal upload gambar. Pastikan folder storage bisa ditulis.'])
+                    ->withInput();
+            }
         }
 
-        Product::create($validated);
+        Product::create($data);
 
-        return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
-=======
-{
-    $validator = Validator::make($request->all(), [
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'price' => 'required|numeric|min:0',
-        'stock' => 'required|integer|min:0',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'category_id' => 'required|exists:categories,id',
-    ]);
-
-=======
-{
-    $validator = Validator::make($request->all(), [
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'price' => 'required|numeric|min:0',
-        'stock' => 'required|integer|min:0',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'category_id' => 'required|exists:categories,id',
-    ]);
-
->>>>>>> Stashed changes
-    if ($validator->fails()) {
-        return redirect()->back()
-            ->withErrors($validator)
-            ->withInput();
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+        return redirect()->route('products.index')
+            ->with('success', 'Product created successfully.');
     }
 
-    $data = $request->all();
-
-    // ... (kode upload gambar Anda sudah benar)
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-        $imageName = time() . '.' . $image->getClientOriginalExtension();
-        try {
-            $image->move(storage_path('app/public/products'), $imageName);
-            $data['image'] = 'products/' . $imageName;
-        } catch (\Exception $e) {
-            // ... (error handling Anda)
-        }
-    }
-    
-    // === TAMBAHKAN BARIS INI UNTUK MENYIMPAN ID PENJUAL ===
-    $data['user_id'] = auth()->id();
-    // =======================================================
-
-    Product::create($data);
-
-    return redirect()->route('products.index')
-        ->with('success', 'Product created successfully.');
-}
     /**
      * Display the specified resource.
      */
     public function show(Product $product)
     {
-        $reviews = $product->reviews()->latest()->with('user')->get();
-        return view('products.show', compact('product', 'reviews'));
+        // Pastikan data user juga di-load untuk halaman detail
+        $product->load('user', 'category');
+        return view('products.show', compact('product'));
     }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -142,25 +122,45 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id', // <-- Tambahan validasi
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
-        if ($request->hasFile('image')) {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            $validated['image'] = $request->file('image')->store('products', 'public');
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        $product->update($validated);
+        $data = $request->all();
 
-        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($product->image) {
+                Storage::delete('public/' . $product->image);
+            }
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            try {
+                $image->move(storage_path('app/public/products'), $imageName);
+                $data['image'] = 'products/' . $imageName;
+            } catch (\Exception $e) {
+                Log::error('Gagal upload gambar: ' . $e->getMessage());
+                return redirect()->back()
+                    ->withErrors(['image' => 'Gagal upload gambar. Pastikan folder storage bisa ditulis.'])
+                    ->withInput();
+            }
+        }
+
+        $product->update($data);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product updated successfully.');
     }
 
     /**
@@ -169,11 +169,29 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         if ($product->image) {
-            Storage::disk('public')->delete($product->image);
+            Storage::delete('public/' . $product->image);
         }
 
         $product->delete();
 
-        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+        return redirect()->route('products.index')
+            ->with('success', 'Product deleted successfully.');
+    }
+
+    /**
+     * API: Get all products
+     */
+    public function apiIndex()
+    {
+        $products = Product::with('category')->latest()->get();
+        return response()->json($products);
+    }
+
+    /**
+     * API: Get specific product
+     */
+    public function apiShow(Product $product)
+    {
+        return response()->json($product->load('category'));
     }
 }
