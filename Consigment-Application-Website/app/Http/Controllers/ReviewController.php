@@ -1,4 +1,5 @@
 <?php
+// Buat controller ini dengan menjalankan: php artisan make:controller ReviewController
 
 namespace App\Http\Controllers;
 
@@ -14,30 +15,28 @@ class ReviewController extends Controller
      */
     public function store(Request $request, Product $product)
     {
-        // Validasi input dari form pop-up
+        // Validasi input
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string|max:1000',
         ]);
 
-        // Cek apakah user yang login sudah pernah memberikan ulasan untuk produk ini
+        // Cek apakah user sudah pernah mereview produk ini
         $existingReview = Review::where('user_id', Auth::id())
                                 ->where('product_id', $product->id)
                                 ->first();
 
-        // Jika sudah ada, kembalikan dengan pesan error
         if ($existingReview) {
             return back()->with('error', 'Anda sudah pernah memberikan ulasan untuk produk ini.');
         }
 
-        // Jika belum, buat review baru yang terhubung dengan produk
+        // Buat review baru
         $product->reviews()->create([
             'user_id' => Auth::id(),
             'rating' => $request->rating,
             'comment' => $request->comment,
         ]);
 
-        // Kembalikan dengan pesan sukses
         return back()->with('success', 'Terima kasih atas ulasan Anda!');
     }
 }
