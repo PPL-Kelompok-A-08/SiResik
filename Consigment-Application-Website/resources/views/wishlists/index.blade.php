@@ -16,6 +16,7 @@
                         </div>
                     @endif
 
+<<<<<<< HEAD:Consigment-Application-Website/resources/views/wishlist/index.blade.php
                     @if($wishlist->isEmpty())
                         <div class="text-center py-16">
                             <p class="text-gray-500">Wishlist Anda masih kosong.</p>
@@ -61,6 +62,40 @@
                                 </tbody>
                             </table>
                         </div>
+=======
+                    <h3 class="text-2xl font-bold mb-6">Barang Favorit Anda</h3>
+                    
+                    @if($wishlists->count())
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            @foreach ($wishlists as $item)
+                                @if($item->product)
+                                <div class="relative border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                                    <a href="{{ route('products.show', $item->product) }}" class="block">
+                                        <div class="w-full h-48 bg-gray-200">
+                                            <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="p-4">
+                                            <h4 class="font-bold text-lg truncate">{{ $item->product->name }}</h4>
+                                            <p class="text-gray-800 font-semibold mt-2">Rp{{ number_format($item->product->price, 0, ',', '.') }}</p>
+                                        </div>
+                                    </a>
+                                    <!-- Tombol Hapus -->
+                                    <form action="{{ route('wishlist.destroy', $item) }}" method="POST" class="absolute top-2 right-2">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-white/70 hover:bg-white p-2 rounded-full text-red-500" title="Hapus dari wishlist">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                                              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @else
+                        <p>Anda belum menambahkan barang apapun ke wishlist.</p>
+>>>>>>> adinar:Consigment-Application-Website/resources/views/wishlists/index.blade.php
                     @endif
 
                 </div>

@@ -29,15 +29,26 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // 1. Validasi semua input, termasuk yang baru
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'nim' => ['required', 'string', 'max:20', 'unique:'.User::class],
+            'phone_number' => ['required', 'string', 'max:15'],
+            'ktm_photo' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'], // Validasi foto
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // 2. Handle upload foto KTM
+        $ktmPath = $request->file('ktm_photo')->store('ktm_photos', 'public');
+
+        // 3. Buat user baru dengan semua data
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'nim' => $request->nim,
+            'phone_number' => $request->phone_number,
+            'ktm_photo_path' => $ktmPath,
             'password' => Hash::make($request->password),
         ]);
 

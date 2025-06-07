@@ -2,51 +2,66 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product; 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Models\Wishlist;
+use App\Models\Product;
 
 class WishlistController extends Controller
 {
-    
     public function index()
     {
-        $wishlist_products = Auth::user()->wishlist()->with('category')->get();
-        return view('wishlist.index', ['wishlist' => $wishlist_products]);
+        $wishlists = Wishlist::with('product')->where('user_id', auth()->id())->get();
+        return view('wishlists.index', compact('wishlists'));
     }
 
-    public function toggleWishlist(Request $request)
+    public function store(Product $product)
     {
-        $request->validate(['product_id' => 'required|exists:products,id']);
-        $userId = Auth::id();
-        $productId = $request->input('product_id');
-        $wishlistTable = 'product_user_wishlist';
-        $existing = DB::table($wishlistTable)->where('user_id', $userId)->where('product_id', $productId)->first();
-        $isInWishlist = false;
-        if ($existing) {
-            DB::table($wishlistTable)->where('id', $existing->id)->delete();
-            $isInWishlist = false;
-        } else {
-            DB::table($wishlistTable)->insert(['user_id' => $userId, 'product_id' => $productId, 'created_at' => now(),'updated_at' => now(),]);
-            $isInWishlist = true;
+        $exists = Wishlist::where('user_id', auth()->id())
+                          ->where('product_id', $product->id)
+                          ->exists();
+
+        if ($exists) {
+            return back()->with('error', 'Produk sudah ada di wishlist.');
         }
-        return response()->json(['status' => 'success', 'in_wishlist' => $isInWishlist]);
+
+        Wishlist::create([
+            'user_id' => auth()->id(),
+            'product_id' => $product->id,
+        ]);
+
+        return back()->with('success', 'Produk ditambahkan ke wishlist.');
     }
 
-    // === METHOD BARU UNTUK HALAMAN KONFIRMASI ===
-    public function confirmDelete(Product $product)
+    public function destroy(Wishlist $wishlist)
     {
-        return view('wishlist.delete', compact('product'));
+        if ($wishlist->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $wishlist->delete();
+        return back()->with('success', 'Produk dihapus dari wishlist.');
     }
 
-    // === METHOD BARU UNTUK MENGHAPUS DATA ===
-    public function destroy(Product $product)
+    /**
+     * Add or remove a product from the user's wishlist.
+     */
+    public function toggle(Product $product)
     {
-        // Menghapus relasi antara user yang login dengan produk ini
-        Auth::user()->wishlist()->detach($product->id);
+        $wishlistItem = Wishlist::where('user_id', auth()->id())
+                                ->where('product_id', $product->id)
+                                ->first();
 
-        // Redirect kembali ke halaman daftar wishlist dengan pesan sukses
-        return redirect()->route('wishlist.index')->with('success', 'Produk berhasil dihapus dari wishlist.');
+        if ($wishlistItem) {
+            // Jika produk sudah ada di wishlist, hapus.
+            $wishlistItem->delete();
+            return back()->with('success', 'Produk dihapus dari wishlist.');
+        } else {
+            // Jika belum ada, tambahkan.
+            Wishlist::create([
+                'user_id' => auth()->id(),
+                'product_id' => $product->id,
+            ]);
+            return back()->with('success', 'Produk ditambahkan ke wishlist.');
+        }
     }
 }
