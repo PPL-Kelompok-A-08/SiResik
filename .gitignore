@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *.log
 .DS_Store
 .env
@@ -22,3 +23,7 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+=======
+.env
+./vendor/*
+>>>>>>> 31d2ed0 (Pengajuan penjemputan sampah terpilah, Penjadwalan penjemputan oleh admin dan  Pelacakan status penjemputan, login akun demo)
