@@ -41,6 +41,10 @@
                         ♻️ Kategori Sampah
                     </a>
 
+                    <a href="/permintaan-penjemputan" class="block px-4 py-3 text-sm hover:bg-emerald-50">
+                        Penjemputan Sampah
+                    </a>
+
                     <a href="/maps" class="block px-4 py-3 text-sm hover:bg-emerald-50">
                         📍 Maps Lokasi
                     </a>
@@ -56,9 +60,15 @@
         </div>
 
         <!-- BUTTON -->
-        <button class="bg-emerald-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-emerald-700">
-            Login Mahasiswa
-        </button>
+        @auth
+            <a href="{{ route('dashboard') }}" class="bg-emerald-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-emerald-700 inline-flex items-center">
+                Dashboard
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="bg-emerald-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-emerald-700 inline-flex items-center">
+                Login
+            </a>
+        @endauth
 
     </div>
 </nav>
@@ -81,9 +91,9 @@
             </p>
 
             <div class="mt-8 flex gap-4">
-                <button class="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-emerald-700 shadow-xl">
+                <a href="{{ auth()->check() ? route('permintaan-penjemputan.index') : route('login') }}" class="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-emerald-700 shadow-xl inline-flex items-center justify-center">
                     Ajukan Penjemputan
-                </button>
+                </a>
 
                 <button class="border-2 border-emerald-100 bg-white text-emerald-900 px-8 py-4 rounded-2xl font-bold hover:bg-emerald-50">
                     Lapor Sampah
