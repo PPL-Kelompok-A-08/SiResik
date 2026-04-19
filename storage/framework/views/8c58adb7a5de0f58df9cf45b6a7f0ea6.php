@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-            @php
+            <?php
                 $menuItems = [
                     ['label' => 'Admin Dashboard', 'active' => false],
                     ['label' => 'Kelola Jadwal', 'active' => true],
@@ -39,20 +39,20 @@
                     ['label' => 'Konten Edukasi', 'active' => false],
                     ['label' => 'Broadcast', 'active' => false],
                 ];
-            @endphp
+            ?>
 
             <nav class="mt-10 space-y-2">
-                @foreach ($menuItems as $item)
-                    <a href="{{ $item['href'] ?? ($item['active'] ? route('dashboard.admin') : '#') }}"
-                        class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition {{ $item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }}">
-                        <span class="text-xl">{{ $item['active'] ? '▣' : '◦' }}</span>
-                        <span>{{ $item['label'] }}</span>
+                <?php $__currentLoopData = $menuItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <a href="<?php echo e($item['href'] ?? ($item['active'] ? route('dashboard.admin') : '#')); ?>"
+                        class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition <?php echo e($item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5'); ?>">
+                        <span class="text-xl"><?php echo e($item['active'] ? '▣' : '◦'); ?></span>
+                        <span><?php echo e($item['label']); ?></span>
                     </a>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </nav>
 
-            <form action="{{ route('logout') }}" method="POST" class="mt-8">
-                @csrf
+            <form action="<?php echo e(route('logout')); ?>" method="POST" class="mt-8">
+                <?php echo csrf_field(); ?>
                 <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
                     <span class="text-xl">↪</span>
                     <span>Keluar (Log Out)</span>
@@ -63,7 +63,7 @@
                 <div class="flex items-center gap-4">
                     <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-xl font-black">R</div>
                     <div>
-                        <p class="text-xl font-bold">{{ $user->name }}</p>
+                        <p class="text-xl font-bold"><?php echo e($user->name); ?></p>
                         <p class="text-xs uppercase tracking-[0.15em] text-emerald-100">Warga Terverifikasi</p>
                     </div>
                 </div>
@@ -77,61 +77,64 @@
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <button type="button" class="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-lg font-semibold text-slate-700">Unduh Laporan</button>
-                    <a href="{{ route('permintaan-penjemputan.index') }}" class="rounded-2xl bg-emerald-500 px-6 py-3 text-lg font-bold text-white">+ Ajukan Penjemputan</a>
+                    <a href="<?php echo e(route('permintaan-penjemputan.index')); ?>" class="rounded-2xl bg-emerald-500 px-6 py-3 text-lg font-bold text-white">+ Ajukan Penjemputan</a>
                 </div>
             </header>
 
-            @if (session('success'))
+            <?php if(session('success')): ?>
                 <div class="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-700">
-                    {{ session('success') }}
-                </div>
-            @endif
+                    <?php echo e(session('success')); ?>
 
-            @if ($errors->any())
+                </div>
+            <?php endif; ?>
+
+            <?php if($errors->any()): ?>
                 <div class="mt-6 rounded-3xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700">
                     <p class="font-semibold">Penjadwalan belum bisa diproses.</p>
                     <ul class="mt-2 list-disc pl-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
+                        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li><?php echo e($error); ?></li>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </ul>
                 </div>
-            @endif
+            <?php endif; ?>
 
             <section class="mt-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
                 <div class="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
                     <h2 class="text-2xl font-black text-slate-800">Daftar Permintaan Penjemputan (Menunggu)</h2>
-                    <span class="rounded-2xl bg-amber-100 px-4 py-2 text-sm font-black uppercase tracking-[0.1em] text-amber-600">{{ $stats['menunggu'] }} Antrean</span>
+                    <span class="rounded-2xl bg-amber-100 px-4 py-2 text-sm font-black uppercase tracking-[0.1em] text-amber-600"><?php echo e($stats['menunggu']); ?> Antrean</span>
                 </div>
 
                 <div class="divide-y divide-slate-200">
-                    @forelse ($pendingRequests as $index => $item)
+                    <?php $__empty_1 = true; $__currentLoopData = $pendingRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <article class="grid gap-6 px-6 py-6 xl:grid-cols-[1.2fr,0.9fr] xl:items-center">
                             <div>
                                 <div class="flex flex-wrap items-center gap-4">
-                                    <span class="text-2xl font-black text-emerald-500">REQ-{{ 101 + $index }}</span>
-                                    <h3 class="text-3xl font-black text-slate-800">{{ $item->pengguna?->name }}</h3>
+                                    <span class="text-2xl font-black text-emerald-500">REQ-<?php echo e(101 + $index); ?></span>
+                                    <h3 class="text-3xl font-black text-slate-800"><?php echo e($item->pengguna?->name); ?></h3>
                                 </div>
-                                <p class="mt-3 text-xl text-slate-500">{{ $item->alamat }}</p>
-                                <p class="mt-2 text-lg text-slate-400">{{ $item->nomor_telepon }}</p>
+                                <p class="mt-3 text-xl text-slate-500"><?php echo e($item->alamat); ?></p>
+                                <p class="mt-2 text-lg text-slate-400"><?php echo e($item->nomor_telepon); ?></p>
                                 <p class="mt-3 text-lg text-slate-400">
                                     Item:
-                                    @foreach ($item->items as $detail)
-                                        <span class="font-semibold text-slate-500">{{ $detail->kategoriSampah?->nama }}</span>{{ $loop->last ? '' : ', ' }}
-                                    @endforeach
+                                    <?php $__currentLoopData = $item->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <span class="font-semibold text-slate-500"><?php echo e($detail->kategoriSampah?->nama); ?></span><?php echo e($loop->last ? '' : ', '); ?>
+
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     <span class="text-slate-300">•</span>
-                                    Diajukan {{ $item->created_at?->diffForHumans() }}
+                                    Diajukan <?php echo e($item->created_at?->diffForHumans()); ?>
+
                                 </p>
                             </div>
 
-                            <form action="{{ route('dashboard.admin.schedule', $item) }}" method="POST" class="grid gap-3 md:grid-cols-[1.2fr,1fr,auto] md:items-end">
-                                @csrf
+                            <form action="<?php echo e(route('dashboard.admin.schedule', $item)); ?>" method="POST" class="grid gap-3 md:grid-cols-[1.2fr,1fr,auto] md:items-end">
+                                <?php echo csrf_field(); ?>
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-black uppercase tracking-[0.2em] text-slate-400">Input Jadwal</span>
                                     <input
                                         type="datetime-local"
                                         name="scheduled_at"
-                                        value="{{ old('scheduled_at') }}"
+                                        value="<?php echo e(old('scheduled_at')); ?>"
                                         class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base outline-none transition focus:border-emerald-400"
                                         required
                                     >
@@ -141,9 +144,9 @@
                                     <span class="mb-2 block text-sm font-black uppercase tracking-[0.2em] text-slate-400">Pilih Petugas</span>
                                     <select name="petugas_id" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base outline-none transition focus:border-emerald-400" required>
                                         <option value="">Pilih Petugas</option>
-                                        @foreach ($petugas as $petugasItem)
-                                            <option value="{{ $petugasItem->id }}">{{ $petugasItem->name }}</option>
-                                        @endforeach
+                                        <?php $__currentLoopData = $petugas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $petugasItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($petugasItem->id); ?>"><?php echo e($petugasItem->name); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </label>
 
@@ -152,9 +155,9 @@
                                 </button>
                             </form>
                         </article>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <div class="px-6 py-16 text-center text-slate-500">Tidak ada permintaan dengan status menunggu.</div>
-                    @endforelse
+                    <?php endif; ?>
                 </div>
             </section>
 
@@ -165,24 +168,24 @@
                 </div>
 
                 <div class="grid gap-5 px-6 py-6 md:grid-cols-2 xl:grid-cols-3">
-                    @php
+                    <?php
                         $weeklySchedules = [
                             ['hari' => 'Senin', 'zona' => 'Zona A', 'jam' => '08:00 WIB', 'petugas' => 'Ahmad'],
                             ['hari' => 'Selasa', 'zona' => 'Zona B', 'jam' => '08:00 WIB', 'petugas' => 'Bambang'],
                             ['hari' => 'Rabu', 'zona' => 'Zona A', 'jam' => '08:00 WIB', 'petugas' => 'Cecep'],
                         ];
-                    @endphp
+                    ?>
 
-                    @foreach ($weeklySchedules as $schedule)
+                    <?php $__currentLoopData = $weeklySchedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $schedule): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <article class="rounded-[2rem] border border-slate-200 bg-slate-50 p-5">
                             <div class="flex items-center justify-between gap-4">
-                                <p class="text-base font-black uppercase tracking-[0.1em] text-emerald-500">{{ $schedule['hari'] }}</p>
-                                <p class="text-sm font-bold text-slate-400">{{ $schedule['jam'] }}</p>
+                                <p class="text-base font-black uppercase tracking-[0.1em] text-emerald-500"><?php echo e($schedule['hari']); ?></p>
+                                <p class="text-sm font-bold text-slate-400"><?php echo e($schedule['jam']); ?></p>
                             </div>
-                            <h3 class="mt-3 text-3xl font-black text-slate-800">{{ $schedule['zona'] }}</h3>
-                            <p class="mt-5 text-base text-slate-500">• Petugas: {{ $schedule['petugas'] }}</p>
+                            <h3 class="mt-3 text-3xl font-black text-slate-800"><?php echo e($schedule['zona']); ?></h3>
+                            <p class="mt-5 text-base text-slate-500">• Petugas: <?php echo e($schedule['petugas']); ?></p>
                         </article>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </section>
 
@@ -193,26 +196,27 @@
                 </div>
 
                 <div class="mt-6 grid gap-4 xl:grid-cols-2">
-                    @forelse ($scheduledRequests as $item)
+                    <?php $__empty_1 = true; $__currentLoopData = $scheduledRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <article class="rounded-3xl border border-slate-200 p-5">
                             <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                 <div>
-                                    <p class="text-2xl font-black text-slate-800">{{ $item->pengguna?->name }}</p>
-                                    <p class="mt-2 text-base text-slate-500">{{ $item->alamat }}</p>
-                                    <p class="mt-2 text-base text-slate-500">Petugas: {{ $item->petugas?->name ?? '-' }}</p>
-                                    <p class="mt-2 text-base text-slate-500">Jadwal: {{ optional($item->scheduled_at ? \Illuminate\Support\Carbon::parse($item->scheduled_at) : null)?->translatedFormat('d M Y, H:i') ?? '-' }}</p>
+                                    <p class="text-2xl font-black text-slate-800"><?php echo e($item->pengguna?->name); ?></p>
+                                    <p class="mt-2 text-base text-slate-500"><?php echo e($item->alamat); ?></p>
+                                    <p class="mt-2 text-base text-slate-500">Petugas: <?php echo e($item->petugas?->name ?? '-'); ?></p>
+                                    <p class="mt-2 text-base text-slate-500">Jadwal: <?php echo e(optional($item->scheduled_at ? \Illuminate\Support\Carbon::parse($item->scheduled_at) : null)?->translatedFormat('d M Y, H:i') ?? '-'); ?></p>
                                 </div>
-                                <span class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-700">{{ $item->status }}</span>
+                                <span class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-700"><?php echo e($item->status); ?></span>
                             </div>
                         </article>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <div class="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-slate-500 xl:col-span-2">
                             Belum ada penjadwalan aktif.
                         </div>
-                    @endforelse
+                    <?php endif; ?>
                 </div>
             </section>
         </main>
     </div>
 </body>
 </html>
+<?php /**PATH D:\File Kuliah\Semester 6\Proyek Perangkat Lunak\SiResik\resources\views/dashboard/admin.blade.php ENDPATH**/ ?>

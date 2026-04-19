@@ -17,7 +17,7 @@
                 </div>
             </div>
 
-            @php
+            <?php
                 $menuItems = [
                     ['label' => 'Dashboard', 'active' => false],
                     ['label' => 'Penjemputan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
@@ -31,20 +31,20 @@
                     ['label' => 'Kegiatan Lingkungan', 'active' => false],
                     ['label' => 'Notifikasi', 'active' => false],
                 ];
-            @endphp
+            ?>
 
             <nav class="mt-14 space-y-2">
-                @foreach ($menuItems as $item)
-                    <a href="{{ $item['href'] ?? route('dashboard.masyarakat') }}"
-                        class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition {{ $item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }}">
-                        <span class="text-xl">{{ $item['active'] ? '◉' : '◦' }}</span>
-                        <span>{{ $item['label'] }}</span>
+                <?php $__currentLoopData = $menuItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <a href="<?php echo e($item['href'] ?? route('dashboard.masyarakat')); ?>"
+                        class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition <?php echo e($item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5'); ?>">
+                        <span class="text-xl"><?php echo e($item['active'] ? '◉' : '◦'); ?></span>
+                        <span><?php echo e($item['label']); ?></span>
                     </a>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </nav>
 
-            <form action="{{ route('logout') }}" method="POST" class="mt-8">
-                @csrf
+            <form action="<?php echo e(route('logout')); ?>" method="POST" class="mt-8">
+                <?php echo csrf_field(); ?>
                 <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
                     <span class="text-xl">↪</span>
                     <span>Keluar (Log Out)</span>
@@ -55,7 +55,7 @@
                 <div class="flex items-center gap-4">
                     <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-xl font-black">R</div>
                     <div>
-                        <p class="text-xl font-bold">{{ $user->name }}</p>
+                        <p class="text-xl font-bold"><?php echo e($user->name); ?></p>
                         <p class="text-xs uppercase tracking-[0.15em] text-emerald-100">Warga Terverifikasi</p>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <button type="button" class="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-lg font-semibold text-slate-700">Unduh Laporan</button>
-                    <a href="{{ route('permintaan-penjemputan.index') }}" class="rounded-2xl bg-emerald-500 px-6 py-3 text-lg font-bold text-white">+ Ajukan Penjemputan</a>
+                    <a href="<?php echo e(route('permintaan-penjemputan.index')); ?>" class="rounded-2xl bg-emerald-500 px-6 py-3 text-lg font-bold text-white">+ Ajukan Penjemputan</a>
                 </div>
             </header>
 
@@ -82,21 +82,21 @@
                             <p class="mt-3 text-2xl text-slate-500">Pantau perkembangan penjemputan sampah Anda secara real-time.</p>
                         </div>
 
-                        @if ($upcomingRequest)
+                        <?php if($upcomingRequest): ?>
                             <div class="rounded-[2rem] bg-[#0c5b49] px-7 py-5 text-white shadow-xl shadow-emerald-900/10">
                                 <p class="text-sm font-black uppercase tracking-[0.18em] text-emerald-200">Jadwal Reguler Area</p>
-                                <p class="mt-2 text-3xl font-black">{{ \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->translatedFormat('l, d M Y') }}</p>
-                                <p class="mt-1 text-lg text-emerald-100">{{ \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->format('H:i') }} WIB bersama {{ $upcomingRequest->petugas?->name ?? 'Petugas' }}</p>
+                                <p class="mt-2 text-3xl font-black"><?php echo e(\Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->translatedFormat('l, d M Y')); ?></p>
+                                <p class="mt-1 text-lg text-emerald-100"><?php echo e(\Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->format('H:i')); ?> WIB bersama <?php echo e($upcomingRequest->petugas?->name ?? 'Petugas'); ?></p>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
 
                     <div class="mt-12">
                         <p class="text-base font-black uppercase tracking-[0.2em] text-slate-400">Riwayat Permintaan</p>
 
                         <div class="mt-6 space-y-5">
-                            @forelse ($trackingRequests as $index => $item)
-                                @php
+                            <?php $__empty_1 = true; $__currentLoopData = $trackingRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <?php
                                     $statusMeta = match ($item->status) {
                                         'Selesai' => [
                                             'badge' => 'text-emerald-600 bg-emerald-100',
@@ -122,42 +122,44 @@
                                     };
                                     $kategoriText = $item->items->pluck('kategoriSampah.nama')->filter()->take(2)->implode(', ');
                                     $beratText = $item->items->sum('berat_kg');
-                                @endphp
+                                ?>
 
                                 <article class="rounded-[2rem] bg-white px-6 py-6 shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
                                     <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                                         <div class="flex items-start gap-5">
-                                            <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-[1.5rem] {{ $statusMeta['iconBg'] }} text-4xl font-black {{ $statusMeta['iconText'] }}">
-                                                {{ $statusMeta['icon'] }}
+                                            <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-[1.5rem] <?php echo e($statusMeta['iconBg']); ?> text-4xl font-black <?php echo e($statusMeta['iconText']); ?>">
+                                                <?php echo e($statusMeta['icon']); ?>
+
                                             </div>
 
                                             <div>
                                                 <div class="flex flex-wrap items-center gap-3">
-                                                    <span class="rounded-xl bg-slate-100 px-3 py-1 text-sm font-black text-slate-500">PK-{{ str_pad((string) ($index + 1), 3, '0', STR_PAD_LEFT) }}</span>
-                                                    <span class="rounded-xl px-3 py-1 text-sm font-black {{ $statusMeta['badge'] }}">{{ $statusMeta['label'] }}</span>
+                                                    <span class="rounded-xl bg-slate-100 px-3 py-1 text-sm font-black text-slate-500">PK-<?php echo e(str_pad((string) ($index + 1), 3, '0', STR_PAD_LEFT)); ?></span>
+                                                    <span class="rounded-xl px-3 py-1 text-sm font-black <?php echo e($statusMeta['badge']); ?>"><?php echo e($statusMeta['label']); ?></span>
                                                 </div>
-                                                <h3 class="mt-4 text-5xl font-black tracking-tight text-slate-800">{{ $kategoriText ?: 'Permintaan Penjemputan' }}</h3>
+                                                <h3 class="mt-4 text-5xl font-black tracking-tight text-slate-800"><?php echo e($kategoriText ?: 'Permintaan Penjemputan'); ?></h3>
                                                 <p class="mt-3 text-xl text-slate-400">
-                                                    Diajukan pada {{ optional($item->created_at)->translatedFormat('d M Y') }} • Estimasi berat {{ rtrim(rtrim(number_format($beratText, 2, '.', ''), '0'), '.') ?: '0' }} kg
+                                                    Diajukan pada <?php echo e(optional($item->created_at)->translatedFormat('d M Y')); ?> • Estimasi berat <?php echo e(rtrim(rtrim(number_format($beratText, 2, '.', ''), '0'), '.') ?: '0'); ?> kg
                                                 </p>
-                                                @if ($item->status === 'Diproses' && $item->scheduled_at)
+                                                <?php if($item->status === 'Diproses' && $item->scheduled_at): ?>
                                                     <p class="mt-2 text-base font-semibold text-blue-600">
-                                                        Dijadwalkan {{ \Illuminate\Support\Carbon::parse($item->scheduled_at)->translatedFormat('d M Y, H:i') }} WIB{{ $item->petugas ? ' • Petugas: '.$item->petugas->name : '' }}
+                                                        Dijadwalkan <?php echo e(\Illuminate\Support\Carbon::parse($item->scheduled_at)->translatedFormat('d M Y, H:i')); ?> WIB<?php echo e($item->petugas ? ' • Petugas: '.$item->petugas->name : ''); ?>
+
                                                     </p>
-                                                @endif
+                                                <?php endif; ?>
                                             </div>
                                         </div>
 
                                         <div class="lg:pr-3">
-                                            <a href="{{ route('permintaan-penjemputan.index') }}" class="inline-flex rounded-2xl border border-slate-200 bg-white px-8 py-4 text-2xl font-bold text-slate-600 shadow-sm">Detail</a>
+                                            <a href="<?php echo e(route('permintaan-penjemputan.index')); ?>" class="inline-flex rounded-2xl border border-slate-200 bg-white px-8 py-4 text-2xl font-bold text-slate-600 shadow-sm">Detail</a>
                                         </div>
                                     </div>
                                 </article>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                 <div class="rounded-[2rem] border border-dashed border-slate-300 bg-white px-6 py-16 text-center text-lg text-slate-500">
                                     Belum ada permintaan penjemputan yang bisa dilacak.
                                 </div>
-                            @endforelse
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -167,16 +169,16 @@
 
                     <section class="mt-6 rounded-[2.5rem] bg-white p-6 shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
                         <div class="space-y-5">
-                            @foreach ($weeklySchedules as $schedule)
+                            <?php $__currentLoopData = $weeklySchedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $schedule): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <article class="rounded-[2rem] border border-slate-200 bg-white px-5 py-5 shadow-sm">
                                     <div class="flex items-start justify-between gap-4">
-                                        <p class="text-2xl font-black uppercase tracking-[0.12em] text-[#0c5b49]">{{ $schedule['hari'] }}</p>
-                                        <span class="rounded-xl bg-slate-100 px-3 py-1 text-sm font-black text-slate-400">{{ $schedule['jam'] }}</span>
+                                        <p class="text-2xl font-black uppercase tracking-[0.12em] text-[#0c5b49]"><?php echo e($schedule['hari']); ?></p>
+                                        <span class="rounded-xl bg-slate-100 px-3 py-1 text-sm font-black text-slate-400"><?php echo e($schedule['jam']); ?></span>
                                     </div>
-                                    <p class="mt-4 text-2xl font-black text-slate-800">{{ $schedule['kategori'] }}</p>
-                                    <p class="mt-4 text-base italic text-slate-400">Berlaku untuk {{ $schedule['zona'] }}</p>
+                                    <p class="mt-4 text-2xl font-black text-slate-800"><?php echo e($schedule['kategori']); ?></p>
+                                    <p class="mt-4 text-base italic text-slate-400">Berlaku untuk <?php echo e($schedule['zona']); ?></p>
                                 </article>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
 
                         <div class="mt-5 rounded-[2rem] border border-emerald-100 bg-emerald-50 px-5 py-5 text-base leading-8 text-emerald-800">
@@ -205,3 +207,4 @@
     </div>
 </body>
 </html>
+<?php /**PATH D:\File Kuliah\Semester 6\Proyek Perangkat Lunak\SiResik\resources\views/dashboard/masyarakat.blade.php ENDPATH**/ ?>

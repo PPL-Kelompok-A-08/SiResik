@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PermintaanPenjemputanController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\KategoriSampahController;
+use App\Http\Controllers\PetaLokasiController;
 
 Route::get('/', [LandingPageController::class, 'index']);
 
@@ -27,7 +28,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/permintaan-penjemputan', [PermintaanPenjemputanController::class, 'index'])->name('permintaan-penjemputan.index');
     Route::post('/permintaan-penjemputan', [PermintaanPenjemputanController::class, 'store'])->name('permintaan-penjemputan.store');
     Route::get('/permintaan-penjemputan/{permintaanPenjemputan}/success', [PermintaanPenjemputanController::class, 'success'])->name('permintaan-penjemputan.success');
+
+    Route::get('/peta-lokasi', [PetaLokasiController::class, 'masyarakat'])
+        ->middleware('role:masyarakat,petugas')
+        ->name('peta.lokasi');
+
+    Route::get('/dashboard/admin/peta-titik-layanan', [PetaLokasiController::class, 'admin'])
+        ->middleware('role:admin')
+        ->name('dashboard.admin.peta');
+
+    Route::get('/api/titik-layanan', [PetaLokasiController::class, 'titikLayananJson'])->name('api.titik-layanan');
 });
 
-Route::get('/maps', fn() => view('maps'));
 Route::get('/reward', fn() => view('reward'));
