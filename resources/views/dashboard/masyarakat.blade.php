@@ -26,7 +26,7 @@
                     ['label' => 'Poin & Reward', 'active' => false],
                     ['label' => 'Sampah Liar', 'active' => false],
                     ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
-                    ['label' => 'Usulkan Titik', 'active' => false],
+                    ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
                     ['label' => 'Edukasi Lingkungan', 'active' => false],
                     ['label' => 'Kegiatan Lingkungan', 'active' => false],
                     ['label' => 'Notifikasi', 'active' => false],
