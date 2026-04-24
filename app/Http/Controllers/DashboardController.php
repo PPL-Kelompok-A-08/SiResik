@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\PermintaanPenjemputan;
 use App\Models\User;
+use App\Models\Reward;
+use App\Models\TitikLayanan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -91,6 +93,8 @@ class DashboardController extends Controller
             ->latest()
             ->get();
         $petugas = User::where('role', 'petugas')->orderBy('name')->get();
+        $rewards = Reward::orderBy('nama')->get();
+        $titikLayanan = TitikLayanan::orderBy('nama')->get();
         $pendingRequests = $permintaan->where('status', 'Menunggu')->values();
         $scheduledRequests = $permintaan->where('status', 'Diproses')->take(4)->values();
 
@@ -102,7 +106,7 @@ class DashboardController extends Controller
             'menunggu' => $pendingRequests->count(),
         ];
 
-        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests'));
+        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan'));
     }
 
     public function schedule(Request $request, PermintaanPenjemputan $permintaanPenjemputan): RedirectResponse
