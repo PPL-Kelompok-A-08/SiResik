@@ -33,9 +33,22 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:masyarakat,petugas')
         ->name('peta.lokasi');
 
+    Route::get('/peta-lokasi/usulan-titik', [PetaLokasiController::class, 'usulanForm'])
+        ->middleware('role:masyarakat')
+        ->name('peta.usulan-titik');
+    Route::post('/peta-lokasi/usulan-titik', [PetaLokasiController::class, 'storeUsulan'])
+        ->middleware('role:masyarakat')
+        ->name('peta.usulan-titik.store');
+
     Route::get('/dashboard/admin/peta-titik-layanan', [PetaLokasiController::class, 'admin'])
         ->middleware('role:admin')
         ->name('dashboard.admin.peta');
+    Route::post('/dashboard/admin/usulan-titik/{usulan}/approve', [PetaLokasiController::class, 'approveUsulan'])
+        ->middleware('role:admin')
+        ->name('dashboard.admin.usulan.approve');
+    Route::post('/dashboard/admin/usulan-titik/{usulan}/reject', [PetaLokasiController::class, 'rejectUsulan'])
+        ->middleware('role:admin')
+        ->name('dashboard.admin.usulan.reject');
 
     Route::get('/api/titik-layanan', [PetaLokasiController::class, 'titikLayananJson'])->name('api.titik-layanan');
 });
