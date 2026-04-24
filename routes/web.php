@@ -1,12 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PermintaanPenjemputanController;
-use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\KategoriSampahController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\PetaLokasiController;
+use App\Http\Controllers\PermintaanPenjemputanController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingPageController::class, 'index']);
 
@@ -22,6 +23,35 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/petugas', [DashboardController::class, 'petugas'])->middleware('role:petugas')->name('dashboard.petugas');
     Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->middleware('role:admin')->name('dashboard.admin');
     Route::post('/dashboard/admin/permintaan/{permintaanPenjemputan}/schedule', [DashboardController::class, 'schedule'])->middleware('role:admin')->name('dashboard.admin.schedule');
+
+    // Admin CRUD routes
+    Route::middleware('role:admin')->prefix('admin')->group(function () {
+        // Kategori Sampah
+        Route::post('/kategori', [AdminController::class, 'storeKategori'])->name('admin.kategori.store');
+        Route::put('/kategori/{kategori}', [AdminController::class, 'updateKategori'])->name('admin.kategori.update');
+        Route::delete('/kategori/{kategori}', [AdminController::class, 'destroyKategori'])->name('admin.kategori.destroy');
+
+        // Titik Layanan
+        Route::post('/titik-layanan', [AdminController::class, 'storeTitikLayanan'])->name('admin.titik-layanan.store');
+        Route::put('/titik-layanan/{titikLayanan}', [AdminController::class, 'updateTitikLayanan'])->name('admin.titik-layanan.update');
+        Route::delete('/titik-layanan/{titikLayanan}', [AdminController::class, 'destroyTitikLayanan'])->name('admin.titik-layanan.destroy');
+
+        // Petugas
+        Route::post('/petugas', [AdminController::class, 'storePetugas'])->name('admin.petugas.store');
+        Route::put('/petugas/{petugas}', [AdminController::class, 'updatePetugas'])->name('admin.petugas.update');
+        Route::delete('/petugas/{petugas}', [AdminController::class, 'destroyPetugas'])->name('admin.petugas.destroy');
+
+        // Verifikasi Laporan
+        Route::post('/verifikasi-laporan/{permintaan}', [AdminController::class, 'verifikasiLaporan'])->name('admin.verifikasi-laporan');
+
+        // Konfigurasi Poin
+        Route::post('/konfigurasi-poin', [AdminController::class, 'updateKonfigurasiPoin'])->name('admin.konfigurasi-poin.update');
+
+        // Reward
+        Route::post('/reward', [AdminController::class, 'storeReward'])->name('admin.reward.store');
+        Route::put('/reward/{reward}', [AdminController::class, 'updateReward'])->name('admin.reward.update');
+        Route::delete('/reward/{reward}', [AdminController::class, 'destroyReward'])->name('admin.reward.destroy');
+    });
 
     Route::get('/kategori', [KategoriSampahController::class, 'index']);
     Route::post('/kategori/hitung', [KategoriSampahController::class, 'hitung']);
