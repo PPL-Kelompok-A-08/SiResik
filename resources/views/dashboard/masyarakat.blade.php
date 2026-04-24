@@ -27,9 +27,15 @@
                     ['label' => 'Sampah Liar', 'active' => false, 'disabled' => true],
                     ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
                     ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
+<<<<<<< HEAD
                     ['label' => 'Edukasi Lingkungan', 'active' => false, 'disabled' => true],
                     ['label' => 'Kegiatan Lingkungan', 'active' => false, 'disabled' => true],
                     ['label' => 'Notifikasi', 'active' => false, 'disabled' => true],
+=======
+                    ['label' => 'Edukasi Lingkungan', 'active' => false],
+                    ['label' => 'Kegiatan Lingkungan', 'active' => false],
+                    ['label' => 'Notifikasi', 'active' => false],
+>>>>>>> 445a879 (Sprint 2 - PBI 18 Pengajuan Usulan Titik Layanan Baru)
                 ];
             @endphp
 
