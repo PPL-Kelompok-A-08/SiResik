@@ -23,5 +23,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(TitikLayananSeeder::class);
+        $this->call(RewardSeeder::class);
     }
 }
