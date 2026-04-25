@@ -17,13 +17,13 @@
                 </div>
             </div>
 
-            @php
+            <?php
                 $menuItems = [
                     ['label' => 'Dashboard', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Penjemputan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
                     ['label' => 'Status Layanan', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Riwayat Layanan', 'active' => false, 'href' => route('dashboard.masyarakat')],
-                    ['label' => 'Poin & Reward', 'active' => false, 'href' => route('poin.index')],
+                    ['label' => 'Poin & Reward', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Sampah Liar', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Peta & Lokasi', 'active' => true, 'href' => route('peta.lokasi')],
                     ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
@@ -31,20 +31,20 @@
                     ['label' => 'Kegiatan Lingkungan', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Notifikasi', 'active' => false, 'href' => route('dashboard.masyarakat')],
                 ];
-            @endphp
+            ?>
 
             <nav class="mt-14 space-y-2">
-                @foreach ($menuItems as $item)
-                    <a href="{{ $item['href'] }}"
-                        class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition {{ $item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }}">
-                        <span class="text-xl">{{ $item['active'] ? '◉' : '◦' }}</span>
-                        <span>{{ $item['label'] }}</span>
+                <?php $__currentLoopData = $menuItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <a href="<?php echo e($item['href']); ?>"
+                        class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition <?php echo e($item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5'); ?>">
+                        <span class="text-xl"><?php echo e($item['active'] ? '◉' : '◦'); ?></span>
+                        <span><?php echo e($item['label']); ?></span>
                     </a>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </nav>
 
-            <form action="{{ route('logout') }}" method="POST" class="mt-8">
-                @csrf
+            <form action="<?php echo e(route('logout')); ?>" method="POST" class="mt-8">
+                <?php echo csrf_field(); ?>
                 <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
                     <span class="text-xl">↪</span>
                     <span>Keluar (Log Out)</span>
@@ -55,7 +55,7 @@
                 <div class="flex items-center gap-4">
                     <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-xl font-black">R</div>
                     <div>
-                        <p class="text-xl font-bold">{{ $user->name }}</p>
+                        <p class="text-xl font-bold"><?php echo e($user->name); ?></p>
                         <p class="text-xs uppercase tracking-[0.15em] text-emerald-100">Warga Terverifikasi</p>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <button type="button" class="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-lg font-semibold text-slate-700">Unduh Laporan</button>
-                    <a href="{{ route('permintaan-penjemputan.index') }}" class="rounded-2xl bg-emerald-500 px-6 py-3 text-lg font-bold text-white">+ Ajukan Penjemputan</a>
+                    <a href="<?php echo e(route('permintaan-penjemputan.index')); ?>" class="rounded-2xl bg-emerald-500 px-6 py-3 text-lg font-bold text-white">+ Ajukan Penjemputan</a>
                 </div>
             </header>
 
@@ -100,7 +100,7 @@
                 </div>
 
                 <div class="mt-6">
-                    @include('peta._leaflet-map', ['titikLayanan' => $titikLayanan])
+                    <?php echo $__env->make('peta._leaflet-map', ['titikLayanan' => $titikLayanan], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                 </div>
 
                 <p class="mt-4 text-sm text-slate-500">
@@ -111,3 +111,4 @@
     </div>
 </body>
 </html>
+<?php /**PATH C:\Users\Dhydo Aryo Jayanata\Documents\GitHub\TUBES\SiResik\resources\views/peta/lokasi-masyarakat.blade.php ENDPATH**/ ?>

@@ -63,4 +63,9 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function poins(): HasMany
+    {
+        return $this->hasMany(Poin::class);
+    }
 }
