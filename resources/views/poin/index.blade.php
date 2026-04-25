@@ -69,7 +69,7 @@
                     <p class="mt-2 text-lg text-slate-500">Pantau perolehan poin dan penukaran reward Anda</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <a href="#" class="rounded-2xl bg-orange-500 px-6 py-3 text-lg font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600">Tukar Reward</a>
+                    <a href="{{ route('reward.index') }}" class="rounded-2xl bg-orange-500 px-6 py-3 text-lg font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600">Tukar Reward</a>
                 </div>
             </header>
 
