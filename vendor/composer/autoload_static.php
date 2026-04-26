@@ -531,6 +531,7 @@ class ComposerStaticInit53b5d56b3b7e3cbac1713e68c8850f6c
     );
 
     public static $classMap = array (
+        'App\\Http\\Controllers\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/DashboardController.php',
@@ -538,12 +539,16 @@ class ComposerStaticInit53b5d56b3b7e3cbac1713e68c8850f6c
         'App\\Http\\Controllers\\LandingPageController' => __DIR__ . '/../..' . '/app/Http/Controllers/LandingPageController.php',
         'App\\Http\\Controllers\\PermintaanPenjemputanController' => __DIR__ . '/../..' . '/app/Http/Controllers/PermintaanPenjemputanController.php',
         'App\\Http\\Controllers\\PetaLokasiController' => __DIR__ . '/../..' . '/app/Http/Controllers/PetaLokasiController.php',
+        'App\\Http\\Controllers\\RiwayatpoinpenggunaController' => __DIR__ . '/../..' . '/app/Http/Controllers/RiwayatpoinpenggunaController.php',
         'App\\Http\\Middleware\\RoleMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/RoleMiddleware.php',
         'App\\Models\\KategoriSampah' => __DIR__ . '/../..' . '/app/Models/KategoriSampah.php',
         'App\\Models\\PermintaanPenjemputan' => __DIR__ . '/../..' . '/app/Models/PermintaanPenjemputan.php',
         'App\\Models\\PermintaanPenjemputanItem' => __DIR__ . '/../..' . '/app/Models/PermintaanPenjemputanItem.php',
+        'App\\Models\\Poin' => __DIR__ . '/../..' . '/app/Models/Poin.php',
+        'App\\Models\\Reward' => __DIR__ . '/../..' . '/app/Models/Reward.php',
         'App\\Models\\TitikLayanan' => __DIR__ . '/../..' . '/app/Models/TitikLayanan.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
+        'App\\Models\\UsulanTitikLayanan' => __DIR__ . '/../..' . '/app/Models/UsulanTitikLayanan.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Brick\\Math\\BigDecimal' => __DIR__ . '/..' . '/brick/math/src/BigDecimal.php',
@@ -669,6 +674,7 @@ class ComposerStaticInit53b5d56b3b7e3cbac1713e68c8850f6c
         'Cron\\MonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
+        'Database\\Seeders\\RewardSeeder' => __DIR__ . '/../..' . '/database/seeders/RewardSeeder.php',
         'Database\\Seeders\\TitikLayananSeeder' => __DIR__ . '/../..' . '/database/seeders/TitikLayananSeeder.php',
         'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
         'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
