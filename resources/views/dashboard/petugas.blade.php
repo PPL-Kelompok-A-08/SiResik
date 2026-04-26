@@ -16,6 +16,7 @@
             </div>
             <div class="flex flex-wrap gap-3">
                 <a href="{{ route('permintaan-penjemputan.index') }}" class="rounded-full bg-amber-300 px-5 py-3 text-sm font-bold text-slate-950">Lihat antrean</a>
+                <a href="{{ route('petugas.riwayat') }}" class="rounded-full border border-amber-300 px-5 py-3 text-sm font-bold text-amber-300 hover:bg-amber-300 hover:text-slate-950 transition">📋 Riwayat Tugas</a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="rounded-full border border-white/20 px-5 py-3 text-sm font-bold text-white">Logout</button>
@@ -45,7 +46,20 @@
                                 <p class="mt-3 text-sm text-slate-600">{{ $item->alamat }}</p>
                                 <p class="text-sm text-slate-600">{{ $item->jadwal }} | {{ $item->tanggal }}</p>
                             </div>
-                            <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">{{ $item->status }}</span>
+                            <div class="flex flex-col gap-2 items-end">
+                                <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">{{ $item->status }}</span>
+                                @if($item->status === 'Diproses' && $item->petugas_id === auth()->id())
+                                    <a href="{{ route('petugas.bukti.show', $item) }}"
+                                       class="rounded-xl bg-amber-400 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-500 transition whitespace-nowrap">
+                                        📷 Upload Bukti
+                                    </a>
+                                @elseif($item->status === 'Selesai')
+                                    <a href="{{ route('petugas.bukti.show', $item) }}"
+                                       class="rounded-xl bg-emerald-100 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-200 transition whitespace-nowrap">
+                                        ✅ Lihat Bukti
+                                    </a>
+                                @endif
+                            </div>
                         </div>
                         <p class="mt-4 text-sm text-slate-500">Catatan: {{ $item->catatan }}</p>
                     </article>
