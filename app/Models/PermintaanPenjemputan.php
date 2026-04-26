@@ -21,12 +21,16 @@ class PermintaanPenjemputan extends Model
         'total_estimasi_poin',
         'pengguna_id',
         'petugas_id',
+        'bukti_penyelesaian',
+        'catatan_penyelesaian',
+        'diselesaikan_at',
     ];
 
     protected function casts(): array
     {
         return [
             'scheduled_at' => 'datetime',
+            'diselesaikan_at' => 'datetime',
         ];
     }
 
