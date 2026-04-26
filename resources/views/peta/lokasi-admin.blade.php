@@ -96,7 +96,7 @@
 
                 <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                        <h2 class="text-4xl font-black tracking-tight text-slate-800">Pemetaan komprehensif</h2>
+                        <h2 class="text-4xl font-black tracking-tight text-slate-800">Pemetaan Komprehensif</h2>
                         <p class="mt-2 text-xl text-slate-500">Koordinat dari basis data; pembaruan dilakukan lewat pengelolaan data titik layanan.</p>
                     </div>
                     <div class="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">

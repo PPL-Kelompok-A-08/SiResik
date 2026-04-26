@@ -664,7 +664,7 @@
                 <div class="section-card">
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <h2 class="text-xl font-black text-slate-800">Daftar Titik Layanan</h2>
-                        <button onclick="openModal('modal-tambah-titik-layanan')" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">+ Tambah Titik Layanan</button>
+                        <button id="btn-open-titik-layanan-modal" onclick="openModal('modal-tambah-titik-layanan')" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">+ Tambah Titik Layanan</button>
                     </div>
                     <table>
                         <thead>
@@ -1046,14 +1046,21 @@
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Alamat</label>
                         <textarea name="alamat" id="titik-layanan-alamat" rows="2" placeholder="Alamat lengkap..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm resize-none" required></textarea>
                     </div>
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Pilih Lokasi di Peta</label>
+                        <div id="titik-layanan-map" class="h-[220px] overflow-hidden rounded-xl border border-slate-200 bg-slate-50"></div>
+                        <p id="titik-layanan-koordinat" class="mt-2 text-xs text-slate-500">Klik peta untuk menentukan titik layanan.</p>
+                    </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Latitude</label>
-                            <input type="number" step="any" name="latitude" id="titik-layanan-latitude" placeholder="-6.2088" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                            <input type="text" id="titik-layanan-latitude-display" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50" readonly>
+                            <input type="hidden" name="latitude" id="titik-layanan-latitude" required>
                         </div>
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Longitude</label>
-                            <input type="number" step="any" name="longitude" id="titik-layanan-longitude" placeholder="106.8166" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                            <input type="text" id="titik-layanan-longitude-display" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50" readonly>
+                            <input type="hidden" name="longitude" id="titik-layanan-longitude" required>
                         </div>
                     </div>
                     <div>
@@ -1213,9 +1220,72 @@
         }
 
         // Modal
-        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function openModal(id) {
+            document.getElementById(id).classList.add('open');
+            if (id === 'modal-tambah-titik-layanan') {
+                setTimeout(function () {
+                    setupTitikLayananMap();
+                }, 100);
+            }
+        }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
         function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
+
+        let titikLayananMap = null;
+        let titikLayananMarker = null;
+
+        function setTitikLayananPoint(lat, lng) {
+            const latValue = Number(lat).toFixed(7);
+            const lngValue = Number(lng).toFixed(7);
+            document.getElementById('titik-layanan-latitude').value = latValue;
+            document.getElementById('titik-layanan-longitude').value = lngValue;
+            document.getElementById('titik-layanan-latitude-display').value = latValue;
+            document.getElementById('titik-layanan-longitude-display').value = lngValue;
+            document.getElementById('titik-layanan-koordinat').textContent = `Koordinat terpilih: ${latValue}, ${lngValue}`;
+
+            if (titikLayananMarker) {
+                titikLayananMarker.setLatLng([lat, lng]);
+            } else {
+                titikLayananMarker = L.marker([lat, lng]).addTo(titikLayananMap);
+            }
+        }
+
+        function setupTitikLayananMap(initialLat = null, initialLng = null) {
+            const fallbackLat = -6.9175;
+            const fallbackLng = 107.6191;
+            const hasInitial = initialLat !== null && initialLng !== null;
+            const startLat = hasInitial ? initialLat : fallbackLat;
+            const startLng = hasInitial ? initialLng : fallbackLng;
+
+            if (!titikLayananMap) {
+                titikLayananMap = L.map('titik-layanan-map', { scrollWheelZoom: true }).setView([startLat, startLng], hasInitial ? 15 : 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                }).addTo(titikLayananMap);
+
+                titikLayananMap.on('click', function (event) {
+                    setTitikLayananPoint(event.latlng.lat, event.latlng.lng);
+                });
+            } else {
+                titikLayananMap.setView([startLat, startLng], hasInitial ? 15 : 13);
+                titikLayananMap.invalidateSize();
+            }
+
+            if (hasInitial) {
+                setTitikLayananPoint(initialLat, initialLng);
+            } else {
+                if (titikLayananMarker) {
+                    titikLayananMap.removeLayer(titikLayananMarker);
+                    titikLayananMarker = null;
+                }
+                document.getElementById('titik-layanan-latitude').value = '';
+                document.getElementById('titik-layanan-longitude').value = '';
+                document.getElementById('titik-layanan-latitude-display').value = '';
+                document.getElementById('titik-layanan-longitude-display').value = '';
+                document.getElementById('titik-layanan-koordinat').textContent = 'Klik peta untuk menentukan titik layanan.';
+            }
+        }
 
         // Kategori
         function editKategori(id, nama, deskripsi, poin) {
@@ -1296,19 +1366,21 @@
             document.getElementById('titik-layanan-jenis').value = jenis;
             document.getElementById('titik-layanan-alamat').value = alamat;
             document.getElementById('titik-layanan-jam').value = jam;
-            document.getElementById('titik-layanan-latitude').value = latitude;
-            document.getElementById('titik-layanan-longitude').value = longitude;
             document.getElementById('titik-layanan-sampah').value = sampah;
             openModal('modal-tambah-titik-layanan');
+            setTimeout(function () {
+                setupTitikLayananMap(Number(latitude), Number(longitude));
+            }, 120);
         }
 
         // Reset form when opening modal for new titik layanan
-        document.querySelector('[onclick*="modal-tambah-titik-layanan"]').addEventListener('click', function() {
+        document.getElementById('btn-open-titik-layanan-modal').addEventListener('click', function() {
             document.getElementById('modal-titik-layanan-title').textContent = 'Tambah Titik Layanan';
             document.getElementById('titik-layanan-form').action = '{{ route("admin.titik-layanan.store") }}';
             const methodInput = document.querySelector('#titik-layanan-form input[name="_method"]');
             if (methodInput) methodInput.remove();
             document.getElementById('titik-layanan-form').reset();
+            setupTitikLayananMap();
         });
 
         function filterVerifikasi(btn, filter) {
