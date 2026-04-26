@@ -7,6 +7,8 @@ use App\Http\Controllers\KategoriSampahController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\PetaLokasiController;
 use App\Http\Controllers\PermintaanPenjemputanController;
+use App\Http\Controllers\RiwayatLayananController;
+use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingPageController::class, 'index']);
@@ -21,6 +23,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'redirect'])->name('dashboard');
     Route::get('/dashboard/masyarakat', [DashboardController::class, 'masyarakat'])->middleware('role:masyarakat')->name('dashboard.masyarakat');
     Route::get('/poin', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'index'])->middleware('role:masyarakat')->name('poin.index');
+    Route::get('/reward', [App\Http\Controllers\PenukaranRewardController::class, 'index'])->middleware('role:masyarakat')->name('reward.index');
+    Route::post('/reward/{id}/redeem', [App\Http\Controllers\PenukaranRewardController::class, 'redeem'])->middleware('role:masyarakat')->name('reward.redeem');
     Route::get('/dashboard/petugas', [DashboardController::class, 'petugas'])->middleware('role:petugas')->name('dashboard.petugas');
     Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->middleware('role:admin')->name('dashboard.admin');
     Route::post('/dashboard/admin/permintaan/{permintaanPenjemputan}/schedule', [DashboardController::class, 'schedule'])->middleware('role:admin')->name('dashboard.admin.schedule');
@@ -82,6 +86,16 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard.admin.usulan.reject');
 
     Route::get('/api/titik-layanan', [PetaLokasiController::class, 'titikLayananJson'])->name('api.titik-layanan');
-});
 
-Route::get('/reward', fn() => view('reward'));
+        Route::middleware('role:masyarakat')->prefix('riwayat-layanan')->group(function () {
+        Route::get('/', [RiwayatLayananController::class, 'index'])->name('riwayat-layanan.index');
+        Route::get('/{permintaanPenjemputan}', [RiwayatLayananController::class, 'show'])->name('riwayat-layanan.show');
+    });
+
+    // PBI 6 - Unggah Bukti Penyelesaian Tugas Petugas
+    Route::middleware('role:petugas,admin')->prefix('petugas')->group(function () {
+        Route::get('/riwayat', [PetugasController::class, 'riwayat'])->name('petugas.riwayat');
+        Route::get('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'showBukti'])->name('petugas.bukti.show');
+        Route::post('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'uploadBukti'])->name('petugas.bukti.upload');
+    });
+});
