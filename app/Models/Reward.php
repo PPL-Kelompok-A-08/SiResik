@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Reward extends Model
 {
@@ -13,4 +14,9 @@ class Reward extends Model
         'stok',
         'aktif'
     ];
+
+    public function penukaranPoins(): HasMany
+    {
+        return $this->hasMany(PenukaranPoin::class);
+    }
 }
