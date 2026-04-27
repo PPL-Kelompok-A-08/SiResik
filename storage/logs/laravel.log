@@ -9189,8 +9189,11 @@ Stack trace:
 #53 {main}
 "} 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> b603a35 (Update PBI 18 - Usulan Titik Layanan Baru)
 =======
+=======
+>>>>>>> 37dc932 (PBI 17 - Informasi Area Cakupan Layanan)
 [2026-04-27 05:35:23] local.ERROR: Route [dashboard.admin.peta] not defined. {"userId":1,"exception":"[object] (Symfony\\Component\\Routing\\Exception\\RouteNotFoundException(code: 0): Route [dashboard.admin.peta] not defined. at D:/File Kuliah/Semester 6/Proyek Perangkat Lunak/SiResik/vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php:528)
 [stacktrace]
 #0 D:/File Kuliah/Semester 6/Proyek Perangkat Lunak/SiResik/vendor/laravel/framework/src/Illuminate/Routing/Redirector.php(153): Illuminate/Routing/UrlGenerator->route('dashboard.admin...', Array)
@@ -9250,4 +9253,7 @@ Stack trace:
 #54 D:/File Kuliah/Semester 6/Proyek Perangkat Lunak/SiResik/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('D://File Kuliah//...')
 #55 {main}
 "} 
+<<<<<<< HEAD
 >>>>>>> c48b37a (PBI 17 - Informasi Area Cakupan Layanan)
+=======
+>>>>>>> 37dc932 (PBI 17 - Informasi Area Cakupan Layanan)

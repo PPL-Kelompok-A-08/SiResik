@@ -118,6 +118,7 @@ class DashboardController extends Controller
         ];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         // Data untuk manajemen status
         $permintaanForStatus = $permintaan->take(10);
 
@@ -125,6 +126,9 @@ class DashboardController extends Controller
 =======
         return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan', 'zonaLayanan', 'usulanMenunggu'));
 >>>>>>> c48b37a (PBI 17 - Informasi Area Cakupan Layanan)
+=======
+        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan', 'zonaLayanan', 'usulanMenunggu'));
+>>>>>>> 37dc932 (PBI 17 - Informasi Area Cakupan Layanan)
     }
 
     public function schedule(Request $request, PermintaanPenjemputan $permintaanPenjemputan): RedirectResponse

@@ -100,6 +100,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/api/titik-layanan', [PetaLokasiController::class, 'titikLayananJson'])->name('api.titik-layanan');
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         Route::middleware('role:masyarakat')->prefix('riwayat-layanan')->group(function () {
         Route::get('/', [RiwayatLayananController::class, 'index'])->name('riwayat-layanan.index');
         Route::get('/{permintaanPenjemputan}', [RiwayatLayananController::class, 'show'])->name('riwayat-layanan.show');
@@ -114,3 +115,6 @@ Route::middleware('guest')->group(function () {
 =======
 Route::get('/reward', fn() => view('reward'));
 >>>>>>> c48b37a (PBI 17 - Informasi Area Cakupan Layanan)
+=======
+Route::get('/reward', fn() => view('reward'));
+>>>>>>> 37dc932 (PBI 17 - Informasi Area Cakupan Layanan)
