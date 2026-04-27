@@ -131,7 +131,7 @@ class PetaLokasiController extends Controller
 
     public function titikLayananJson(): JsonResponse
     {
-        $data = TitikLayanan::orderBy('nama')->get();
+        $data = TitikLayanan::with('jadwalOperasional')->orderBy('nama')->get();
 
         return response()->json($data);
     }
