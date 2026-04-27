@@ -350,6 +350,54 @@
                 </div>
             </section>
 
+            <!-- Manajemen Status Permintaan -->
+            <section class="mt-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
+                <div class="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
+                    <h2 class="text-2xl font-black text-slate-800">Manajemen Status Permintaan</h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Pengguna</th>
+                                <th>Alamat</th>
+                                <th>Status Saat Ini</th>
+                                <th>Tanggal Dibuat</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__empty_1 = true; $__currentLoopData = $permintaanForStatus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <tr>
+                                    <td>REQ-<?php echo e(101 + $loop->index); ?></td>
+                                    <td><?php echo e($item->pengguna?->name); ?></td>
+                                    <td><?php echo e($item->alamat); ?></td>
+                                    <td>
+                                        <span class="status-badge <?php echo e($item->status === 'Menunggu' ? 'status-menunggu' : 
+                                            ($item->status === 'Diproses' ? 'status-dijadwalkan' : 'status-selesai')); ?>">
+                                            <?php echo e($item->status); ?>
+
+                                        </span>
+                                    </td>
+                                    <td><?php echo e($item->created_at?->format('d M Y')); ?></td>
+                                    <td>
+                                        <button onclick="openUpdateStatusModal(<?php echo e($item->id); ?>, '<?php echo e($item->status); ?>', '<?php echo e($item->pengguna?->name); ?>', '<?php echo e($item->alamat); ?>')" class="text-blue-500 hover:text-blue-700 text-sm font-semibold px-3 py-1 rounded border border-blue-200 hover:bg-blue-50 transition">
+                                            Update Status
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                <tr>
+                                    <td colspan="6" class="text-center py-8 text-slate-500">Tidak ada permintaan penjemputan.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <section class="mt-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
                 <div class="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
                     <h2 class="text-2xl font-black text-slate-800">Master Jadwal Reguler Mingguan</h2>
@@ -1405,6 +1453,101 @@
                 },
                 options: { plugins: { legend: { position: 'bottom' } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f5f9' } } } }
             });
+        }
+    </script>
+
+    <!-- Modal: Update Status Permintaan -->
+    <div id="modal-update-status" class="modal-overlay" onclick="closeModalOutside(event,'modal-update-status')">
+        <div class="modal" style="max-width: 500px;">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-black text-slate-800">Update Status Permintaan</h3>
+                <button onclick="closeModal('modal-update-status')" class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
+            </div>
+            
+            <div class="bg-slate-50 rounded-lg p-4 mb-6 border border-slate-200">
+                <p class="text-sm text-slate-500">Pengguna</p>
+                <p class="font-semibold text-slate-800" id="status-modal-user">-</p>
+                <p class="text-sm text-slate-500 mt-2">Alamat</p>
+                <p class="text-slate-700" id="status-modal-alamat">-</p>
+                <p class="text-sm text-slate-500 mt-2">Status Saat Ini</p>
+                <span id="status-modal-current" class="status-badge status-menunggu">-</span>
+            </div>
+
+            <form id="update-status-form" method="POST">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('PUT'); ?>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Status Baru</label>
+                        <select name="status" id="status-select" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                            <option value="">Pilih Status</option>
+                            <option value="Menunggu">Menunggu</option>
+                            <option value="Diproses">Diproses</option>
+                            <option value="Selesai">Selesai</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex gap-3">
+                    <button type="button" onclick="closeModal('modal-update-status')" class="flex-1 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-600">Batal</button>
+                    <button type="submit" class="flex-1 rounded-xl bg-blue-500 py-3 text-sm font-bold text-white hover:bg-blue-600 transition">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openUpdateStatusModal(permintaanId, currentStatus, userName, alamat) {
+            document.getElementById('status-modal-user').textContent = userName;
+            document.getElementById('status-modal-alamat').textContent = alamat;
+            document.getElementById('status-modal-current').textContent = currentStatus;
+            document.getElementById('status-modal-current').className = 'status-badge ' + (
+                currentStatus === 'Menunggu' ? 'status-menunggu' : 
+                (currentStatus === 'Diproses' ? 'status-dijadwalkan' : 'status-selesai')
+            );
+            
+            const form = document.getElementById('update-status-form');
+            form.action = `/permintaan-penjemputan/${permintaanId}/status`;
+            
+            openModal('modal-update-status');
+        }
+
+        // Handle update status form submission
+        document.getElementById('update-status-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const url = this.action;
+            const statusValue = document.getElementById('status-select').value;
+            
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    status: statusValue
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                closeModal('modal-update-status');
+                showSuccessMessage(data.message || 'Status berhasil diperbarui');
+                setTimeout(() => location.reload(), 1500);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat update status');
+            });
+        });
+
+        function showSuccessMessage(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => alertDiv.remove(), 3000);
         }
     </script>
 </body>
