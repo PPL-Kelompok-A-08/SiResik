@@ -7,6 +7,7 @@ use App\Http\Controllers\KategoriSampahController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\PetaLokasiController;
 use App\Http\Controllers\PermintaanPenjemputanController;
+use App\Http\Controllers\JadwalOperasionalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingPageController::class, 'index']);
@@ -38,6 +39,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/titik-layanan', [AdminController::class, 'storeTitikLayanan'])->name('admin.titik-layanan.store');
         Route::put('/titik-layanan/{titikLayanan}', [AdminController::class, 'updateTitikLayanan'])->name('admin.titik-layanan.update');
         Route::delete('/titik-layanan/{titikLayanan}', [AdminController::class, 'destroyTitikLayanan'])->name('admin.titik-layanan.destroy');
+
+        // Jadwal Operasional Titik Layanan
+        Route::get('/titik-layanan/{titikLayanan}/jadwal', [JadwalOperasionalController::class, 'index'])->name('admin.jadwal.index');
+        Route::post('/titik-layanan/{titikLayanan}/jadwal', [JadwalOperasionalController::class, 'store'])->name('admin.jadwal.store');
+        Route::put('/jadwal/{jadwal}', [JadwalOperasionalController::class, 'update'])->name('admin.jadwal.update');
+        Route::delete('/jadwal/{jadwal}', [JadwalOperasionalController::class, 'destroy'])->name('admin.jadwal.destroy');
 
         // Petugas
         Route::post('/petugas', [AdminController::class, 'storePetugas'])->name('admin.petugas.store');
