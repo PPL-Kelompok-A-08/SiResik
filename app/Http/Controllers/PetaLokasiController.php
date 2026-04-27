@@ -24,6 +24,18 @@ class PetaLokasiController extends Controller
     public function usulanForm(): View
     {
         $user = auth()->user();
+        $titikLayanan = TitikLayanan::orderBy('nama')->get();
+        $usulanMenunggu = UsulanTitikLayanan::with('pengusul')
+            ->where('status', 'diajukan')
+            ->latest()
+            ->get();
+
+        return view('peta.lokasi-admin', compact('user', 'titikLayanan', 'usulanMenunggu'));
+    }
+
+    public function usulanForm(): View
+    {
+        $user = auth()->user();
 
         return view('peta.usulan-titik', compact('user'));
     }
@@ -63,6 +75,7 @@ class PetaLokasiController extends Controller
         if ($usulan->status !== 'diajukan') {
             return redirect()
                 ->route('dashboard.admin', ['page' => 'area'])
+                ->route('dashboard.admin.peta')
                 ->with('error', 'Usulan ini sudah diproses sebelumnya.');
         }
 
@@ -89,7 +102,7 @@ class PetaLokasiController extends Controller
         });
 
         return redirect()
-            ->route('dashboard.admin', ['page' => 'area'])
+            ->route('dashboard.admin.peta')
             ->with('success', 'Usulan berhasil disetujui dan sudah menjadi titik layanan aktif.');
     }
 
@@ -97,7 +110,7 @@ class PetaLokasiController extends Controller
     {
         if ($usulan->status !== 'diajukan') {
             return redirect()
-                ->route('dashboard.admin', ['page' => 'area'])
+                ->route('dashboard.admin.peta')
                 ->with('error', 'Usulan ini sudah diproses sebelumnya.');
         }
 
@@ -113,7 +126,7 @@ class PetaLokasiController extends Controller
         ]);
 
         return redirect()
-            ->route('dashboard.admin', ['page' => 'area'])
+            ->route('dashboard.admin.peta')
             ->with('success', 'Usulan ditolak dan tidak ditambahkan ke titik layanan.');
     }
 

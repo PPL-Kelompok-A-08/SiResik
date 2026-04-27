@@ -74,6 +74,10 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         $permintaan = PermintaanPenjemputan::with('pengguna')
+            ->where(function ($q) use ($user) {
+                $q->where('petugas_id', $user->id)
+                  ->orWhereNull('petugas_id');
+            })
             ->latest()
             ->take(8)
             ->get();

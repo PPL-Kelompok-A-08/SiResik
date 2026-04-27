@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Http\\Controllers\\AdminController' => $baseDir . '/app/Http/Controllers/AdminController.php',
     'App\\Http\\Controllers\\AuthController' => $baseDir . '/app/Http/Controllers/AuthController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\DashboardController' => $baseDir . '/app/Http/Controllers/DashboardController.php',
@@ -13,12 +14,16 @@ return array(
     'App\\Http\\Controllers\\LandingPageController' => $baseDir . '/app/Http/Controllers/LandingPageController.php',
     'App\\Http\\Controllers\\PermintaanPenjemputanController' => $baseDir . '/app/Http/Controllers/PermintaanPenjemputanController.php',
     'App\\Http\\Controllers\\PetaLokasiController' => $baseDir . '/app/Http/Controllers/PetaLokasiController.php',
+    'App\\Http\\Controllers\\RiwayatpoinpenggunaController' => $baseDir . '/app/Http/Controllers/RiwayatpoinpenggunaController.php',
     'App\\Http\\Middleware\\RoleMiddleware' => $baseDir . '/app/Http/Middleware/RoleMiddleware.php',
     'App\\Models\\KategoriSampah' => $baseDir . '/app/Models/KategoriSampah.php',
     'App\\Models\\PermintaanPenjemputan' => $baseDir . '/app/Models/PermintaanPenjemputan.php',
     'App\\Models\\PermintaanPenjemputanItem' => $baseDir . '/app/Models/PermintaanPenjemputanItem.php',
+    'App\\Models\\Poin' => $baseDir . '/app/Models/Poin.php',
+    'App\\Models\\Reward' => $baseDir . '/app/Models/Reward.php',
     'App\\Models\\TitikLayanan' => $baseDir . '/app/Models/TitikLayanan.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
+    'App\\Models\\UsulanTitikLayanan' => $baseDir . '/app/Models/UsulanTitikLayanan.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Brick\\Math\\BigDecimal' => $vendorDir . '/brick/math/src/BigDecimal.php',
@@ -144,6 +149,7 @@ return array(
     'Cron\\MonthField' => $vendorDir . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
     'Database\\Factories\\UserFactory' => $baseDir . '/database/factories/UserFactory.php',
     'Database\\Seeders\\DatabaseSeeder' => $baseDir . '/database/seeders/DatabaseSeeder.php',
+    'Database\\Seeders\\RewardSeeder' => $baseDir . '/database/seeders/RewardSeeder.php',
     'Database\\Seeders\\TitikLayananSeeder' => $baseDir . '/database/seeders/TitikLayananSeeder.php',
     'DateError' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
     'DateException' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
