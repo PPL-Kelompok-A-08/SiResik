@@ -7,10 +7,12 @@ use App\Models\TitikLayanan;
 use App\Models\User;
 use App\Models\PermintaanPenjemputan;
 use App\Models\Reward;
+use App\Models\ZonaLayanan;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -206,5 +208,128 @@ class AdminController extends Controller
         $reward->delete();
 
         return redirect()->back()->with('success', 'Reward berhasil dihapus.');
+    }
+
+    // === ZONA LAYANAN (AREA CAKUPAN) ===
+    public function storeZonaLayanan(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nama' => ['required', 'string', 'max:100', 'unique:zona_layanans,nama'],
+            'warna' => ['required', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
+            'geojson' => [
+                'required',
+                'string',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    try {
+                        $decoded = json_decode((string) $value, true, 512, JSON_THROW_ON_ERROR);
+                    } catch (\Throwable) {
+                        $fail('Format poligon tidak valid.');
+                        return;
+                    }
+
+                    $type = $decoded['type'] ?? null;
+                    $geometry = $decoded['geometry'] ?? $decoded; // allow geometry-only payload
+                    $geomType = $geometry['type'] ?? $type;
+                    $coords = $geometry['coordinates'] ?? null;
+
+                    if (!in_array($geomType, ['Polygon', 'MultiPolygon'], true)) {
+                        $fail('Poligon wajib bertipe Polygon/MultiPolygon.');
+                        return;
+                    }
+
+                    if (!is_array($coords) || empty($coords)) {
+                        $fail('Koordinat poligon kosong.');
+                        return;
+                    }
+                },
+            ],
+        ], [
+            'nama.required' => 'Nama zona wajib diisi.',
+            'warna.required' => 'Warna zona wajib dipilih.',
+            'warna.regex' => 'Format warna tidak valid.',
+            'geojson.required' => 'Silakan gambar area poligon terlebih dahulu.',
+        ]);
+
+        $geojson = json_decode($validated['geojson'], true);
+        // Normalize to geometry-only for simpler client rendering.
+        if (isset($geojson['type'], $geojson['coordinates'])) {
+            $geometry = $geojson;
+        } else {
+            $geometry = $geojson['geometry'] ?? $geojson;
+        }
+
+        ZonaLayanan::create([
+            'nama' => $validated['nama'],
+            'warna' => $validated['warna'],
+            'geojson' => $geometry,
+        ]);
+
+        return redirect()->back()->with('success', 'Zona layanan berhasil ditambahkan.');
+    }
+
+    public function updateZonaLayanan(Request $request, ZonaLayanan $zonaLayanan): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nama' => ['required', 'string', 'max:100', Rule::unique('zona_layanans', 'nama')->ignore($zonaLayanan->id)],
+            'warna' => ['required', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
+            'geojson' => [
+                'nullable',
+                'string',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if ($value === null || $value === '') return;
+                    try {
+                        $decoded = json_decode((string) $value, true, 512, JSON_THROW_ON_ERROR);
+                    } catch (\Throwable) {
+                        $fail('Format poligon tidak valid.');
+                        return;
+                    }
+
+                    $type = $decoded['type'] ?? null;
+                    $geometry = $decoded['geometry'] ?? $decoded;
+                    $geomType = $geometry['type'] ?? $type;
+                    $coords = $geometry['coordinates'] ?? null;
+
+                    if (!in_array($geomType, ['Polygon', 'MultiPolygon'], true)) {
+                        $fail('Poligon wajib bertipe Polygon/MultiPolygon.');
+                        return;
+                    }
+
+                    if (!is_array($coords) || empty($coords)) {
+                        $fail('Koordinat poligon kosong.');
+                        return;
+                    }
+                },
+            ],
+        ], [
+            'nama.required' => 'Nama zona wajib diisi.',
+            'warna.required' => 'Warna zona wajib dipilih.',
+            'warna.regex' => 'Format warna tidak valid.',
+        ]);
+
+        $update = [
+            'nama' => $validated['nama'],
+            'warna' => $validated['warna'],
+        ];
+
+        if (!empty($validated['geojson'])) {
+            $geojson = json_decode($validated['geojson'], true);
+            if (isset($geojson['type'], $geojson['coordinates'])) {
+                $geometry = $geojson;
+            } else {
+                $geometry = $geojson['geometry'] ?? $geojson;
+            }
+            $update['geojson'] = $geometry;
+        }
+
+        $zonaLayanan->update($update);
+
+        return redirect()->back()->with('success', 'Zona layanan berhasil diperbarui.');
+    }
+
+    public function destroyZonaLayanan(ZonaLayanan $zonaLayanan): RedirectResponse
+    {
+        $zonaLayanan->delete();
+
+        return redirect()->back()->with('success', 'Zona layanan berhasil dihapus.');
     }
 }
