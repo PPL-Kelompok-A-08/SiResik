@@ -4609,6 +4609,7 @@ Stack trace:
 #35 C:/Users/Raffi/Documents/GitHub/SiResik/artisan(16): Illuminate/Foundation/Application->handleCommand(Object(Symfony/Component/Console/Input/ArgvInput))
 #36 {main}
 "} 
+<<<<<<< HEAD
 [2026-05-04 15:20:42] local.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'siresik_db.rewards' doesn't exist (Connection: mysql, Host: 194.233.69.244, Port: 3307, Database: siresik_db, SQL: select * from `rewards` order by `nama` asc) {"userId":2,"exception":"[object] (Illuminate\\Database\\QueryException(code: 42S02): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'siresik_db.rewards' doesn't exist (Connection: mysql, Host: 194.233.69.244, Port: 3307, Database: siresik_db, SQL: select * from `rewards` order by `nama` asc) at D:/praktikum & project/SiResik/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838)
 [stacktrace]
 #0 D:/praktikum & project/SiResik/vendor/laravel/framework/src/Illuminate/Database/Connection.php(794): Illuminate/Database/Connection->runQueryCallback('select * from `...', Array, Object(Closure))
@@ -8542,3 +8543,5 @@ Stack trace:
 #36 {main}
 >>>>>>> c580094 (Merge origin/main into dhydo_branch - resolve conflict routes/web.php (combine JadwalOperasional + Notifikasi + RiwayatLayanan + Petugas routes))
 "} 
+=======
+>>>>>>> c0db70e (Notifikasi perubahan status layanan)
