@@ -44,6 +44,7 @@
 
     function buildPopup(row) {
         const meta = jenisMeta[row.jenis] || jenisMeta.tps;
+<<<<<<< HEAD
         const sampah = row.jenis_sampah_diterima ? escapeHtml(row.jenis_sampah_diterima) : '<span class="text-slate-400">—</span>';
         
         let jadwalHtml = '';
@@ -89,6 +90,18 @@
             '<p class="mt-2 text-sm text-slate-600">' + escapeHtml(row.alamat) + '</p>' +
             jadwalHtml +
             '<p class="mt-3 text-xs font-semibold text-slate-500">Jenis sampah</p>' +
+=======
+        const jam = row.jam_operasional ? escapeHtml(row.jam_operasional) : '<span class="text-slate-400">—</span>';
+        const sampah = row.jenis_sampah_diterima ? escapeHtml(row.jenis_sampah_diterima) : '<span class="text-slate-400">—</span>';
+        return (
+            '<div class="min-w-[220px] max-w-[280px] text-slate-800">' +
+            '<p class="text-xs font-bold uppercase tracking-wider text-emerald-700">' + escapeHtml(meta.label) + '</p>' +
+            '<p class="mt-1 text-base font-bold leading-snug">' + escapeHtml(row.nama) + '</p>' +
+            '<p class="mt-2 text-sm text-slate-600">' + escapeHtml(row.alamat) + '</p>' +
+            '<p class="mt-3 text-xs font-semibold text-slate-500">Jam operasional</p>' +
+            '<p class="text-sm">' + jam + '</p>' +
+            '<p class="mt-2 text-xs font-semibold text-slate-500">Jenis sampah</p>' +
+>>>>>>> 0c596cb (Squashed commit of the following:)
             '<p class="text-sm">' + sampah + '</p>' +
             '</div>'
         );

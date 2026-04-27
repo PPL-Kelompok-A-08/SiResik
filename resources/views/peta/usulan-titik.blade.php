@@ -26,10 +26,14 @@
                     ['label' => 'Status Layanan', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Riwayat Layanan', 'active' => false, 'href' => route('dashboard.masyarakat')],
 <<<<<<< HEAD
+<<<<<<< HEAD
                     ['label' => 'Poin & Reward', 'active' => false, 'href' => route('poin.index')],
 =======
                     ['label' => 'Poin & Reward', 'active' => false, 'href' => route('dashboard.masyarakat')],
 >>>>>>> 445a879 (Sprint 2 - PBI 18 Pengajuan Usulan Titik Layanan Baru)
+=======
+                    ['label' => 'Poin & Reward', 'active' => false, 'href' => route('poin.index')],
+>>>>>>> 0c596cb (Squashed commit of the following:)
                     ['label' => 'Sampah Liar', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
                     ['label' => 'Usulkan Titik', 'active' => true, 'href' => route('peta.usulan-titik')],

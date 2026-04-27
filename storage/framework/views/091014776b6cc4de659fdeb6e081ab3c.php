@@ -19,6 +19,7 @@
 
             <?php
                 $menuItems = [
+<<<<<<< HEAD
                     ['label' => 'Dashboard', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Penjemputan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
                     ['label' => 'Status Layanan', 'active' => true, 'href' => route('dashboard.masyarakat')],
@@ -36,11 +37,25 @@
                     ['label' => 'Kegiatan Lingkungan', 'active' => false],
                     ['label' => 'Notifikasi', 'active' => false],
 >>>>>>> 445a879 (Sprint 2 - PBI 18 Pengajuan Usulan Titik Layanan Baru):storage/framework/views/381934b4a656c46e49641cb649b9ce0b.php
+=======
+                    ['label' => 'Dashboard', 'active' => false],
+                    ['label' => 'Penjemputan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
+                    ['label' => 'Status Layanan', 'active' => true],
+                    ['label' => 'Riwayat Layanan', 'active' => false],
+                    ['label' => 'Poin & Reward', 'active' => false, 'href' => route('poin.index')],
+                    ['label' => 'Sampah Liar', 'active' => false],
+                    ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
+                    ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
+                    ['label' => 'Edukasi Lingkungan', 'active' => false],
+                    ['label' => 'Kegiatan Lingkungan', 'active' => false],
+                    ['label' => 'Notifikasi', 'active' => false],
+>>>>>>> 0c596cb (Squashed commit of the following:)
                 ];
             ?>
 
             <nav class="mt-14 space-y-2">
                 <?php $__currentLoopData = $menuItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+<<<<<<< HEAD
                     <?php if(!empty($item['href'])): ?>
                         <a href="<?php echo e($item['href']); ?>"
                             class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition <?php echo e($item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5'); ?>">
@@ -53,6 +68,13 @@
                             <span><?php echo e($item['label']); ?></span>
                         </div>
                     <?php endif; ?>
+=======
+                    <a href="<?php echo e($item['href'] ?? route('dashboard.masyarakat')); ?>"
+                        class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition <?php echo e($item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5'); ?>">
+                        <span class="text-xl"><?php echo e($item['active'] ? '◉' : '◦'); ?></span>
+                        <span><?php echo e($item['label']); ?></span>
+                    </a>
+>>>>>>> 0c596cb (Squashed commit of the following:)
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </nav>
 

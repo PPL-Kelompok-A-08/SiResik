@@ -2795,6 +2795,9 @@
 #62 {main}
 "} 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0c596cb (Squashed commit of the following:)
 [2026-04-25 11:49:47] production.ERROR: could not find driver (Connection: sqlite, Database: C:\Users\Dhydo Aryo Jayanata\Documents\GitHub\TUBES\SiResik\database\database.sqlite, SQL: select exists (select 1 from "main".sqlite_master where name = 'migrations' and type = 'table') as "exists") {"exception":"[object] (Illuminate\\Database\\QueryException(code: 0): could not find driver (Connection: sqlite, Database: C:\\Users\\Dhydo Aryo Jayanata\\Documents\\GitHub\\TUBES\\SiResik\\database\\database.sqlite, SQL: select exists (select 1 from \"main\".sqlite_master where name = 'migrations' and type = 'table') as \"exists\") at C:/Users/Dhydo Aryo Jayanata/Documents/GitHub/TUBES/SiResik/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838)
 [stacktrace]
 #0 C:/Users/Dhydo Aryo Jayanata/Documents/GitHub/TUBES/SiResik/vendor/laravel/framework/src/Illuminate/Database/Connection.php(794): Illuminate/Database/Connection->runQueryCallback('select exists (...', Array, Object(Closure))
@@ -4067,6 +4070,7 @@ Stack trace:
 "} 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 [2026-04-25 15:09:48] local.ERROR: SQLSTATE[HY000] [2002] Network is unreachable (Connection: mysql, Host: 194.233.69.244, Port: 3307, Database: siresik, SQL: select * from `cache` where `key` in (laravel-cache-illuminate:queue:paused:database:default)) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 2002): SQLSTATE[HY000] [2002] Network is unreachable (Connection: mysql, Host: 194.233.69.244, Port: 3307, Database: siresik, SQL: select * from `cache` where `key` in (laravel-cache-illuminate:queue:paused:database:default)) at /Users/mac/Downloads/SiResik-1/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838)
 [stacktrace]
 #0 /Users/mac/Downloads/SiResik-1/vendor/laravel/framework/src/Illuminate/Database/Connection.php(999): Illuminate\\Database\\Connection->runQueryCallback('select * from `...', Array, Object(Closure))
@@ -4173,6 +4177,8 @@ Stack trace:
 #20 {main}
 >>>>>>> 0aaef1e (PBI 12 - Jadwal operasional bank sampah)
 =======
+=======
+>>>>>>> 0c596cb (Squashed commit of the following:)
 [2026-04-26 08:03:16] local.ERROR: SQLSTATE[HY000] [1045] Access denied for user 'root'@'103.194.173.99' (using password: YES) (Connection: mysql, Host: 194.233.69.244, Port: 3306, Database: siresik, SQL: select exists (select 1 from information_schema.tables where table_schema = schema() and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 1045): SQLSTATE[HY000] [1045] Access denied for user 'root'@'103.194.173.99' (using password: YES) (Connection: mysql, Host: 194.233.69.244, Port: 3306, Database: siresik, SQL: select exists (select 1 from information_schema.tables where table_schema = schema() and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) at C:/Users/Raffi/Documents/GitHub/SiResik/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838)
 [stacktrace]
 #0 C:/Users/Raffi/Documents/GitHub/SiResik/vendor/laravel/framework/src/Illuminate/Database/Connection.php(999): Illuminate/Database/Connection->runQueryCallback('select exists (...', Array, Object(Closure))
@@ -4254,6 +4260,7 @@ Stack trace:
 #41 C:/Users/Raffi/Documents/GitHub/SiResik/artisan(16): Illuminate/Foundation/Application->handleCommand(Object(Symfony/Component/Console/Input/ArgvInput))
 #42 {main}
 "} 
+<<<<<<< HEAD
 [2026-04-27 13:13:12] local.ERROR: SQLSTATE[HY000]: General error: 1005 Can't create table `siresik`.`service_status_logs` (errno: 150 "Foreign key constraint is incorrectly formed") (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: siresik, SQL: alter table `service_status_logs` add constraint `service_status_logs_layanan_id_foreign` foreign key (`layanan_id`) references `layanans` (`id`) on delete cascade) {"exception":"[object] (Illuminate\\Database\\QueryException(code: HY000): SQLSTATE[HY000]: General error: 1005 Can't create table `siresik`.`service_status_logs` (errno: 150 \"Foreign key constraint is incorrectly formed\") (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: siresik, SQL: alter table `service_status_logs` add constraint `service_status_logs_layanan_id_foreign` foreign key (`layanan_id`) references `layanans` (`id`) on delete cascade) at C:/Users/Raffi/Documents/GitHub/SiResik/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838)
 [stacktrace]
 #0 C:/Users/Raffi/Documents/GitHub/SiResik/vendor/laravel/framework/src/Illuminate/Database/Connection.php(794): Illuminate/Database/Connection->runQueryCallback('alter table `se...', Array, Object(Closure))
@@ -8729,6 +8736,8 @@ Stack trace:
 "} 
 >>>>>>> bc7eddc (PBI 25 Jumlah Tagihan Masyarakat)
 =======
+=======
+>>>>>>> 0c596cb (Squashed commit of the following:)
 [2026-04-24 18:14:21] local.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'siresik_db.rewards' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: siresik_db, SQL: select * from `rewards` order by `nama` asc) {"userId":1,"exception":"[object] (Illuminate\\Database\\QueryException(code: 42S02): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'siresik_db.rewards' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: siresik_db, SQL: select * from `rewards` order by `nama` asc) at D:/File Kuliah/Semester 6/Proyek Perangkat Lunak/SiResik/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838)
 [stacktrace]
 #0 D:/File Kuliah/Semester 6/Proyek Perangkat Lunak/SiResik/vendor/laravel/framework/src/Illuminate/Database/Connection.php(794): Illuminate/Database/Connection->runQueryCallback('select * from `...', Array, Object(Closure))

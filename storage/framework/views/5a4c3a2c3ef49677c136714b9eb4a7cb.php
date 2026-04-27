@@ -25,7 +25,11 @@
                     ['label' => 'Penjemputan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
                     ['label' => 'Status Layanan', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Riwayat Layanan', 'active' => false, 'href' => route('dashboard.masyarakat')],
+<<<<<<< HEAD
                     ['label' => 'Poin & Reward', 'active' => false, 'href' => route('poin.index')],
+=======
+                    ['label' => 'Poin & Reward', 'active' => false, 'href' => route('dashboard.masyarakat')],
+>>>>>>> 0c596cb (Squashed commit of the following:)
                     ['label' => 'Sampah Liar', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
                     ['label' => 'Usulkan Titik', 'active' => true, 'href' => route('peta.usulan-titik')],
