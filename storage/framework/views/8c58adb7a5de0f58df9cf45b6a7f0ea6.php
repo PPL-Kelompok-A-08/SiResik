@@ -57,47 +57,47 @@
 
             <!-- Nav -->
             <nav class="mt-10 space-y-2">
-                <a onclick="showPage('dashboard')"
+                <a data-page="dashboard" onclick="showPage('dashboard')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Admin Dashboard</span>
                 </a>
-                <a onclick="showPage('jadwal')"
+                <a data-page="jadwal" onclick="showPage('jadwal')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition bg-emerald-600 text-white shadow-lg shadow-emerald-900/20 cursor-pointer">
                     <span class="text-xl">▣</span>
                     <span>Kelola Jadwal</span>
                 </a>
-                <a onclick="showPage('verifikasi')"
+                <a data-page="verifikasi" onclick="showPage('verifikasi')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Verifikasi Laporan</span>
                 </a>
-                <a onclick="showPage('kategori')"
+                <a data-page="kategori" onclick="showPage('kategori')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Kategori & Reward</span>
                 </a>
-                <a onclick="showPage('reward')"
+                <a data-page="reward" onclick="showPage('reward')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Kelola Reward</span>
                 </a>
-                <a onclick="showPage('area')"
+                <a data-page="area" onclick="showPage('area')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Area Layanan</span>
                 </a>
-                <a onclick="showPage('petugas')"
+                <a data-page="petugas" onclick="showPage('petugas')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Pantau Petugas</span>
                 </a>
-                <a onclick="showPage('riwayat')"
+                <a data-page="riwayat" onclick="showPage('riwayat')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Riwayat Layanan</span>
                 </a>
-                <a onclick="showPage('laporan')"
+                <a data-page="laporan" onclick="showPage('laporan')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Laporan Periodik</span>
@@ -628,40 +628,70 @@
                         <h1 class="text-4xl font-black text-slate-900">Area Layanan</h1>
                         <p class="mt-1 text-slate-500">Manage service areas and zones.</p>
                     </div>
-                    <button class="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white">+ Tambah Area</button>
+                    <button type="button"
+                        onclick="var m=document.getElementById('modalTambahArea'); if(m){m.classList.add('open');} setTimeout(function(){ if(window.__initZonaRadiusMap) window.__initZonaRadiusMap(); },120);"
+                        class="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white">
+                        + Tambah Area
+                    </button>
                 </div>
 
-                <!-- Map Placeholder -->
-                <div class="section-card mb-6 p-6">
-                    <h2 class="text-xl font-black text-slate-800 mb-4">Peta Area Layanan</h2>
-                    <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between mb-6">
+                <?php echo $__env->make('peta._leaflet-area-admin-map', ['titikLayanan' => $titikLayanan, 'zonaLayanan' => $zonaLayanan, 'usulanMenunggu' => $usulanMenunggu], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+
+                <div class="section-card mt-6">
+                    <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <div>
-                            <h3 class="text-4xl font-black tracking-tight text-slate-800">Pemetaan komprehensif</h3>
-                            <p class="mt-2 text-xl text-slate-500">Koordinat dari basis data; pembaruan dilakukan lewat pengelolaan data titik layanan.</p>
+                            <h2 class="text-xl font-black text-slate-800">Usulan Titik Layanan Menunggu Verifikasi</h2>
+                            <p class="mt-1 text-sm text-slate-500">Usulan dari masyarakat akan tampil sebagai marker oranye di peta.</p>
                         </div>
-                        <div class="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">
-                            <label class="relative flex-1 min-w-[220px]">
-                                <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400">⌕</span>
-                                <input type="search" id="cari-lokasi" autocomplete="off" placeholder="Cari nama atau alamat..."
-                                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-lg text-slate-800 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200">
-                            </label>
-                            <button type="button" id="peta-lokasi-saya"
-                                class="whitespace-nowrap rounded-2xl border border-emerald-600 bg-emerald-50 px-5 py-3 text-lg font-semibold text-emerald-900 transition hover:bg-emerald-100">
-                                Lokasi saya
-                            </button>
-                        </div>
+                        <p class="text-sm font-semibold text-slate-500"><?php echo e($usulanMenunggu->count()); ?> usulan menunggu</p>
                     </div>
+                    <div class="p-6 space-y-4">
+                        <?php $__empty_1 = true; $__currentLoopData = $usulanMenunggu; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $usulan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <article class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-5">
+                                <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                                    <div>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <span class="rounded-xl bg-amber-100 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-amber-700">Diajukan</span>
+                                            <span class="rounded-xl bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-700">
+                                                <?php echo e($usulan->jenis_layanan === 'bank_sampah' ? 'Bank Sampah' : 'Titik Sampah'); ?>
 
-                    <div class="flex flex-wrap gap-6 text-sm font-semibold text-slate-600 mb-6">
-                        <span class="inline-flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-green-600"></span> TPS</span>
-                        <span class="inline-flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-blue-600"></span> Bank Sampah</span>
-                        <span class="inline-flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-amber-600"></span> Usulan baru</span>
+                                            </span>
+                                        </div>
+
+                                        <p class="mt-3 text-lg font-bold text-slate-800"><?php echo e($usulan->alamat_detail); ?></p>
+                                        <p class="mt-1 text-sm text-slate-600">Koordinat: <?php echo e(number_format($usulan->latitude, 6)); ?>, <?php echo e(number_format($usulan->longitude, 6)); ?></p>
+                                        <p class="mt-2 text-sm text-slate-600">Alasan: <?php echo e($usulan->deskripsi_alasan); ?></p>
+                                        <p class="mt-2 text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">
+                                            Pengusul: <?php echo e($usulan->pengusul?->name ?? 'Pengguna'); ?> • <?php echo e(optional($usulan->created_at)->translatedFormat('d M Y H:i')); ?>
+
+                                        </p>
+                                    </div>
+
+                                    <div class="flex w-full flex-col gap-2 sm:w-auto">
+                                        <form method="POST" action="<?php echo e(route('dashboard.admin.usulan.approve', $usulan)); ?>">
+                                            <?php echo csrf_field(); ?>
+                                            <button type="submit" class="w-full rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-700">
+                                                Setujui & Jadikan Titik Layanan
+                                            </button>
+                                        </form>
+
+                                        <form method="POST" action="<?php echo e(route('dashboard.admin.usulan.reject', $usulan)); ?>" class="space-y-2">
+                                            <?php echo csrf_field(); ?>
+                                            <input type="text" name="catatan_verifikasi" placeholder="Alasan penolakan (opsional)"
+                                                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-100">
+                                            <button type="submit" class="w-full rounded-xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-bold text-red-700 transition hover:bg-red-100">
+                                                Tolak Usulan
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </article>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                            <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-10 text-center text-sm text-slate-500">
+                                Tidak ada usulan yang menunggu verifikasi saat ini.
+                            </div>
+                        <?php endif; ?>
                     </div>
-
-                    <?php
-                        $titikLayanan = \App\Models\TitikLayanan::orderBy('nama')->get();
-                    ?>
-                    <?php echo $__env->make('peta._leaflet-map', ['titikLayanan' => $titikLayanan], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                 </div>
 
                 <!-- Zone List -->
@@ -1084,6 +1114,64 @@
         </div>
     </div>
 
+    <!-- Modal: Tambah Area Layanan (Zona) -->
+    <div id="modalTambahArea" class="modal-overlay" onclick="closeModalOutside(event,'modalTambahArea')">
+        <div class="modal" style="width: 920px; max-width: 92vw;">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-black text-slate-800">Tambah Area Layanan</h3>
+                <button type="button" onclick="closeModal('modalTambahArea')" class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
+            </div>
+            <form id="formTambahArea" method="POST" action="<?php echo e(route('admin.zona-layanan.store')); ?>">
+                <?php echo csrf_field(); ?>
+                <div class="grid grid-cols-1 gap-6 lg:grid-cols-[360px,1fr]">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Nama Zona</label>
+                            <input type="text" name="nama" value="<?php echo e(old('nama')); ?>" placeholder="Contoh: Zona A - Gedung Kuliah"
+                                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Warna Zona</label>
+                            <div class="flex items-center gap-3 border border-slate-200 rounded-xl px-3 py-2">
+                                <input type="color" id="zona-warna" name="warna" value="<?php echo e(old('warna', '#16a34a')); ?>" class="h-10 w-14 rounded-lg border border-slate-200 bg-white p-1">
+                                <input type="text" id="zona-warna-text" value="<?php echo e(old('warna', '#16a34a')); ?>" readonly class="flex-1 border border-slate-200 rounded-lg px-3 py-2 text-sm bg-slate-50 font-semibold text-slate-700">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Cakupan Wilayah (Radius)</label>
+                            <input type="number" id="zona-radius-km" inputmode="decimal" step="0.1" min="0.1" placeholder="Radius (km). Contoh: 1.0"
+                                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm">
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <button type="button" class="zona-radius-preset px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-700" data-km="0.25">0.25 km</button>
+                                <button type="button" class="zona-radius-preset px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-700" data-km="0.5">0.5 km</button>
+                                <button type="button" class="zona-radius-preset px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-700" data-km="1">1 km</button>
+                                <button type="button" class="zona-radius-preset px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-700" data-km="2">2 km</button>
+                                <button type="button" class="zona-radius-preset px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-700" data-km="5">5 km</button>
+                            </div>
+                            <p class="mt-3 text-xs text-slate-500">Klik peta untuk menentukan titik pusat. Area akan terbentuk berdasarkan radius.</p>
+                        </div>
+
+                        <input type="hidden" name="geojson" id="zona-geojson" value="<?php echo e(old('geojson')); ?>">
+                        <input type="hidden" id="zona-center-lat" value="">
+                        <input type="hidden" id="zona-center-lng" value="">
+
+                        <div class="mt-6 flex gap-3">
+                            <button type="button" onclick="closeModal('modalTambahArea')" class="flex-1 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-600">Batal</button>
+                            <button type="submit" class="flex-1 rounded-xl bg-emerald-500 py-3 text-sm font-bold text-white">Simpan Area</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Pilih Lokasi di Peta</label>
+                        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                            <div id="zona-form-map" style="height: 420px; width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Modal: Tambah/Edit Kategori -->
     <div id="modal-tambah-kategori" class="modal-overlay" onclick="closeModalOutside(event,'modal-tambah-kategori')">
         <div class="modal">
@@ -1209,8 +1297,11 @@
                 n.querySelector('span:first-child').textContent = '◦';
             });
             
-            // Find the clicked element
-            const clickedElement = event.currentTarget;
+            // Find the clicked element (or fall back to matching nav item)
+            const clickedElement = (typeof event !== 'undefined' && event && event.currentTarget)
+                ? event.currentTarget
+                : document.querySelector('nav a[data-page="' + name + '"]');
+            if (!clickedElement) return;
             clickedElement.classList.remove('text-emerald-50', 'hover:bg-white/5');
             clickedElement.classList.add('bg-emerald-600', 'text-white', 'shadow-lg', 'shadow-emerald-900/20');
             clickedElement.querySelector('span:first-child').textContent = '▣';
@@ -1223,6 +1314,14 @@
             }
         }
 
+        window.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const page = params.get('page');
+            if (page) {
+                showPage(page);
+            }
+        });
+
         // Modal
         function openModal(id) {
             document.getElementById(id).classList.add('open');
@@ -1231,9 +1330,18 @@
                     setupTitikLayananMap();
                 }, 100);
             }
+            if (id === 'modalTambahArea') {
+                setTimeout(function () {
+                    if (window.__initZonaRadiusMap) window.__initZonaRadiusMap();
+                }, 120);
+            }
         }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
         function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
+
+        function openModalTambahArea() {
+            openModal('modalTambahArea');
+        }
 
         let titikLayananMap = null;
         let titikLayananMarker = null;

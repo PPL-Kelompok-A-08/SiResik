@@ -19,7 +19,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
 });
 
-Route::middleware('auth')->group(function () {
+    Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'redirect'])->name('dashboard');
     
@@ -63,6 +63,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/reward', [AdminController::class, 'storeReward'])->name('admin.reward.store');
         Route::put('/reward/{reward}', [AdminController::class, 'updateReward'])->name('admin.reward.update');
         Route::delete('/reward/{reward}', [AdminController::class, 'destroyReward'])->name('admin.reward.destroy');
+
+        // Zona Layanan (Area Cakupan)
+        Route::post('/zona-layanan', [AdminController::class, 'storeZonaLayanan'])->name('admin.zona-layanan.store');
+        Route::put('/zona-layanan/{zonaLayanan}', [AdminController::class, 'updateZonaLayanan'])->name('admin.zona-layanan.update');
+        Route::delete('/zona-layanan/{zonaLayanan}', [AdminController::class, 'destroyZonaLayanan'])->name('admin.zona-layanan.destroy');
     });
 
     Route::get('/kategori', [KategoriSampahController::class, 'index']);
@@ -83,9 +88,8 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:masyarakat')
         ->name('peta.usulan-titik.store');
 
-    Route::get('/dashboard/admin/peta-titik-layanan', [PetaLokasiController::class, 'admin'])
-        ->middleware('role:admin')
-        ->name('dashboard.admin.peta');
+    // (PBI 17) Area layanan ditampilkan langsung di Dashboard Admin (tab Area Layanan),
+    // tidak memakai halaman terpisah.
     Route::post('/dashboard/admin/usulan-titik/{usulan}/approve', [PetaLokasiController::class, 'approveUsulan'])
         ->middleware('role:admin')
         ->name('dashboard.admin.usulan.approve');
@@ -95,6 +99,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/api/titik-layanan', [PetaLokasiController::class, 'titikLayananJson'])->name('api.titik-layanan');
 
+<<<<<<< HEAD
         Route::middleware('role:masyarakat')->prefix('riwayat-layanan')->group(function () {
         Route::get('/', [RiwayatLayananController::class, 'index'])->name('riwayat-layanan.index');
         Route::get('/{permintaanPenjemputan}', [RiwayatLayananController::class, 'show'])->name('riwayat-layanan.show');
@@ -106,3 +111,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'uploadBukti'])->name('petugas.bukti.upload');
     });
 });
+=======
+Route::get('/reward', fn() => view('reward'));
+>>>>>>> c48b37a (PBI 17 - Informasi Area Cakupan Layanan)
