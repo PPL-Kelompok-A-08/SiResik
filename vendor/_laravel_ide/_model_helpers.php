@@ -339,8 +339,22 @@ namespace App\Models {
     /**
      * App\Models\PenukaranPoin
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property \Illuminate\Support\Carbon $tanggal_penukaran
+     * @property string $status_penukaran
+     * @property int $reward_id
+     * @property int $user_id
+     * @property int $id
      * @property-read \App\Models\User $user
      * @property-read \App\Models\Reward $reward
+     * @method static \Illuminate\Database\Eloquent\Builder<PenukaranPoin>|PenukaranPoin whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PenukaranPoin>|PenukaranPoin whereUserId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PenukaranPoin>|PenukaranPoin whereRewardId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PenukaranPoin>|PenukaranPoin whereStatusPenukaran($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PenukaranPoin>|PenukaranPoin whereTanggalPenukaran($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PenukaranPoin>|PenukaranPoin whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PenukaranPoin>|PenukaranPoin whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PenukaranPoin>|PenukaranPoin newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<PenukaranPoin>|PenukaranPoin newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<PenukaranPoin>|PenukaranPoin query()
@@ -667,6 +681,9 @@ namespace App\Models {
      * @property string $catatan
      * @property string $nomor_telepon
      * @property string $alamat
+     * @property \Illuminate\Support\Carbon|null $diselesaikan_at
+     * @property string|null $catatan_penyelesaian
+     * @property string|null $bukti_penyelesaian
      * @property string $status
      * @property \Illuminate\Support\Carbon|null $scheduled_at
      * @property string $jadwal
@@ -681,6 +698,9 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<PermintaanPenjemputan>|PermintaanPenjemputan whereJadwal($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PermintaanPenjemputan>|PermintaanPenjemputan whereScheduledAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PermintaanPenjemputan>|PermintaanPenjemputan whereStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PermintaanPenjemputan>|PermintaanPenjemputan whereBuktiPenyelesaian($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PermintaanPenjemputan>|PermintaanPenjemputan whereCatatanPenyelesaian($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PermintaanPenjemputan>|PermintaanPenjemputan whereDiselesaikanAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PermintaanPenjemputan>|PermintaanPenjemputan whereAlamat($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PermintaanPenjemputan>|PermintaanPenjemputan whereNomorTelepon($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PermintaanPenjemputan>|PermintaanPenjemputan whereCatatan($value)
@@ -1341,7 +1361,23 @@ namespace App\Models {
     /**
      * App\Models\Poin
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property \Illuminate\Support\Carbon $tanggal
+     * @property string $keterangan
+     * @property mixed $tipe
+     * @property int $jumlah
+     * @property int $user_id
+     * @property int $id
      * @property-read \App\Models\User $user
+     * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin whereUserId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin whereJumlah($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin whereTipe($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin whereKeterangan($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin whereTanggal($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Poin>|Poin query()
@@ -1660,8 +1696,24 @@ namespace App\Models {
     /**
      * App\Models\Reward
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property bool $aktif
+     * @property int $stok
+     * @property int $poin_diperlukan
+     * @property string|null $deskripsi
+     * @property string $nama
+     * @property int $id
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PenukaranPoin> $penukaranPoins
      * @property-read int|null $penukaran_poins_count
+     * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward whereNama($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward whereDeskripsi($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward wherePoinDiperlukan($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward whereStok($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward whereAktif($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Reward>|Reward query()
@@ -2664,8 +2716,34 @@ namespace App\Models {
     /**
      * App\Models\UsulanTitikLayanan
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property string|null $catatan_verifikasi
+     * @property \Illuminate\Support\Carbon|null $verified_at
+     * @property int|null $verified_by
+     * @property string $status
+     * @property string $deskripsi_alasan
+     * @property string $jenis_layanan
+     * @property string $alamat_detail
+     * @property float $longitude
+     * @property float $latitude
+     * @property int $user_id
+     * @property int $id
      * @property-read \App\Models\User $pengusul
      * @property-read \App\Models\User $verifier
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereUserId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereLatitude($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereLongitude($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereAlamatDetail($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereJenisLayanan($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereDeskripsiAlasan($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereVerifiedBy($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereVerifiedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereCatatanVerifikasi($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<UsulanTitikLayanan>|UsulanTitikLayanan query()
