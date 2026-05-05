@@ -8,7 +8,6 @@ use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PetaLokasiController;
 use App\Http\Controllers\PermintaanPenjemputanController;
-use App\Http\Controllers\JadwalOperasionalController;
 use App\Http\Controllers\RiwayatLayananController;
 use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
@@ -23,12 +22,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'redirect'])->name('dashboard');
-
+    
     // Notification routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
-
+    
     Route::get('/dashboard/masyarakat', [DashboardController::class, 'masyarakat'])->middleware('role:masyarakat')->name('dashboard.masyarakat');
     Route::get('/poin', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'index'])->middleware('role:masyarakat')->name('poin.index');
     Route::get('/reward', [App\Http\Controllers\PenukaranRewardController::class, 'index'])->middleware('role:masyarakat')->name('reward.index');
@@ -48,12 +47,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/titik-layanan', [AdminController::class, 'storeTitikLayanan'])->name('admin.titik-layanan.store');
         Route::put('/titik-layanan/{titikLayanan}', [AdminController::class, 'updateTitikLayanan'])->name('admin.titik-layanan.update');
         Route::delete('/titik-layanan/{titikLayanan}', [AdminController::class, 'destroyTitikLayanan'])->name('admin.titik-layanan.destroy');
-
-        // Jadwal Operasional Titik Layanan
-        Route::get('/titik-layanan/{titikLayanan}/jadwal', [JadwalOperasionalController::class, 'index'])->name('admin.jadwal.index');
-        Route::post('/titik-layanan/{titikLayanan}/jadwal', [JadwalOperasionalController::class, 'store'])->name('admin.jadwal.store');
-        Route::put('/jadwal/{jadwal}', [JadwalOperasionalController::class, 'update'])->name('admin.jadwal.update');
-        Route::delete('/jadwal/{jadwal}', [JadwalOperasionalController::class, 'destroy'])->name('admin.jadwal.destroy');
 
         // Petugas
         Route::post('/petugas', [AdminController::class, 'storePetugas'])->name('admin.petugas.store');
@@ -102,7 +95,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/api/titik-layanan', [PetaLokasiController::class, 'titikLayananJson'])->name('api.titik-layanan');
 
-    Route::middleware('role:masyarakat')->prefix('riwayat-layanan')->group(function () {
+        Route::middleware('role:masyarakat')->prefix('riwayat-layanan')->group(function () {
         Route::get('/', [RiwayatLayananController::class, 'index'])->name('riwayat-layanan.index');
         Route::get('/{permintaanPenjemputan}', [RiwayatLayananController::class, 'show'])->name('riwayat-layanan.show');
     });
