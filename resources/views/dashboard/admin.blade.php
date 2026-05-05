@@ -742,6 +742,7 @@
                                             @method('DELETE')
                                             <button type="submit" class="text-slate-400 hover:text-red-600 text-sm">✕</button>
                                         </form>
+                                        <a href="{{ route('admin.jadwal.index', $titik->id) }}" class="text-emerald-500 hover:text-emerald-700 text-sm font-semibold ml-2">🕒 Jadwal</a>
                                     </div>
                                 </td>
                             </tr>

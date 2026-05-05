@@ -44,16 +44,51 @@
 
     function buildPopup(row) {
         const meta = jenisMeta[row.jenis] || jenisMeta.tps;
-        const jam = row.jam_operasional ? escapeHtml(row.jam_operasional) : '<span class="text-slate-400">—</span>';
         const sampah = row.jenis_sampah_diterima ? escapeHtml(row.jenis_sampah_diterima) : '<span class="text-slate-400">—</span>';
+        
+        let jadwalHtml = '';
+        if (row.jadwal_operasional && row.jadwal_operasional.length > 0) {
+            jadwalHtml += '<div class="mt-3 rounded-xl bg-emerald-50 p-3 ring-1 ring-emerald-100">';
+            jadwalHtml += '<p class="text-xs font-bold uppercase tracking-wider text-emerald-800 mb-2 border-b border-emerald-200 pb-1">Jadwal Operasional</p>';
+            jadwalHtml += '<table class="w-full text-xs text-emerald-900">';
+            
+            // Check if there is any open schedule right now
+            let isBukaSekarang = false;
+            
+            row.jadwal_operasional.forEach(j => {
+                const isBuka = j.status_buka;
+                if (isBuka) isBukaSekarang = true;
+                
+                const jamBuka = j.jam_buka.substring(0, 5);
+                const jamTutup = j.jam_tutup.substring(0, 5);
+                const textStyle = isBuka ? 'font-bold text-emerald-700' : 'text-emerald-700/70';
+                
+                jadwalHtml += '<tr class="border-b border-emerald-100/50 last:border-0">';
+                jadwalHtml += '<td class="py-1 pr-2 w-20 align-top ' + textStyle + '">' + escapeHtml(j.hari) + '</td>';
+                jadwalHtml += '<td class="py-1 ' + textStyle + '">' + jamBuka + ' - ' + jamTutup;
+                if (j.keterangan) jadwalHtml += '<br><span class="text-[10px] opacity-75">' + escapeHtml(j.keterangan) + '</span>';
+                jadwalHtml += '</td></tr>';
+            });
+            jadwalHtml += '</table>';
+            
+            if (isBukaSekarang) {
+                jadwalHtml += '<div class="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider"><span class="h-1.5 w-1.5 rounded-full bg-white animate-pulse"></span> BUKA</div>';
+            } else {
+                jadwalHtml += '<div class="mt-2 inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-600 uppercase tracking-wider"><span class="h-1.5 w-1.5 rounded-full bg-red-500"></span> TUTUP</div>';
+            }
+            jadwalHtml += '</div>';
+        } else {
+            const jamText = row.jam_operasional ? escapeHtml(row.jam_operasional) : '<span class="text-slate-400">—</span>';
+            jadwalHtml = '<p class="mt-3 text-xs font-semibold text-slate-500">Jam operasional (Legacy)</p><p class="text-sm">' + jamText + '</p>';
+        }
+
         return (
-            '<div class="min-w-[220px] max-w-[280px] text-slate-800">' +
+            '<div class="min-w-[240px] max-w-[320px] text-slate-800">' +
             '<p class="text-xs font-bold uppercase tracking-wider text-emerald-700">' + escapeHtml(meta.label) + '</p>' +
             '<p class="mt-1 text-base font-bold leading-snug">' + escapeHtml(row.nama) + '</p>' +
             '<p class="mt-2 text-sm text-slate-600">' + escapeHtml(row.alamat) + '</p>' +
-            '<p class="mt-3 text-xs font-semibold text-slate-500">Jam operasional</p>' +
-            '<p class="text-sm">' + jam + '</p>' +
-            '<p class="mt-2 text-xs font-semibold text-slate-500">Jenis sampah</p>' +
+            jadwalHtml +
+            '<p class="mt-3 text-xs font-semibold text-slate-500">Jenis sampah</p>' +
             '<p class="text-sm">' + sampah + '</p>' +
             '</div>'
         );
