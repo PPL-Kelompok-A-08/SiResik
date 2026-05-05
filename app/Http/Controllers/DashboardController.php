@@ -72,6 +72,10 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         $permintaan = PermintaanPenjemputan::with('pengguna')
+            ->where(function ($q) use ($user) {
+                $q->where('petugas_id', $user->id)
+                  ->orWhereNull('petugas_id');
+            })
             ->latest()
             ->take(8)
             ->get();
@@ -106,7 +110,10 @@ class DashboardController extends Controller
             'menunggu' => $pendingRequests->count(),
         ];
 
-        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan'));
+        // Data untuk manajemen status
+        $permintaanForStatus = $permintaan->take(10);
+
+        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan', 'permintaanForStatus'));
     }
 
     public function schedule(Request $request, PermintaanPenjemputan $permintaanPenjemputan): RedirectResponse
