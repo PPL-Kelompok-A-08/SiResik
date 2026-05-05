@@ -104,8 +104,8 @@
                 </a>
             </nav>
 
-            <form action="{{ route('logout') }}" method="POST" class="mt-8">
-                @csrf
+            <form action="<?php echo e(route('logout')); ?>" method="POST" class="mt-8">
+                <?php echo csrf_field(); ?>
                 <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
                     <span class="text-xl">↪</span>
                     <span>Keluar (Log Out)</span>
@@ -116,7 +116,7 @@
                 <div class="flex items-center gap-4">
                     <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-xl font-black">R</div>
                     <div>
-                        <p class="text-xl font-bold">{{ $user->name }}</p>
+                        <p class="text-xl font-bold"><?php echo e($user->name); ?></p>
                         <p class="text-xs uppercase tracking-[0.15em] text-emerald-100">Warga Terverifikasi</p>
                     </div>
                 </div>
@@ -160,7 +160,7 @@
                         <div class="stat-card" style="background:#fee2e2; border:1px solid #fecaca;">
                             <div class="text-slate-700">
                                 <p class="text-sm opacity-80">Pending Requests</p>
-                                <p class="text-2xl font-black">{{ $stats['menunggu'] ?? 0 }}</p>
+                                <p class="text-2xl font-black"><?php echo e($stats['menunggu'] ?? 0); ?></p>
                             </div>
                         </div>
                         <div class="stat-card" style="background:#f0fdf4; border:1px solid #bbf7d0;">
@@ -266,61 +266,64 @@
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <button type="button" class="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-lg font-semibold text-slate-700">Unduh Laporan</button>
-                    <a href="{{ route('permintaan-penjemputan.index') }}" class="rounded-2xl bg-emerald-500 px-6 py-3 text-lg font-bold text-white">+ Ajukan Penjemputan</a>
+                    <a href="<?php echo e(route('permintaan-penjemputan.index')); ?>" class="rounded-2xl bg-emerald-500 px-6 py-3 text-lg font-bold text-white">+ Ajukan Penjemputan</a>
                 </div>
             </header>
 
-            @if (session('success'))
+            <?php if(session('success')): ?>
                 <div class="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-700">
-                    {{ session('success') }}
-                </div>
-            @endif
+                    <?php echo e(session('success')); ?>
 
-            @if ($errors->any())
+                </div>
+            <?php endif; ?>
+
+            <?php if($errors->any()): ?>
                 <div class="mt-6 rounded-3xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700">
                     <p class="font-semibold">Penjadwalan belum bisa diproses.</p>
                     <ul class="mt-2 list-disc pl-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
+                        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li><?php echo e($error); ?></li>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </ul>
                 </div>
-            @endif
+            <?php endif; ?>
 
             <section class="mt-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
                 <div class="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
                     <h2 class="text-2xl font-black text-slate-800">Daftar Permintaan Penjemputan (Menunggu)</h2>
-                    <span class="rounded-2xl bg-amber-100 px-4 py-2 text-sm font-black uppercase tracking-[0.1em] text-amber-600">{{ $stats['menunggu'] }} Antrean</span>
+                    <span class="rounded-2xl bg-amber-100 px-4 py-2 text-sm font-black uppercase tracking-[0.1em] text-amber-600"><?php echo e($stats['menunggu']); ?> Antrean</span>
                 </div>
 
                 <div class="divide-y divide-slate-200">
-                    @forelse ($pendingRequests as $index => $item)
+                    <?php $__empty_1 = true; $__currentLoopData = $pendingRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <article class="grid gap-6 px-6 py-6 xl:grid-cols-[1.2fr,0.9fr] xl:items-center">
                             <div>
                                 <div class="flex flex-wrap items-center gap-4">
-                                    <span class="text-2xl font-black text-emerald-500">REQ-{{ 101 + $index }}</span>
-                                    <h3 class="text-3xl font-black text-slate-800">{{ $item->pengguna?->name }}</h3>
+                                    <span class="text-2xl font-black text-emerald-500">REQ-<?php echo e(101 + $index); ?></span>
+                                    <h3 class="text-3xl font-black text-slate-800"><?php echo e($item->pengguna?->name); ?></h3>
                                 </div>
-                                <p class="mt-3 text-xl text-slate-500">{{ $item->alamat }}</p>
-                                <p class="mt-2 text-lg text-slate-400">{{ $item->nomor_telepon }}</p>
+                                <p class="mt-3 text-xl text-slate-500"><?php echo e($item->alamat); ?></p>
+                                <p class="mt-2 text-lg text-slate-400"><?php echo e($item->nomor_telepon); ?></p>
                                 <p class="mt-3 text-lg text-slate-400">
                                     Item:
-                                    @foreach ($item->items as $detail)
-                                        <span class="font-semibold text-slate-500">{{ $detail->kategoriSampah?->nama }}</span>{{ $loop->last ? '' : ', ' }}
-                                    @endforeach
+                                    <?php $__currentLoopData = $item->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <span class="font-semibold text-slate-500"><?php echo e($detail->kategoriSampah?->nama); ?></span><?php echo e($loop->last ? '' : ', '); ?>
+
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     <span class="text-slate-300">•</span>
-                                    Diajukan {{ $item->created_at?->diffForHumans() }}
+                                    Diajukan <?php echo e($item->created_at?->diffForHumans()); ?>
+
                                 </p>
                             </div>
 
-                            <form action="{{ route('dashboard.admin.schedule', $item) }}" method="POST" class="grid gap-3 md:grid-cols-[1.2fr,1fr,auto] md:items-end">
-                                @csrf
+                            <form action="<?php echo e(route('dashboard.admin.schedule', $item)); ?>" method="POST" class="grid gap-3 md:grid-cols-[1.2fr,1fr,auto] md:items-end">
+                                <?php echo csrf_field(); ?>
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-black uppercase tracking-[0.2em] text-slate-400">Input Jadwal</span>
                                     <input
                                         type="datetime-local"
                                         name="scheduled_at"
-                                        value="{{ old('scheduled_at') }}"
+                                        value="<?php echo e(old('scheduled_at')); ?>"
                                         class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base outline-none transition focus:border-emerald-400"
                                         required
                                     >
@@ -330,9 +333,9 @@
                                     <span class="mb-2 block text-sm font-black uppercase tracking-[0.2em] text-slate-400">Pilih Petugas</span>
                                     <select name="petugas_id" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base outline-none transition focus:border-emerald-400" required>
                                         <option value="">Pilih Petugas</option>
-                                        @foreach ($petugas as $petugasItem)
-                                            <option value="{{ $petugasItem->id }}">{{ $petugasItem->name }}</option>
-                                        @endforeach
+                                        <?php $__currentLoopData = $petugas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $petugasItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($petugasItem->id); ?>"><?php echo e($petugasItem->name); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </label>
 
@@ -341,9 +344,9 @@
                                 </button>
                             </form>
                         </article>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <div class="px-6 py-16 text-center text-slate-500">Tidak ada permintaan dengan status menunggu.</div>
-                    @endforelse
+                    <?php endif; ?>
                 </div>
             </section>
 
@@ -366,31 +369,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($permintaanForStatus as $item)
+                            <?php $__empty_1 = true; $__currentLoopData = $permintaanForStatus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                 <tr>
-                                    <td>REQ-{{ 101 + $loop->index }}</td>
-                                    <td>{{ $item->pengguna?->name }}</td>
-                                    <td>{{ $item->alamat }}</td>
+                                    <td>REQ-<?php echo e(101 + $loop->index); ?></td>
+                                    <td><?php echo e($item->pengguna?->name); ?></td>
+                                    <td><?php echo e($item->alamat); ?></td>
                                     <td>
-                                        <span class="status-badge {{ 
-                                            $item->status === 'Menunggu' ? 'status-menunggu' : 
-                                            ($item->status === 'Diproses' ? 'status-dijadwalkan' : 'status-selesai')
-                                        }}">
-                                            {{ $item->status }}
+                                        <span class="status-badge <?php echo e($item->status === 'Menunggu' ? 'status-menunggu' : 
+                                            ($item->status === 'Diproses' ? 'status-dijadwalkan' : 'status-selesai')); ?>">
+                                            <?php echo e($item->status); ?>
+
                                         </span>
                                     </td>
-                                    <td>{{ $item->created_at?->format('d M Y') }}</td>
+                                    <td><?php echo e($item->created_at?->format('d M Y')); ?></td>
                                     <td>
-                                        <button onclick="openUpdateStatusModal({{ $item->id }}, '{{ $item->status }}', '{{ $item->pengguna?->name }}', '{{ $item->alamat }}')" class="text-blue-500 hover:text-blue-700 text-sm font-semibold px-3 py-1 rounded border border-blue-200 hover:bg-blue-50 transition">
+                                        <button onclick="openUpdateStatusModal(<?php echo e($item->id); ?>, '<?php echo e($item->status); ?>', '<?php echo e($item->pengguna?->name); ?>', '<?php echo e($item->alamat); ?>')" class="text-blue-500 hover:text-blue-700 text-sm font-semibold px-3 py-1 rounded border border-blue-200 hover:bg-blue-50 transition">
                                             Update Status
                                         </button>
                                     </td>
                                 </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                 <tr>
                                     <td colspan="6" class="text-center py-8 text-slate-500">Tidak ada permintaan penjemputan.</td>
                                 </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -403,24 +405,24 @@
                 </div>
 
                 <div class="grid gap-5 px-6 py-6 md:grid-cols-2 xl:grid-cols-3">
-                    @php
+                    <?php
                         $weeklySchedules = [
                             ['hari' => 'Senin', 'zona' => 'Zona A', 'jam' => '08:00 WIB', 'petugas' => 'Ahmad'],
                             ['hari' => 'Selasa', 'zona' => 'Zona B', 'jam' => '08:00 WIB', 'petugas' => 'Bambang'],
                             ['hari' => 'Rabu', 'zona' => 'Zona A', 'jam' => '08:00 WIB', 'petugas' => 'Cecep'],
                         ];
-                    @endphp
+                    ?>
 
-                    @foreach ($weeklySchedules as $schedule)
+                    <?php $__currentLoopData = $weeklySchedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $schedule): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <article class="rounded-[2rem] border border-slate-200 bg-slate-50 p-5">
                             <div class="flex items-center justify-between gap-4">
-                                <p class="text-base font-black uppercase tracking-[0.1em] text-emerald-500">{{ $schedule['hari'] }}</p>
-                                <p class="text-sm font-bold text-slate-400">{{ $schedule['jam'] }}</p>
+                                <p class="text-base font-black uppercase tracking-[0.1em] text-emerald-500"><?php echo e($schedule['hari']); ?></p>
+                                <p class="text-sm font-bold text-slate-400"><?php echo e($schedule['jam']); ?></p>
                             </div>
-                            <h3 class="mt-3 text-3xl font-black text-slate-800">{{ $schedule['zona'] }}</h3>
-                            <p class="mt-5 text-base text-slate-500">• Petugas: {{ $schedule['petugas'] }}</p>
+                            <h3 class="mt-3 text-3xl font-black text-slate-800"><?php echo e($schedule['zona']); ?></h3>
+                            <p class="mt-5 text-base text-slate-500">• Petugas: <?php echo e($schedule['petugas']); ?></p>
                         </article>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </section>
 
@@ -431,23 +433,23 @@
                 </div>
 
                 <div class="mt-6 grid gap-4 xl:grid-cols-2">
-                    @forelse ($scheduledRequests as $item)
+                    <?php $__empty_1 = true; $__currentLoopData = $scheduledRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <article class="rounded-3xl border border-slate-200 p-5">
                             <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                 <div>
-                                    <p class="text-2xl font-black text-slate-800">{{ $item->pengguna?->name }}</p>
-                                    <p class="mt-2 text-base text-slate-500">{{ $item->alamat }}</p>
-                                    <p class="mt-2 text-base text-slate-500">Petugas: {{ $item->petugas?->name ?? '-' }}</p>
-                                    <p class="mt-2 text-base text-slate-500">Jadwal: {{ optional($item->scheduled_at ? \Illuminate\Support\Carbon::parse($item->scheduled_at) : null)?->translatedFormat('d M Y, H:i') ?? '-' }}</p>
+                                    <p class="text-2xl font-black text-slate-800"><?php echo e($item->pengguna?->name); ?></p>
+                                    <p class="mt-2 text-base text-slate-500"><?php echo e($item->alamat); ?></p>
+                                    <p class="mt-2 text-base text-slate-500">Petugas: <?php echo e($item->petugas?->name ?? '-'); ?></p>
+                                    <p class="mt-2 text-base text-slate-500">Jadwal: <?php echo e(optional($item->scheduled_at ? \Illuminate\Support\Carbon::parse($item->scheduled_at) : null)?->translatedFormat('d M Y, H:i') ?? '-'); ?></p>
                                 </div>
-                                <span class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-700">{{ $item->status }}</span>
+                                <span class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-700"><?php echo e($item->status); ?></span>
                             </div>
                         </article>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <div class="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-slate-500 xl:col-span-2">
                             Belum ada penjadwalan aktif.
                         </div>
-                    @endforelse
+                    <?php endif; ?>
                 </div>
             </section>
             </div>
@@ -469,41 +471,41 @@
                 <div class="section-card">
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <h2 class="text-xl font-black text-slate-800">Daftar Laporan</h2>
-                        <span class="text-sm text-slate-500">Total: {{ $permintaan->count() }} laporan</span>
+                        <span class="text-sm text-slate-500">Total: <?php echo e($permintaan->count()); ?> laporan</span>
                     </div>
                     <div class="grid gap-4 p-6 md:grid-cols-2">
-                        @forelse($permintaan as $laporan)
+                        <?php $__empty_1 = true; $__currentLoopData = $permintaan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $laporan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <div class="rounded-2xl border border-slate-200 p-5">
                             <div class="flex items-start justify-between mb-4">
                                 <div>
-                                    <p class="text-lg font-black text-slate-800">Laporan #{{ $laporan->id }}</p>
-                                    <p class="text-sm text-slate-500">Oleh: {{ $laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                                    <p class="text-lg font-black text-slate-800">Laporan #<?php echo e($laporan->id); ?></p>
+                                    <p class="text-sm text-slate-500">Oleh: <?php echo e($laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui'); ?></p>
                                 </div>
-                                <span class="status-badge {{ $laporan->status === 'Menunggu' ? 'status-menunggu' : ($laporan->status === 'Selesai' ? 'status-selesai' : 'status-dibatalkan') }}">{{ $laporan->status }}</span>
+                                <span class="status-badge <?php echo e($laporan->status === 'Menunggu' ? 'status-menunggu' : ($laporan->status === 'Selesai' ? 'status-selesai' : 'status-dibatalkan')); ?>"><?php echo e($laporan->status); ?></span>
                             </div>
-                            <p class="text-sm text-slate-600 mb-4">{{ $laporan->alamat ?? 'Tidak ada deskripsi' }}</p>
+                            <p class="text-sm text-slate-600 mb-4"><?php echo e($laporan->alamat ?? 'Tidak ada deskripsi'); ?></p>
                             <div class="flex gap-2">
-                                @if($laporan->status === 'Menunggu')
-                                <form method="POST" action="{{ route('admin.verifikasi-laporan', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('disetujui'); return true;">
-                                    @csrf
+                                <?php if($laporan->status === 'Menunggu'): ?>
+                                <form method="POST" action="<?php echo e(route('admin.verifikasi-laporan', $laporan)); ?>" style="display: inline;" onsubmit="showVerifikasiSuccess('disetujui'); return true;">
+                                    <?php echo csrf_field(); ?>
                                     <input type="hidden" name="status" value="disetujui">
                                     <button type="submit" class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Setujui</button>
                                 </form>
-                                <form method="POST" action="{{ route('admin.verifikasi-laporan', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('ditolak'); return true;">
-                                    @csrf
+                                <form method="POST" action="<?php echo e(route('admin.verifikasi-laporan', $laporan)); ?>" style="display: inline;" onsubmit="showVerifikasiSuccess('ditolak'); return true;">
+                                    <?php echo csrf_field(); ?>
                                     <input type="hidden" name="status" value="ditolak">
                                     <button type="submit" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Tolak</button>
                                 </form>
-                                @else
-                                <div class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: {{ $laporan->status }}</div>
-                                @endif
+                                <?php else: ?>
+                                <div class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: <?php echo e($laporan->status); ?></div>
+                                <?php endif; ?>
                             </div>
                         </div>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <div class="col-span-full text-center py-8 text-slate-500">
                             Tidak ada laporan untuk diverifikasi.
                         </div>
-                        @endforelse
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -527,28 +529,26 @@
                             <tr>
                                 <th>Nama</th>
                                 <th>Poin/kg</th>
-                                <th>Harga/kg</th>
                                 <th>Deskripsi</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach(\App\Models\KategoriSampah::all() as $kategori)
+                            <?php $__currentLoopData = \App\Models\KategoriSampah::all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $kategori): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
-                                <td>{{ $kategori->nama }}</td>
-                                <td>{{ $kategori->poin_per_kg }}</td>
-                                <td>Rp {{ number_format($kategori->harga_per_kg, 0, ',', '.') }}</td>
-                                <td>{{ $kategori->deskripsi }}</td>
+                                <td><?php echo e($kategori->nama); ?></td>
+                                <td><?php echo e($kategori->poin_per_kg); ?></td>
+                                <td><?php echo e($kategori->deskripsi); ?></td>
                                 <td>
-                                    <button onclick="editKategori({{ $kategori->id }}, '{{ $kategori->nama }}', '{{ $kategori->deskripsi }}', {{ $kategori->poin_per_kg }}, {{ $kategori->harga_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
-                                    <form method="POST" action="{{ route('admin.kategori.destroy', $kategori) }}" style="display: inline;" onsubmit="return confirm('Yakin hapus kategori ini?')">
-                                        @csrf
-                                        @method('DELETE')
+                                    <button onclick="editKategori(<?php echo e($kategori->id); ?>, '<?php echo e($kategori->nama); ?>', '<?php echo e($kategori->deskripsi); ?>', <?php echo e($kategori->poin_per_kg); ?>)" class="text-emerald-500 hover:text-emerald-700">Edit</button>
+                                    <form method="POST" action="<?php echo e(route('admin.kategori.destroy', $kategori)); ?>" style="display: inline;" onsubmit="return confirm('Yakin hapus kategori ini?')">
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('DELETE'); ?>
                                         <button type="submit" class="text-red-500 hover:text-red-700 ml-2">Hapus</button>
                                     </form>
                                 </td>
                             </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -556,20 +556,20 @@
                 <!-- Konfigurasi Poin -->
                 <div class="section-card p-6">
                     <h2 class="text-xl font-black text-slate-800 mb-4">Konfigurasi Sistem Poin</h2>
-                    <form method="POST" action="{{ route('admin.konfigurasi-poin.update') }}">
-                        @csrf
+                    <form method="POST" action="<?php echo e(route('admin.konfigurasi-poin.update')); ?>">
+                        <?php echo csrf_field(); ?>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold mb-2">Poin Minimal Tukar Reward</label>
-                                <input type="number" name="poin_minimal_tukar" value="{{ session('poin_minimal_tukar', 100) }}" class="w-full border border-slate-300 rounded-lg px-3 py-2" required>
+                                <input type="number" name="poin_minimal_tukar" value="<?php echo e(session('poin_minimal_tukar', 100)); ?>" class="w-full border border-slate-300 rounded-lg px-3 py-2" required>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold mb-2">Bonus Poin Bulanan</label>
-                                <input type="number" name="bonus_poin_bulanan" value="{{ session('bonus_poin_bulanan', 50) }}" class="w-full border border-slate-300 rounded-lg px-3 py-2" required>
+                                <input type="number" name="bonus_poin_bulanan" value="<?php echo e(session('bonus_poin_bulanan', 50)); ?>" class="w-full border border-slate-300 rounded-lg px-3 py-2" required>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold mb-2">Maksimal Poin Harian</label>
-                                <input type="number" name="maksimal_poin_harian" value="{{ session('maksimal_poin_harian', 200) }}" class="w-full border border-slate-300 rounded-lg px-3 py-2" required>
+                                <input type="number" name="maksimal_poin_harian" value="<?php echo e(session('maksimal_poin_harian', 200)); ?>" class="w-full border border-slate-300 rounded-lg px-3 py-2" required>
                             </div>
                         </div>
                         <button type="submit" class="mt-4 rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white">Simpan Konfigurasi</button>
@@ -591,7 +591,7 @@
                 <div class="grid grid-cols-3 gap-4 mb-6">
                     <div class="section-card p-5">
                         <p class="text-sm text-slate-500">Total Reward</p>
-                        <p class="text-2xl font-black text-slate-800">{{ $rewards->count() }}</p>
+                        <p class="text-2xl font-black text-slate-800"><?php echo e($rewards->count()); ?></p>
                     </div>
                     <div class="section-card p-5">
                         <p class="text-sm text-slate-500">Penukaran Bulan Ini</p>
@@ -609,35 +609,36 @@
                         <h2 class="text-xl font-black text-slate-800">Daftar Reward</h2>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-                        @forelse($rewards as $reward)
+                        <?php $__empty_1 = true; $__currentLoopData = $rewards; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reward): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <div class="rounded-2xl border border-slate-200 p-4 relative">
                             <div class="flex items-start justify-between mb-2">
-                                <p class="text-lg font-black text-slate-800">{{ $reward->nama }}</p>
+                                <p class="text-lg font-black text-slate-800"><?php echo e($reward->nama); ?></p>
                                 <div class="flex gap-1">
-                                    <button onclick="editReward({{ $reward->id }}, '{{ $reward->nama }}', '{{ $reward->deskripsi }}', {{ $reward->poin_diperlukan }}, {{ $reward->stok }}, {{ $reward->aktif ? 'true' : 'false' }})" class="text-slate-400 hover:text-slate-600 text-sm">✎</button>
-                                    <form method="POST" action="{{ route('admin.reward.destroy', $reward) }}" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus reward ini?')">
-                                        @csrf
-                                        @method('DELETE')
+                                    <button onclick="editReward(<?php echo e($reward->id); ?>, '<?php echo e($reward->nama); ?>', '<?php echo e($reward->deskripsi); ?>', <?php echo e($reward->poin_diperlukan); ?>, <?php echo e($reward->stok); ?>, <?php echo e($reward->aktif ? 'true' : 'false'); ?>)" class="text-slate-400 hover:text-slate-600 text-sm">✎</button>
+                                    <form method="POST" action="<?php echo e(route('admin.reward.destroy', $reward)); ?>" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus reward ini?')">
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('DELETE'); ?>
                                         <button type="submit" class="text-slate-400 hover:text-red-600 text-sm">✕</button>
                                     </form>
                                 </div>
                             </div>
-                            <p class="text-sm text-slate-500 mb-2">{{ $reward->poin_diperlukan }} poin</p>
-                            <p class="text-xs text-slate-400 mb-2">Stok: {{ $reward->stok }}</p>
-                            @if($reward->deskripsi)
-                            <p class="text-xs text-slate-500">{{ Str::limit($reward->deskripsi, 50) }}</p>
-                            @endif
+                            <p class="text-sm text-slate-500 mb-2"><?php echo e($reward->poin_diperlukan); ?> poin</p>
+                            <p class="text-xs text-slate-400 mb-2">Stok: <?php echo e($reward->stok); ?></p>
+                            <?php if($reward->deskripsi): ?>
+                            <p class="text-xs text-slate-500"><?php echo e(Str::limit($reward->deskripsi, 50)); ?></p>
+                            <?php endif; ?>
                             <div class="mt-2">
-                                <span class="text-xs px-2 py-1 rounded-full {{ $reward->aktif ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700' }}">
-                                    {{ $reward->aktif ? 'Aktif' : 'Tidak Aktif' }}
+                                <span class="text-xs px-2 py-1 rounded-full <?php echo e($reward->aktif ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'); ?>">
+                                    <?php echo e($reward->aktif ? 'Aktif' : 'Tidak Aktif'); ?>
+
                                 </span>
                             </div>
                         </div>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <div class="col-span-full text-center py-8 text-slate-500">
                             Belum ada reward yang ditambahkan.
                         </div>
-                        @endforelse
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -705,10 +706,10 @@
                         <span class="inline-flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-amber-600"></span> Usulan baru</span>
                     </div>
 
-                    @php
+                    <?php
                         $titikLayanan = \App\Models\TitikLayanan::orderBy('nama')->get();
-                    @endphp
-                    @include('peta._leaflet-map', ['titikLayanan' => $titikLayanan])
+                    ?>
+                    <?php echo $__env->make('peta._leaflet-map', ['titikLayanan' => $titikLayanan], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                 </div>
 
                 <!-- Zone List -->
@@ -728,28 +729,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($titikLayanan as $titik)
+                            <?php $__empty_1 = true; $__currentLoopData = $titikLayanan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $titik): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
-                                <td>{{ $titik->nama }}</td>
-                                <td>{{ $titik->jenis }}</td>
-                                <td>{{ $titik->alamat }}</td>
-                                <td>{{ $titik->jam_operasional }}</td>
+                                <td><?php echo e($titik->nama); ?></td>
+                                <td><?php echo e($titik->jenis); ?></td>
+                                <td><?php echo e($titik->alamat); ?></td>
+                                <td><?php echo e($titik->jam_operasional); ?></td>
                                 <td>
                                     <div class="flex gap-2">
-                                        <button onclick="editTitikLayanan({{ $titik->id }}, '{{ $titik->nama }}', '{{ $titik->jenis }}', '{{ $titik->alamat }}', '{{ $titik->jam_operasional }}', {{ $titik->latitude }}, {{ $titik->longitude }}, '{{ $titik->jenis_sampah_diterima }}')" class="text-slate-400 hover:text-slate-600 text-sm">✎</button>
-                                        <form method="POST" action="{{ route('admin.titik-layanan.destroy', $titik) }}" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus titik layanan ini?')">
-                                            @csrf
-                                            @method('DELETE')
+                                        <button onclick="editTitikLayanan(<?php echo e($titik->id); ?>, '<?php echo e($titik->nama); ?>', '<?php echo e($titik->jenis); ?>', '<?php echo e($titik->alamat); ?>', '<?php echo e($titik->jam_operasional); ?>', <?php echo e($titik->latitude); ?>, <?php echo e($titik->longitude); ?>, '<?php echo e($titik->jenis_sampah_diterima); ?>')" class="text-slate-400 hover:text-slate-600 text-sm">✎</button>
+                                        <form method="POST" action="<?php echo e(route('admin.titik-layanan.destroy', $titik)); ?>" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus titik layanan ini?')">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
                                             <button type="submit" class="text-slate-400 hover:text-red-600 text-sm">✕</button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="5" class="text-center py-8 text-slate-500">Belum ada titik layanan yang ditambahkan.</td>
                             </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -769,15 +770,15 @@
                 <div class="grid grid-cols-3 gap-4 mb-6">
                     <div class="section-card p-5">
                         <p class="text-sm text-slate-500">Total Petugas</p>
-                        <p class="text-2xl font-black text-slate-800">{{ $petugas->count() }}</p>
+                        <p class="text-2xl font-black text-slate-800"><?php echo e($petugas->count()); ?></p>
                     </div>
                     <div class="section-card p-5">
                         <p class="text-sm text-slate-500">Aktif Hari Ini</p>
-                        <p class="text-2xl font-black text-slate-800">{{ $petugas->where('created_at', '>=', now()->startOfDay())->count() }}</p>
+                        <p class="text-2xl font-black text-slate-800"><?php echo e($petugas->where('created_at', '>=', now()->startOfDay())->count()); ?></p>
                     </div>
                     <div class="section-card p-5">
                         <p class="text-sm text-slate-500">Penjemputan Selesai</p>
-                        <p class="text-2xl font-black text-slate-800">{{ $permintaan->where('status', 'Selesai')->count() }}</p>
+                        <p class="text-2xl font-black text-slate-800"><?php echo e($permintaan->where('status', 'Selesai')->count()); ?></p>
                     </div>
                 </div>
 
@@ -787,38 +788,38 @@
                         <h2 class="text-xl font-black text-slate-800">Daftar Petugas</h2>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
-                        @forelse($petugas as $petugasItem)
+                        <?php $__empty_1 = true; $__currentLoopData = $petugas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $petugasItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <div class="rounded-2xl border border-slate-200 p-5">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-4">
                                     <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                                        <span class="text-emerald-600 font-bold">{{ substr($petugasItem->name, 0, 1) }}</span>
+                                        <span class="text-emerald-600 font-bold"><?php echo e(substr($petugasItem->name, 0, 1)); ?></span>
                                     </div>
                                     <div>
-                                        <p class="text-lg font-black text-slate-800">{{ $petugasItem->name }}</p>
-                                        <p class="text-sm text-slate-500">{{ $petugasItem->email }}</p>
+                                        <p class="text-lg font-black text-slate-800"><?php echo e($petugasItem->name); ?></p>
+                                        <p class="text-sm text-slate-500"><?php echo e($petugasItem->email); ?></p>
                                     </div>
                                 </div>
                                 <div class="flex gap-1">
-                                    <button onclick="editPetugas({{ $petugasItem->id }}, '{{ $petugasItem->name }}', '{{ $petugasItem->email }}')" class="text-slate-400 hover:text-slate-600 text-sm">✎</button>
-                                    <form method="POST" action="{{ route('admin.petugas.destroy', $petugasItem) }}" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus petugas ini?')">
-                                        @csrf
-                                        @method('DELETE')
+                                    <button onclick="editPetugas(<?php echo e($petugasItem->id); ?>, '<?php echo e($petugasItem->name); ?>', '<?php echo e($petugasItem->email); ?>')" class="text-slate-400 hover:text-slate-600 text-sm">✎</button>
+                                    <form method="POST" action="<?php echo e(route('admin.petugas.destroy', $petugasItem)); ?>" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus petugas ini?')">
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('DELETE'); ?>
                                         <button type="submit" class="text-slate-400 hover:text-red-600 text-sm">✕</button>
                                     </form>
                                 </div>
                             </div>
                             <div class="space-y-1">
                                 <p class="text-sm text-slate-600">Status: <span class="text-emerald-600 font-semibold">Aktif</span></p>
-                                <p class="text-sm text-slate-600">Penjemputan hari ini: {{ $permintaan->where('petugas_id', $petugasItem->id)->where('status', 'Selesai')->filter(function($item) { return $item->updated_at && $item->updated_at->isToday(); })->count() }}</p>
-                                <p class="text-sm text-slate-600">Total penjemputan: {{ $permintaan->where('petugas_id', $petugasItem->id)->where('status', 'Selesai')->count() }}</p>
+                                <p class="text-sm text-slate-600">Penjemputan hari ini: <?php echo e($permintaan->where('petugas_id', $petugasItem->id)->where('status', 'Selesai')->filter(function($item) { return $item->updated_at && $item->updated_at->isToday(); })->count()); ?></p>
+                                <p class="text-sm text-slate-600">Total penjemputan: <?php echo e($permintaan->where('petugas_id', $petugasItem->id)->where('status', 'Selesai')->count()); ?></p>
                             </div>
                         </div>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <div class="col-span-full text-center py-8 text-slate-500">
                             Belum ada petugas yang terdaftar.
                         </div>
-                        @endforelse
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -1005,7 +1006,7 @@
                 <button onclick="closeModal('modal-tambah-reward')" class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
             </div>
             <form id="reward-form" method="POST">
-                @csrf
+                <?php echo csrf_field(); ?>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Nama Reward</label>
@@ -1044,7 +1045,7 @@
                 <button onclick="closeModal('modal-tambah-petugas')" class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
             </div>
             <form id="petugas-form" method="POST">
-                @csrf
+                <?php echo csrf_field(); ?>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Nama Lengkap</label>
@@ -1079,7 +1080,7 @@
                 <button onclick="closeModal('modal-tambah-titik-layanan')" class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
             </div>
             <form id="titik-layanan-form" method="POST">
-                @csrf
+                <?php echo csrf_field(); ?>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Nama Titik Layanan</label>
@@ -1132,21 +1133,15 @@
                 <button onclick="closeModal('modal-tambah-kategori')" class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
             </div>
             <form id="kategori-form" method="POST">
-                @csrf
+                <?php echo csrf_field(); ?>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Nama Kategori</label>
                         <input type="text" name="nama" id="kategori-nama" placeholder="Contoh: Plastik" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Poin per kg</label>
-                            <input type="number" name="poin_per_kg" id="kategori-poin" placeholder="Contoh: 50" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Harga per kg (Rp)</label>
-                            <input type="number" name="harga_per_kg" id="kategori-harga" placeholder="Contoh: 5000" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
-                        </div>
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Poin per kg</label>
+                        <input type="number" name="poin_per_kg" id="kategori-poin" placeholder="Contoh: 50" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Deskripsi</label>
@@ -1169,7 +1164,7 @@
                 <button onclick="closeModal('modal-tambah-jadwal-area')" class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
             </div>
             <form id="jadwal-area-form" method="POST">
-                @csrf
+                <?php echo csrf_field(); ?>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Hari</label>
@@ -1195,9 +1190,9 @@
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Pilih Petugas</label>
                         <select name="petugas_id" id="jadwal-petugas" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
                             <option value="">Pilih Petugas</option>
-                            @foreach($petugas as $petugasItem)
-                            <option value="{{ $petugasItem->id }}">{{ $petugasItem->name }}</option>
-                            @endforeach
+                            <?php $__currentLoopData = $petugas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $petugasItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($petugasItem->id); ?>"><?php echo e($petugasItem->name); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                     </div>
                 </div>
@@ -1275,21 +1270,20 @@
         function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
 
         // Kategori
-        function editKategori(id, nama, deskripsi, poin, harga) {
+        function editKategori(id, nama, deskripsi, poin) {
             document.getElementById('modal-title').textContent = 'Edit Kategori Sampah';
             document.getElementById('kategori-form').action = `/admin/kategori/${id}`;
             document.getElementById('kategori-form').insertAdjacentHTML('afterbegin', '<input type="hidden" name="_method" value="PUT">');
             document.getElementById('kategori-nama').value = nama;
             document.getElementById('kategori-deskripsi').value = deskripsi;
             document.getElementById('kategori-poin').value = poin;
-            document.getElementById('kategori-harga').value = harga;
             openModal('modal-tambah-kategori');
         }
 
         // Reset form when opening modal for new kategori
         document.querySelector('[onclick*="modal-tambah-kategori"]').addEventListener('click', function() {
             document.getElementById('modal-title').textContent = 'Tambah Kategori Sampah';
-            document.getElementById('kategori-form').action = '{{ route("admin.kategori.store") }}';
+            document.getElementById('kategori-form').action = '<?php echo e(route("admin.kategori.store")); ?>';
             const methodInput = document.querySelector('input[name="_method"]');
             if (methodInput) methodInput.remove();
             document.getElementById('kategori-form').reset();
@@ -1311,7 +1305,7 @@
         // Reset form when opening modal for new reward
         document.querySelector('[onclick*="modal-tambah-reward"]').addEventListener('click', function() {
             document.getElementById('modal-reward-title').textContent = 'Tambah Reward';
-            document.getElementById('reward-form').action = '{{ route("admin.reward.store") }}';
+            document.getElementById('reward-form').action = '<?php echo e(route("admin.reward.store")); ?>';
             const methodInput = document.querySelector('#reward-form input[name="_method"]');
             if (methodInput) methodInput.remove();
             document.getElementById('reward-form').reset();
@@ -1335,7 +1329,7 @@
         // Reset form when opening modal for new petugas
         document.querySelector('[onclick*="modal-tambah-petugas"]').addEventListener('click', function() {
             document.getElementById('modal-petugas-title').textContent = 'Tambah Petugas';
-            document.getElementById('petugas-form').action = '{{ route("admin.petugas.store") }}';
+            document.getElementById('petugas-form').action = '<?php echo e(route("admin.petugas.store")); ?>';
             const methodInput = document.querySelector('#petugas-form input[name="_method"]');
             if (methodInput) methodInput.remove();
             document.getElementById('petugas-form').reset();
@@ -1363,7 +1357,7 @@
         // Reset form when opening modal for new titik layanan
         document.querySelector('[onclick*="modal-tambah-titik-layanan"]').addEventListener('click', function() {
             document.getElementById('modal-titik-layanan-title').textContent = 'Tambah Titik Layanan';
-            document.getElementById('titik-layanan-form').action = '{{ route("admin.titik-layanan.store") }}';
+            document.getElementById('titik-layanan-form').action = '<?php echo e(route("admin.titik-layanan.store")); ?>';
             const methodInput = document.querySelector('#titik-layanan-form input[name="_method"]');
             if (methodInput) methodInput.remove();
             document.getElementById('titik-layanan-form').reset();
@@ -1480,8 +1474,8 @@
             </div>
 
             <form id="update-status-form" method="POST">
-                @csrf
-                @method('PUT')
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('PUT'); ?>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Status Baru</label>
@@ -1558,3 +1552,4 @@
     </script>
 </body>
 </html>
+<?php /**PATH /Users/mac/Downloads/SiResik/resources/views/dashboard/admin.blade.php ENDPATH**/ ?>
