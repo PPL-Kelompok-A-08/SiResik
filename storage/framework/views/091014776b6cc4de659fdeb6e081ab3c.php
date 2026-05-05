@@ -19,27 +19,34 @@
 
             <?php
                 $menuItems = [
-                    ['label' => 'Dashboard', 'active' => false],
+                    ['label' => 'Dashboard', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Penjemputan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
-                    ['label' => 'Status Layanan', 'active' => true],
-                    ['label' => 'Riwayat Layanan', 'active' => false],
+                    ['label' => 'Status Layanan', 'active' => true, 'href' => route('dashboard.masyarakat')],
+                    ['label' => 'Riwayat Layanan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
                     ['label' => 'Poin & Reward', 'active' => false, 'href' => route('poin.index')],
-                    ['label' => 'Sampah Liar', 'active' => false],
+                    ['label' => 'Sampah Liar', 'active' => false, 'disabled' => true],
                     ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
                     ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
-                    ['label' => 'Edukasi Lingkungan', 'active' => false],
-                    ['label' => 'Kegiatan Lingkungan', 'active' => false],
-                    ['label' => 'Notifikasi', 'active' => false],
+                    ['label' => 'Edukasi Lingkungan', 'active' => false, 'disabled' => true],
+                    ['label' => 'Kegiatan Lingkungan', 'active' => false, 'disabled' => true],
+                    ['label' => 'Notifikasi', 'active' => false, 'disabled' => true],
                 ];
             ?>
 
             <nav class="mt-14 space-y-2">
                 <?php $__currentLoopData = $menuItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <a href="<?php echo e($item['href'] ?? route('dashboard.masyarakat')); ?>"
-                        class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition <?php echo e($item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5'); ?>">
-                        <span class="text-xl"><?php echo e($item['active'] ? '◉' : '◦'); ?></span>
-                        <span><?php echo e($item['label']); ?></span>
-                    </a>
+                    <?php if(!empty($item['href'])): ?>
+                        <a href="<?php echo e($item['href']); ?>"
+                            class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition <?php echo e($item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5'); ?>">
+                            <span class="text-xl"><?php echo e($item['active'] ? '◉' : '◦'); ?></span>
+                            <span><?php echo e($item['label']); ?></span>
+                        </a>
+                    <?php else: ?>
+                        <div class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-200 opacity-70 cursor-not-allowed">
+                            <span class="text-xl">◦</span>
+                            <span><?php echo e($item['label']); ?></span>
+                        </div>
+                    <?php endif; ?>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </nav>
 
