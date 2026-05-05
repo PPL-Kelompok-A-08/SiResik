@@ -21,6 +21,7 @@ class AdminController extends Controller
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'poin_per_kg' => 'required|integer|min:0',
+            'harga_per_kg' => 'required|numeric|min:0',
         ]);
 
         KategoriSampah::create($validated);
@@ -34,6 +35,7 @@ class AdminController extends Controller
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'poin_per_kg' => 'required|integer|min:0',
+            'harga_per_kg' => 'required|numeric|min:0',
         ]);
 
         $kategori->update($validated);
