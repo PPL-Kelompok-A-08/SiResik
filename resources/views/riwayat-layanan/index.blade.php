@@ -193,6 +193,10 @@
                                     <p class="text-xs text-emerald-600 font-semibold">Estimasi Poin</p>
                                     <p class="text-2xl font-black text-emerald-700">{{ number_format($item->total_estimasi_poin) }}</p>
                                 </div>
+                                <div class="rounded-2xl bg-rose-50 px-4 py-3 text-right">
+                                    <p class="text-xs text-rose-600 font-semibold">Tagihan</p>
+                                    <p class="text-lg font-black text-rose-700">Rp {{ number_format($item->total_tagihan, 0, ',', '.') }}</p>
+                                </div>
                                 <a href="{{ route('riwayat-layanan.show', $item) }}"
                                    class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 transition w-full text-center">
                                     Lihat Detail →

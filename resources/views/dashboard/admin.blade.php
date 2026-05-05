@@ -527,6 +527,7 @@
                             <tr>
                                 <th>Nama</th>
                                 <th>Poin/kg</th>
+                                <th>Harga/kg</th>
                                 <th>Deskripsi</th>
                                 <th>Aksi</th>
                             </tr>
@@ -536,9 +537,10 @@
                             <tr>
                                 <td>{{ $kategori->nama }}</td>
                                 <td>{{ $kategori->poin_per_kg }}</td>
+                                <td>Rp {{ number_format($kategori->harga_per_kg, 0, ',', '.') }}</td>
                                 <td>{{ $kategori->deskripsi }}</td>
                                 <td>
-                                    <button onclick="editKategori({{ $kategori->id }}, '{{ $kategori->nama }}', '{{ $kategori->deskripsi }}', {{ $kategori->poin_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
+                                    <button onclick="editKategori({{ $kategori->id }}, '{{ $kategori->nama }}', '{{ $kategori->deskripsi }}', {{ $kategori->poin_per_kg }}, {{ $kategori->harga_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
                                     <form method="POST" action="{{ route('admin.kategori.destroy', $kategori) }}" style="display: inline;" onsubmit="return confirm('Yakin hapus kategori ini?')">
                                         @csrf
                                         @method('DELETE')
@@ -1137,9 +1139,15 @@
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Nama Kategori</label>
                         <input type="text" name="nama" id="kategori-nama" placeholder="Contoh: Plastik" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
                     </div>
-                    <div>
-                        <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Poin per kg</label>
-                        <input type="number" name="poin_per_kg" id="kategori-poin" placeholder="Contoh: 50" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Poin per kg</label>
+                            <input type="number" name="poin_per_kg" id="kategori-poin" placeholder="Contoh: 50" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Harga per kg (Rp)</label>
+                            <input type="number" name="harga_per_kg" id="kategori-harga" placeholder="Contoh: 5000" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Deskripsi</label>
@@ -1268,13 +1276,14 @@
         function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
 
         // Kategori
-        function editKategori(id, nama, deskripsi, poin) {
+        function editKategori(id, nama, deskripsi, poin, harga) {
             document.getElementById('modal-title').textContent = 'Edit Kategori Sampah';
             document.getElementById('kategori-form').action = `/admin/kategori/${id}`;
             document.getElementById('kategori-form').insertAdjacentHTML('afterbegin', '<input type="hidden" name="_method" value="PUT">');
             document.getElementById('kategori-nama').value = nama;
             document.getElementById('kategori-deskripsi').value = deskripsi;
             document.getElementById('kategori-poin').value = poin;
+            document.getElementById('kategori-harga').value = harga;
             openModal('modal-tambah-kategori');
         }
 

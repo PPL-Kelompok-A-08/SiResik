@@ -45,15 +45,24 @@
                                     <p class="font-bold text-slate-800">{{ $item->kategoriSampah?->nama }}</p>
                                     <p class="text-sm text-slate-500">{{ rtrim(rtrim(number_format($item->berat_kg, 2, '.', ''), '0'), '.') }} kg</p>
                                 </div>
-                                <p class="font-bold text-emerald-600">{{ number_format($item->estimasi_poin) }} poin</p>
+                                <div class="text-right">
+                                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-[0.05em]">{{ number_format($item->estimasi_poin) }} poin</p>
+                                    <p class="mt-1 font-bold text-emerald-600">Rp {{ number_format($item->total_tagihan, 0, ',', '.') }}</p>
+                                </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
 
-                <div class="mt-5 border-t border-slate-200 pt-5 text-right">
-                    <p class="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Total Estimasi Poin</p>
-                    <p class="mt-2 text-4xl font-black text-emerald-500">{{ number_format($permintaan->total_estimasi_poin) }}</p>
+                <div class="mt-5 space-y-3 border-t border-slate-200 pt-5">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Total Estimasi Poin</p>
+                        <p class="text-2xl font-black text-emerald-500">{{ number_format($permintaan->total_estimasi_poin) }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Total Tagihan</p>
+                        <p class="text-2xl font-black text-rose-600">Rp {{ number_format($permintaan->total_tagihan, 0, ',', '.') }}</p>
+                    </div>
                 </div>
             </div>
 

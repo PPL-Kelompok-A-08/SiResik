@@ -12,7 +12,9 @@ class KategoriSampah extends Model
     protected $fillable = [
         'nama',
         'deskripsi',
-        'poin_per_kg'
+        'poin_per_kg',
+        'harga_per_kg',
+        'status'
     ];
 
     public function permintaanItems(): HasMany
