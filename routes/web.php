@@ -5,9 +5,12 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriSampahController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PetaLokasiController;
 use App\Http\Controllers\PermintaanPenjemputanController;
 use App\Http\Controllers\JadwalOperasionalController;
+use App\Http\Controllers\RiwayatLayananController;
+use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingPageController::class, 'index']);
@@ -20,6 +23,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'redirect'])->name('dashboard');
+
+    // Notification routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
+
     Route::get('/dashboard/masyarakat', [DashboardController::class, 'masyarakat'])->middleware('role:masyarakat')->name('dashboard.masyarakat');
     Route::get('/poin', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'index'])->middleware('role:masyarakat')->name('poin.index');
     Route::get('/reward', [App\Http\Controllers\PenukaranRewardController::class, 'index'])->middleware('role:masyarakat')->name('reward.index');
@@ -68,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/permintaan-penjemputan', [PermintaanPenjemputanController::class, 'index'])->name('permintaan-penjemputan.index');
     Route::post('/permintaan-penjemputan', [PermintaanPenjemputanController::class, 'store'])->name('permintaan-penjemputan.store');
     Route::get('/permintaan-penjemputan/{permintaanPenjemputan}/success', [PermintaanPenjemputanController::class, 'success'])->name('permintaan-penjemputan.success');
+    Route::put('/permintaan-penjemputan/{permintaanPenjemputan}/status', [PermintaanPenjemputanController::class, 'updateStatus'])->middleware('role:admin')->name('permintaan-penjemputan.update-status');
 
     Route::get('/peta-lokasi', [PetaLokasiController::class, 'masyarakat'])
         ->middleware('role:masyarakat,petugas')
@@ -91,4 +101,15 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard.admin.usulan.reject');
 
     Route::get('/api/titik-layanan', [PetaLokasiController::class, 'titikLayananJson'])->name('api.titik-layanan');
-});
+
+    Route::middleware('role:masyarakat')->prefix('riwayat-layanan')->group(function () {
+        Route::get('/', [RiwayatLayananController::class, 'index'])->name('riwayat-layanan.index');
+        Route::get('/{permintaanPenjemputan}', [RiwayatLayananController::class, 'show'])->name('riwayat-layanan.show');
+    });
+
+    Route::middleware('role:petugas,admin')->prefix('petugas')->group(function () {
+        Route::get('/riwayat', [PetugasController::class, 'riwayat'])->name('petugas.riwayat');
+        Route::get('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'showBukti'])->name('petugas.bukti.show');
+        Route::post('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'uploadBukti'])->name('petugas.bukti.upload');
+    });
+});
