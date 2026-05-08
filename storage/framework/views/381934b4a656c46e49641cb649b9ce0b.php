@@ -19,6 +19,8 @@
 
             <?php
                 $menuItems = [
+<<<<<<< HEAD:storage/framework/views/091014776b6cc4de659fdeb6e081ab3c.php
+<<<<<<< HEAD
                     ['label' => 'Dashboard', 'active' => false, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Penjemputan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
                     ['label' => 'Status Layanan', 'active' => true, 'href' => route('dashboard.masyarakat')],
@@ -27,14 +29,46 @@
                     ['label' => 'Sampah Liar', 'active' => false, 'disabled' => true],
                     ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
                     ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
+<<<<<<< HEAD:storage/framework/views/091014776b6cc4de659fdeb6e081ab3c.php
                     ['label' => 'Edukasi Lingkungan', 'active' => false, 'disabled' => true],
                     ['label' => 'Kegiatan Lingkungan', 'active' => false, 'disabled' => true],
                     ['label' => 'Notifikasi', 'active' => false, 'disabled' => true],
+=======
+                    ['label' => 'Edukasi Lingkungan', 'active' => false],
+                    ['label' => 'Kegiatan Lingkungan', 'active' => false],
+                    ['label' => 'Notifikasi', 'active' => false],
+>>>>>>> 445a879 (Sprint 2 - PBI 18 Pengajuan Usulan Titik Layanan Baru):storage/framework/views/381934b4a656c46e49641cb649b9ce0b.php
+=======
+                    ['label' => 'Dashboard', 'active' => false],
+=======
+                    ['label' => 'Dashboard', 'active' => false, 'href' => route('dashboard.masyarakat')],
+>>>>>>> 4b189df (Update PBI 17 & PBI 18):storage/framework/views/381934b4a656c46e49641cb649b9ce0b.php
+                    ['label' => 'Penjemputan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
+                    ['label' => 'Status Layanan', 'active' => true, 'href' => route('dashboard.masyarakat')],
+                    ['label' => 'Riwayat Layanan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
+                    ['label' => 'Poin & Reward', 'active' => false, 'href' => route('poin.index')],
+                    ['label' => 'Sampah Liar', 'active' => false, 'disabled' => true],
+                    ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
+                    ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
+<<<<<<< HEAD:storage/framework/views/091014776b6cc4de659fdeb6e081ab3c.php
+                    ['label' => 'Edukasi Lingkungan', 'active' => false],
+                    ['label' => 'Kegiatan Lingkungan', 'active' => false],
+                    ['label' => 'Notifikasi', 'active' => false],
+>>>>>>> 0c596cb (Squashed commit of the following:)
+=======
+                    ['label' => 'Edukasi Lingkungan', 'active' => false, 'disabled' => true],
+                    ['label' => 'Kegiatan Lingkungan', 'active' => false, 'disabled' => true],
+                    ['label' => 'Notifikasi', 'active' => false, 'disabled' => true],
+>>>>>>> 4b189df (Update PBI 17 & PBI 18):storage/framework/views/381934b4a656c46e49641cb649b9ce0b.php
                 ];
             ?>
 
             <nav class="mt-14 space-y-2">
                 <?php $__currentLoopData = $menuItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+<<<<<<< HEAD:storage/framework/views/091014776b6cc4de659fdeb6e081ab3c.php
+<<<<<<< HEAD
+=======
+>>>>>>> 4b189df (Update PBI 17 & PBI 18):storage/framework/views/381934b4a656c46e49641cb649b9ce0b.php
                     <?php if(!empty($item['href'])): ?>
                         <a href="<?php echo e($item['href']); ?>"
                             class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition <?php echo e($item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5'); ?>">
@@ -47,6 +81,16 @@
                             <span><?php echo e($item['label']); ?></span>
                         </div>
                     <?php endif; ?>
+<<<<<<< HEAD:storage/framework/views/091014776b6cc4de659fdeb6e081ab3c.php
+=======
+                    <a href="<?php echo e($item['href'] ?? route('dashboard.masyarakat')); ?>"
+                        class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition <?php echo e($item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5'); ?>">
+                        <span class="text-xl"><?php echo e($item['active'] ? '◉' : '◦'); ?></span>
+                        <span><?php echo e($item['label']); ?></span>
+                    </a>
+>>>>>>> 0c596cb (Squashed commit of the following:)
+=======
+>>>>>>> 4b189df (Update PBI 17 & PBI 18):storage/framework/views/381934b4a656c46e49641cb649b9ce0b.php
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </nav>
 
@@ -214,4 +258,4 @@
     </div>
 </body>
 </html>
-<?php /**PATH /Users/mac/Downloads/SiResik-1/resources/views/dashboard/masyarakat.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\File Kuliah\Semester 6\Proyek Perangkat Lunak\SiResik\resources\views/dashboard/masyarakat.blade.php ENDPATH**/ ?>

@@ -111,4 +111,4 @@
     </div>
 </body>
 </html>
-<?php /**PATH C:\Users\Dhydo Aryo Jayanata\Documents\GitHub\TUBES\SiResik\resources\views/peta/lokasi-masyarakat.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\File Kuliah\Semester 6\Proyek Perangkat Lunak\SiResik\resources\views/peta/lokasi-masyarakat.blade.php ENDPATH**/ ?>

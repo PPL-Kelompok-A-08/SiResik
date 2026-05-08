@@ -13,6 +13,7 @@
 *.log
 .DS_Store
 .env
+<<<<<<< HEAD
 .env.backup
 .env.production
 .phpactor.json
@@ -48,3 +49,13 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 >>>>>>> 808688c (Update gitignore)
+=======
+./vendor/*
+.log
+logs/
+storage/logs/laravel.log
+storage/framework/sessions/0s7Z3xDhzUZooxh0fthTidCHkqjSEPcC7UoIOzA5
+storage/framework/sessions/fRxlVgNssORi859KQfQ3ELCb62zX9pMv6MqNLB21
+storage/framework/sessions/oFoJQULGj4VoS8vywh0HOpCscK2CbmkE1g96EnMb
+storage/framework/sessions/P7zZ25Qs6LW4cPQN8SU80XYjwtwQH8ab448kJQb3
+>>>>>>> 4b189df (Update PBI 17 & PBI 18)

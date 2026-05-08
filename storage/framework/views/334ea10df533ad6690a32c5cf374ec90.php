@@ -74,4 +74,4 @@
     </main>
 </body>
 </html>
-<?php /**PATH C:\Users\Raffi\Documents\GitHub\SiResik\resources\views/auth/login.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\File Kuliah\Semester 6\Proyek Perangkat Lunak\SiResik\resources\views/auth/login.blade.php ENDPATH**/ ?>
