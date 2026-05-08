@@ -347,6 +347,55 @@
                 </div>
             </section>
 
+            <!-- Manajemen Status Permintaan -->
+            <section class="mt-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
+                <div class="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
+                    <h2 class="text-2xl font-black text-slate-800">Manajemen Status Permintaan</h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Pengguna</th>
+                                <th>Alamat</th>
+                                <th>Status Saat Ini</th>
+                                <th>Tanggal Dibuat</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($permintaanForStatus as $item)
+                                <tr>
+                                    <td>REQ-{{ 101 + $loop->index }}</td>
+                                    <td>{{ $item->pengguna?->name }}</td>
+                                    <td>{{ $item->alamat }}</td>
+                                    <td>
+                                        <span class="status-badge {{ 
+                                            $item->status === 'Menunggu' ? 'status-menunggu' : 
+                                            ($item->status === 'Diproses' ? 'status-dijadwalkan' : 'status-selesai')
+                                        }}">
+                                            {{ $item->status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $item->created_at?->format('d M Y') }}</td>
+                                    <td>
+                                        <button onclick="openUpdateStatusModal({{ $item->id }}, '{{ $item->status }}', '{{ $item->pengguna?->name }}', '{{ $item->alamat }}')" class="text-blue-500 hover:text-blue-700 text-sm font-semibold px-3 py-1 rounded border border-blue-200 hover:bg-blue-50 transition">
+                                            Update Status
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center py-8 text-slate-500">Tidak ada permintaan penjemputan.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <section class="mt-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
                 <div class="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
                     <h2 class="text-2xl font-black text-slate-800">Master Jadwal Reguler Mingguan</h2>
@@ -478,6 +527,7 @@
                             <tr>
                                 <th>Nama</th>
                                 <th>Poin/kg</th>
+                                <th>Harga/kg</th>
                                 <th>Deskripsi</th>
                                 <th>Aksi</th>
                             </tr>
@@ -487,9 +537,10 @@
                             <tr>
                                 <td>{{ $kategori->nama }}</td>
                                 <td>{{ $kategori->poin_per_kg }}</td>
+                                <td>Rp {{ number_format($kategori->harga_per_kg, 0, ',', '.') }}</td>
                                 <td>{{ $kategori->deskripsi }}</td>
                                 <td>
-                                    <button onclick="editKategori({{ $kategori->id }}, '{{ $kategori->nama }}', '{{ $kategori->deskripsi }}', {{ $kategori->poin_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
+                                    <button onclick="editKategori({{ $kategori->id }}, '{{ $kategori->nama }}', '{{ $kategori->deskripsi }}', {{ $kategori->poin_per_kg }}, {{ $kategori->harga_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
                                     <form method="POST" action="{{ route('admin.kategori.destroy', $kategori) }}" style="display: inline;" onsubmit="return confirm('Yakin hapus kategori ini?')">
                                         @csrf
                                         @method('DELETE')
@@ -691,6 +742,7 @@
                                             @method('DELETE')
                                             <button type="submit" class="text-slate-400 hover:text-red-600 text-sm">✕</button>
                                         </form>
+                                        <a href="{{ route('admin.jadwal.index', $titik->id) }}" class="text-emerald-500 hover:text-emerald-700 text-sm font-semibold ml-2">🕒 Jadwal</a>
                                     </div>
                                 </td>
                             </tr>
@@ -1087,9 +1139,15 @@
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Nama Kategori</label>
                         <input type="text" name="nama" id="kategori-nama" placeholder="Contoh: Plastik" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
                     </div>
-                    <div>
-                        <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Poin per kg</label>
-                        <input type="number" name="poin_per_kg" id="kategori-poin" placeholder="Contoh: 50" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Poin per kg</label>
+                            <input type="number" name="poin_per_kg" id="kategori-poin" placeholder="Contoh: 50" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Harga per kg (Rp)</label>
+                            <input type="number" name="harga_per_kg" id="kategori-harga" placeholder="Contoh: 5000" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Deskripsi</label>
@@ -1218,13 +1276,14 @@
         function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
 
         // Kategori
-        function editKategori(id, nama, deskripsi, poin) {
+        function editKategori(id, nama, deskripsi, poin, harga) {
             document.getElementById('modal-title').textContent = 'Edit Kategori Sampah';
             document.getElementById('kategori-form').action = `/admin/kategori/${id}`;
             document.getElementById('kategori-form').insertAdjacentHTML('afterbegin', '<input type="hidden" name="_method" value="PUT">');
             document.getElementById('kategori-nama').value = nama;
             document.getElementById('kategori-deskripsi').value = deskripsi;
             document.getElementById('kategori-poin').value = poin;
+            document.getElementById('kategori-harga').value = harga;
             openModal('modal-tambah-kategori');
         }
 
@@ -1401,6 +1460,101 @@
                 },
                 options: { plugins: { legend: { position: 'bottom' } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f5f9' } } } }
             });
+        }
+    </script>
+
+    <!-- Modal: Update Status Permintaan -->
+    <div id="modal-update-status" class="modal-overlay" onclick="closeModalOutside(event,'modal-update-status')">
+        <div class="modal" style="max-width: 500px;">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-black text-slate-800">Update Status Permintaan</h3>
+                <button onclick="closeModal('modal-update-status')" class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
+            </div>
+            
+            <div class="bg-slate-50 rounded-lg p-4 mb-6 border border-slate-200">
+                <p class="text-sm text-slate-500">Pengguna</p>
+                <p class="font-semibold text-slate-800" id="status-modal-user">-</p>
+                <p class="text-sm text-slate-500 mt-2">Alamat</p>
+                <p class="text-slate-700" id="status-modal-alamat">-</p>
+                <p class="text-sm text-slate-500 mt-2">Status Saat Ini</p>
+                <span id="status-modal-current" class="status-badge status-menunggu">-</span>
+            </div>
+
+            <form id="update-status-form" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Status Baru</label>
+                        <select name="status" id="status-select" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                            <option value="">Pilih Status</option>
+                            <option value="Menunggu">Menunggu</option>
+                            <option value="Diproses">Diproses</option>
+                            <option value="Selesai">Selesai</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex gap-3">
+                    <button type="button" onclick="closeModal('modal-update-status')" class="flex-1 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-600">Batal</button>
+                    <button type="submit" class="flex-1 rounded-xl bg-blue-500 py-3 text-sm font-bold text-white hover:bg-blue-600 transition">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openUpdateStatusModal(permintaanId, currentStatus, userName, alamat) {
+            document.getElementById('status-modal-user').textContent = userName;
+            document.getElementById('status-modal-alamat').textContent = alamat;
+            document.getElementById('status-modal-current').textContent = currentStatus;
+            document.getElementById('status-modal-current').className = 'status-badge ' + (
+                currentStatus === 'Menunggu' ? 'status-menunggu' : 
+                (currentStatus === 'Diproses' ? 'status-dijadwalkan' : 'status-selesai')
+            );
+            
+            const form = document.getElementById('update-status-form');
+            form.action = `/permintaan-penjemputan/${permintaanId}/status`;
+            
+            openModal('modal-update-status');
+        }
+
+        // Handle update status form submission
+        document.getElementById('update-status-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const url = this.action;
+            const statusValue = document.getElementById('status-select').value;
+            
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    status: statusValue
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                closeModal('modal-update-status');
+                showSuccessMessage(data.message || 'Status berhasil diperbarui');
+                setTimeout(() => location.reload(), 1500);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat update status');
+            });
+        });
+
+        function showSuccessMessage(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => alertDiv.remove(), 3000);
         }
     </script>
 </body>

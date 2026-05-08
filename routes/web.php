@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriSampahController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PetaLokasiController;
 use App\Http\Controllers\PermintaanPenjemputanController;
 use App\Http\Controllers\RiwayatLayananController;
@@ -21,6 +22,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'redirect'])->name('dashboard');
+    
+    // Notification routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
+    
     Route::get('/dashboard/masyarakat', [DashboardController::class, 'masyarakat'])->middleware('role:masyarakat')->name('dashboard.masyarakat');
     Route::get('/poin', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'index'])->middleware('role:masyarakat')->name('poin.index');
     Route::get('/reward', [App\Http\Controllers\PenukaranRewardController::class, 'index'])->middleware('role:masyarakat')->name('reward.index');
@@ -63,6 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/permintaan-penjemputan', [PermintaanPenjemputanController::class, 'index'])->name('permintaan-penjemputan.index');
     Route::post('/permintaan-penjemputan', [PermintaanPenjemputanController::class, 'store'])->name('permintaan-penjemputan.store');
     Route::get('/permintaan-penjemputan/{permintaanPenjemputan}/success', [PermintaanPenjemputanController::class, 'success'])->name('permintaan-penjemputan.success');
+    Route::put('/permintaan-penjemputan/{permintaanPenjemputan}/status', [PermintaanPenjemputanController::class, 'updateStatus'])->middleware('role:admin')->name('permintaan-penjemputan.update-status');
 
     Route::get('/peta-lokasi', [PetaLokasiController::class, 'masyarakat'])
         ->middleware('role:masyarakat,petugas')
@@ -92,7 +100,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/{permintaanPenjemputan}', [RiwayatLayananController::class, 'show'])->name('riwayat-layanan.show');
     });
 
-    // PBI 6 - Unggah Bukti Penyelesaian Tugas Petugas
     Route::middleware('role:petugas,admin')->prefix('petugas')->group(function () {
         Route::get('/riwayat', [PetugasController::class, 'riwayat'])->name('petugas.riwayat');
         Route::get('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'showBukti'])->name('petugas.bukti.show');

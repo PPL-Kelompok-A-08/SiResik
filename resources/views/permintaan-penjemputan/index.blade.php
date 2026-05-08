@@ -110,12 +110,16 @@
                                         data-card
                                         data-id="{{ $item->id }}"
                                         data-name="{{ $item->nama }}"
-                                        data-poin="{{ $item->poin_per_kg }}">
+                                        data-poin="{{ $item->poin_per_kg }}"
+                                        data-harga="{{ $item->harga_per_kg }}">
                                         <input type="checkbox" name="selected_categories[]" value="{{ $item->id }}" class="sr-only category-checkbox" @checked($oldSelected)>
                                         <div class="flex h-full flex-col">
                                             <div class="flex items-start justify-between gap-4">
                                                 <div class="h-14 w-14 rounded-2xl bg-slate-100 text-2xl leading-[3.5rem] text-center text-emerald-600">♻</div>
-                                                <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">{{ number_format($item->poin_per_kg) }} poin/kg</span>
+                                                <div class="flex flex-col gap-2">
+                                                    <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">{{ number_format($item->poin_per_kg) }} poin/kg</span>
+                                                    <span class="rounded-full bg-rose-50 px-3 py-1 text-xs font-bold text-rose-700">Rp {{ number_format($item->harga_per_kg, 0, ',', '.') }}/kg</span>
+                                                </div>
                                             </div>
                                             <h3 class="mt-5 text-lg font-bold text-slate-900">{{ $item->nama }}</h3>
                                             <p class="mt-2 text-sm leading-6 text-slate-500">{{ $item->deskripsi }}</p>
@@ -162,6 +166,11 @@
                             <p id="total-points" class="mt-3 text-right text-4xl font-black text-emerald-500">0</p>
                         </div>
 
+                        <div class="mt-4 border-t border-slate-200 pt-4">
+                            <p class="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Total Tagihan</p>
+                            <p id="total-tagihan" class="mt-3 text-right text-4xl font-black text-rose-600">Rp 0</p>
+                        </div>
+
                         <button type="submit" class="mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-emerald-500 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-emerald-500/30 transition hover:bg-emerald-600">
                             Ajukan Penjemputan
                         </button>
@@ -195,6 +204,7 @@
                             <th class="pb-3 pr-4 font-semibold">Detail</th>
                             <th class="pb-3 pr-4 font-semibold">Kategori</th>
                             <th class="pb-3 pr-4 font-semibold">Poin</th>
+                            <th class="pb-3 pr-4 font-semibold">Tagihan</th>
                             <th class="pb-3 font-semibold">Status</th>
                         </tr>
                     </thead>
@@ -221,6 +231,7 @@
                                     </div>
                                 </td>
                                 <td class="py-4 pr-4 font-bold text-emerald-600">{{ number_format($item->total_estimasi_poin) }}</td>
+                                <td class="py-4 pr-4 font-bold text-rose-600">Rp {{ number_format($item->total_tagihan, 0, ',', '.') }}</td>
                                 <td class="py-4">
                                     @php
                                         $statusClass = match ($item->status) {
@@ -250,18 +261,24 @@
         const summaryList = document.getElementById('summary-list');
         const summaryEmpty = document.getElementById('summary-empty');
         const totalPoints = document.getElementById('total-points');
+        const totalTagihan = document.getElementById('total-tagihan');
         const selectedCount = document.getElementById('selected-count');
 
         function formatNumber(value) {
             return new Intl.NumberFormat('id-ID').format(value);
         }
 
+        function formatCurrency(value) {
+            return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(value));
+        }
+
         function renderSummary() {
-            if (!summaryList || !totalPoints || !selectedCount) {
+            if (!summaryList || !totalPoints || !selectedCount || !totalTagihan) {
                 return;
             }
 
             let total = 0;
+            let totalHarga = 0;
             let count = 0;
             const items = [];
 
@@ -271,6 +288,7 @@
                 const active = checkbox.checked;
                 const weight = parseFloat(weightInput.value || 0);
                 const pointsPerKg = parseInt(card.dataset.poin, 10);
+                const hargaPerKg = parseFloat(card.dataset.harga || 0);
 
                 card.classList.toggle('border-emerald-500', active);
                 card.classList.toggle('bg-emerald-50', active);
@@ -278,7 +296,9 @@
 
                 if (active && weight > 0) {
                     const subtotal = Math.round(weight * pointsPerKg);
+                    const subtotalHarga = weight * hargaPerKg;
                     total += subtotal;
+                    totalHarga += subtotalHarga;
                     count += 1;
                     items.push(`
                         <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -287,7 +307,10 @@
                                     <p class="font-bold text-slate-800">${card.dataset.name}</p>
                                     <p class="mt-2 text-sm text-slate-500">${weight} kg</p>
                                 </div>
-                                <p class="text-sm font-bold text-emerald-600">${formatNumber(subtotal)} poin</p>
+                                <div class="text-right">
+                                    <p class="text-xs font-bold text-emerald-600">${formatNumber(subtotal)} poin</p>
+                                    <p class="mt-1 text-sm font-bold text-rose-600">${formatCurrency(subtotalHarga)}</p>
+                                </div>
                             </div>
                         </div>
                     `);
@@ -306,6 +329,7 @@
 
             selectedCount.textContent = `${count} Item`;
             totalPoints.textContent = formatNumber(total);
+            totalTagihan.textContent = formatCurrency(totalHarga);
         }
 
         cards.forEach((card) => {

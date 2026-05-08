@@ -23,4 +23,12 @@ class TitikLayanan extends Model
             'longitude' => 'float',
         ];
     }
+
+    /**
+     * Get the operasional schedules for the titik layanan.
+     */
+    public function jadwalOperasional(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(JadwalOperasional::class);
+    }
 }
