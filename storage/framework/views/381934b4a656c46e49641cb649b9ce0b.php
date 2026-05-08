@@ -214,4 +214,4 @@
     </div>
 </body>
 </html>
-<?php /**PATH /Users/mac/Downloads/SiResik-1/resources/views/dashboard/masyarakat.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\File Kuliah\Semester 6\Proyek Perangkat Lunak\SiResik\resources\views/dashboard/masyarakat.blade.php ENDPATH**/ ?>

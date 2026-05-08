@@ -74,7 +74,6 @@ class PetaLokasiController extends Controller
     {
         if ($usulan->status !== 'diajukan') {
             return redirect()
-                ->route('dashboard.admin', ['page' => 'area'])
                 ->route('dashboard.admin.peta')
                 ->with('error', 'Usulan ini sudah diproses sebelumnya.');
         }

@@ -55,15 +55,24 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'jenis' => 'required|in:tps,bank_sampah,usulan',
+            'jenis' => 'required|in:tps,bank_sampah',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'alamat' => 'required|string',
+            'alamat' => 'nullable|string',
             'jam_operasional' => 'nullable|string',
             'jenis_sampah_diterima' => 'nullable|string',
         ]);
 
-        TitikLayanan::create($validated);
+        TitikLayanan::create([
+            'nama' => $validated['nama'],
+            'jenis' => $validated['jenis'],
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+            // kolom alamat di DB tidak nullable, jadi beri fallback jika admin mengosongkan
+            'alamat' => trim((string) ($validated['alamat'] ?? '')) !== '' ? $validated['alamat'] : '—',
+            'jam_operasional' => trim((string) ($validated['jam_operasional'] ?? '')) !== '' ? $validated['jam_operasional'] : null,
+            'jenis_sampah_diterima' => trim((string) ($validated['jenis_sampah_diterima'] ?? '')) !== '' ? $validated['jenis_sampah_diterima'] : null,
+        ]);
 
         return redirect()->back()->with('success', 'Titik layanan berhasil ditambahkan.');
     }
@@ -72,15 +81,23 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'jenis' => 'required|in:tps,bank_sampah,usulan',
+            'jenis' => 'required|in:tps,bank_sampah',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'alamat' => 'required|string',
+            'alamat' => 'nullable|string',
             'jam_operasional' => 'nullable|string',
             'jenis_sampah_diterima' => 'nullable|string',
         ]);
 
-        $titikLayanan->update($validated);
+        $titikLayanan->update([
+            'nama' => $validated['nama'],
+            'jenis' => $validated['jenis'],
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+            'alamat' => trim((string) ($validated['alamat'] ?? '')) !== '' ? $validated['alamat'] : '—',
+            'jam_operasional' => trim((string) ($validated['jam_operasional'] ?? '')) !== '' ? $validated['jam_operasional'] : null,
+            'jenis_sampah_diterima' => trim((string) ($validated['jenis_sampah_diterima'] ?? '')) !== '' ? $validated['jenis_sampah_diterima'] : null,
+        ]);
 
         return redirect()->back()->with('success', 'Titik layanan berhasil diperbarui.');
     }

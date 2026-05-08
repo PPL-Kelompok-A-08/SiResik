@@ -1065,14 +1065,13 @@
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Jenis</label>
                         <select name="jenis" id="titik-layanan-jenis" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
-                            <option value="TPS">TPS (Tempat Pembuangan Sementara)</option>
-                            <option value="Bank Sampah">Bank Sampah</option>
-                            <option value="Drop Point">Drop Point</option>
+                            <option value="tps">TPS (Tempat Pembuangan Sementara)</option>
+                            <option value="bank_sampah">Bank Sampah</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Alamat</label>
-                        <textarea name="alamat" id="titik-layanan-alamat" rows="2" placeholder="Alamat lengkap..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm resize-none" required></textarea>
+                        <textarea name="alamat" id="titik-layanan-alamat" rows="2" placeholder="Alamat lengkap (opsional)..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm resize-none"></textarea>
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Pilih Lokasi di Peta</label>
@@ -1093,11 +1092,11 @@
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Jam Operasional</label>
-                        <input type="text" name="jam_operasional" id="titik-layanan-jam" placeholder="Contoh: 08:00 - 17:00" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        <input type="text" name="jam_operasional" id="titik-layanan-jam" placeholder="Contoh: 08:00 - 17:00 (opsional)" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Jenis Sampah Diterima</label>
-                        <input type="text" name="jenis_sampah_diterima" id="titik-layanan-sampah" placeholder="Contoh: Plastik, Organik, Kertas" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        <input type="text" name="jenis_sampah_diterima" id="titik-layanan-sampah" placeholder="Contoh: Plastik, Organik, Kertas (opsional)" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm">
                     </div>
                 </div>
                 <div class="mt-6 flex gap-3">
