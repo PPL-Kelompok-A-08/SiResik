@@ -110,10 +110,6 @@
                                 <span>🗓 {{ $item->jadwal }}</span>
                                 <span>📅 {{ $item->tanggal }}</span>
                             </div>
-                            <div class="mt-2 flex flex-wrap gap-4 text-sm font-semibold">
-                                <span class="text-emerald-600">💰 Poin: {{ number_format($item->total_estimasi_poin) }}</span>
-                                <span class="text-rose-600">💳 Tagihan: Rp {{ number_format($item->total_tagihan, 0, ',', '.') }}</span>
-                            </div>
                             @if($item->catatan && $item->catatan !== '-')
                                 <p class="mt-1 text-xs text-slate-400">Catatan: {{ $item->catatan }}</p>
                             @endif

@@ -7,10 +7,25 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-900">
-    <div class="min-h-screen xl:grid xl:grid-cols-[300px,1fr]">
-        @include('components.sidebar')
+    <header class="bg-slate-950 text-white">
+        <div class="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-8 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-amber-300">Dashboard Petugas</p>
+                <h1 class="mt-2 text-4xl font-black">Halo, {{ $user->name }}</h1>
+                <p class="mt-2 text-sm text-slate-300">Pantau antrean permintaan penjemputan dan prioritas operasional lapangan.</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <a href="{{ route('permintaan-penjemputan.index') }}" class="rounded-full bg-amber-300 px-5 py-3 text-sm font-bold text-slate-950">Lihat antrean</a>
+                <a href="{{ route('petugas.riwayat') }}" class="rounded-full border border-amber-300 px-5 py-3 text-sm font-bold text-amber-300 hover:bg-amber-300 hover:text-slate-950 transition">📋 Riwayat Tugas</a>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="rounded-full border border-white/20 px-5 py-3 text-sm font-bold text-white">Logout</button>
+                </form>
+            </div>
+        </div>
+    </header>
 
-        <main class="px-6 py-8 lg:px-10">
+    <main class="mx-auto max-w-7xl px-6 py-10">
         <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <div class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p class="text-sm text-slate-500">Jadwal hari ini</p><p class="mt-3 text-4xl font-black">{{ $stats['jadwal_hari_ini'] }}</p></div>
             <div class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200"><p class="text-sm text-slate-500">Menunggu</p><p class="mt-3 text-4xl font-black text-sky-600">{{ $stats['menunggu'] }}</p></div>

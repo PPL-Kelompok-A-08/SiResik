@@ -223,18 +223,24 @@
                                     </div>
                                 </div>
                                 <div class="text-right">
+<<<<<<< HEAD
                                     <p class="text-xs text-slate-400">Poin • Tagihan</p>
                                     <p class="text-sm font-semibold">
                                         <span class="text-emerald-600">{{ number_format($item->estimasi_poin) }} poin</span>
                                         <span class="text-slate-400">•</span>
                                         <span class="text-rose-600">Rp {{ number_format($item->total_tagihan, 0, ',', '.') }}</span>
                                     </p>
+=======
+                                    <p class="text-xs text-slate-400">Estimasi Poin</p>
+                                    <p class="text-lg font-black text-emerald-600">+{{ number_format($item->estimasi_poin) }}</p>
+>>>>>>> ba54deaa9d9548a81c3d0647a596af854617fd1d
                                 </div>
                             </div>
                         @empty
                             <p class="text-center text-slate-400 py-4">Tidak ada item.</p>
                         @endforelse
                     </div>
+<<<<<<< HEAD
                     <div class="mt-4 grid grid-cols-2 gap-3">
                         <div class="flex justify-between items-center rounded-2xl bg-emerald-900 px-6 py-4 text-white">
                             <span class="font-bold">Total Poin</span>
@@ -244,6 +250,11 @@
                             <span class="font-bold">Total Tagihan</span>
                             <span class="text-xl font-black text-rose-300">Rp {{ number_format($permintaan->total_tagihan, 0, ',', '.') }}</span>
                         </div>
+=======
+                    <div class="mt-4 flex justify-between items-center rounded-2xl bg-emerald-900 px-6 py-4 text-white">
+                        <span class="font-bold">Total Estimasi Poin</span>
+                        <span class="text-2xl font-black text-emerald-300">{{ number_format($permintaan->total_estimasi_poin) }} poin</span>
+>>>>>>> ba54deaa9d9548a81c3d0647a596af854617fd1d
                     </div>
                 </div>
             </section>

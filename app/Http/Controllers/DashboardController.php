@@ -6,6 +6,8 @@ use App\Models\PermintaanPenjemputan;
 use App\Models\User;
 use App\Models\Reward;
 use App\Models\TitikLayanan;
+use App\Models\ZonaLayanan;
+use App\Models\UsulanTitikLayanan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -99,6 +101,11 @@ class DashboardController extends Controller
         $petugas = User::where('role', 'petugas')->orderBy('name')->get();
         $rewards = Reward::orderBy('nama')->get();
         $titikLayanan = TitikLayanan::orderBy('nama')->get();
+        $zonaLayanan = ZonaLayanan::orderBy('nama')->get();
+        $usulanMenunggu = UsulanTitikLayanan::with('pengusul')
+            ->where('status', 'diajukan')
+            ->latest()
+            ->get();
         $pendingRequests = $permintaan->where('status', 'Menunggu')->values();
         $scheduledRequests = $permintaan->where('status', 'Diproses')->take(4)->values();
 
@@ -110,10 +117,7 @@ class DashboardController extends Controller
             'menunggu' => $pendingRequests->count(),
         ];
 
-        // Data untuk manajemen status
-        $permintaanForStatus = $permintaan->take(10);
-
-        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan', 'permintaanForStatus'));
+        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan', 'zonaLayanan', 'usulanMenunggu'));
     }
 
     public function schedule(Request $request, PermintaanPenjemputan $permintaanPenjemputan): RedirectResponse
