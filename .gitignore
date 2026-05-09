@@ -16,6 +16,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 .env.backup
 .env.production
 .phpactor.json
@@ -59,6 +60,9 @@ Thumbs.db
 =======
 /vendor
 >>>>>>> e755b98 (Update PBI 17)
+=======
+/vendor
+>>>>>>> 6676d2c (Update PBI 17)
 .log
 logs/
 storage/logs/laravel.log
@@ -68,10 +72,13 @@ storage/framework/sessions/oFoJQULGj4VoS8vywh0HOpCscK2CbmkE1g96EnMb
 storage/framework/sessions/P7zZ25Qs6LW4cPQN8SU80XYjwtwQH8ab448kJQb3
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 4b189df (Update PBI 17 & PBI 18)
 =======
 =======
 >>>>>>> e755b98 (Update PBI 17)
+=======
+>>>>>>> 6676d2c (Update PBI 17)
 storage/framework/sessions/mv7Fev9npB23puNcHkdZNA3Qq3KSaaVhr3JcwPRc
 storage/framework/views/0d9904d4b15efd31d0ae9379cb224f77.php
 storage/framework/views/03e3d51332b0c38d9d241e97a05b01a3.php
@@ -84,6 +91,9 @@ storage/framework/views/381934b4a656c46e49641cb649b9ce0b.php
 storage/framework/views/d29fc026ba0ca4f74d407624a7015100.php
 storage/logs/laravel.log
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> c20cefb (Update PBI 17)
 =======
 >>>>>>> e755b98 (Update PBI 17)
+=======
+>>>>>>> 6676d2c (Update PBI 17)
