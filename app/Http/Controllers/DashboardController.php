@@ -93,6 +93,7 @@ class DashboardController extends Controller
         $petugas = User::where('role', 'petugas')->orderBy('name')->get();
         $pendingRequests = $permintaan->where('status', 'Menunggu')->values();
         $scheduledRequests = $permintaan->where('status', 'Diproses')->take(4)->values();
+        $permintaanForStatus = $permintaan;
 
         $stats = [
             'total_user' => User::count(),
@@ -102,7 +103,7 @@ class DashboardController extends Controller
             'menunggu' => $pendingRequests->count(),
         ];
 
-        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests'));
+        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan', 'zonaLayanan', 'usulanMenunggu'));
     }
 
     public function schedule(Request $request, PermintaanPenjemputan $permintaanPenjemputan): RedirectResponse
