@@ -3,44 +3,60 @@
 namespace Database\Seeders;
 
 use App\Models\Reward;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class RewardSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        // Nonaktifkan FK check sementara agar truncate bisa berjalan
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Reward::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         $rewards = [
             [
-                'nama' => 'Voucher Belanja',
-                'deskripsi' => 'Voucher belanja senilai Rp 50.000 untuk toko retail terdekat',
-                'poin_diperlukan' => 100,
-                'stok' => 50,
-                'aktif' => true,
+                'nama'           => 'Saldo OVO 10rb',
+                'deskripsi'      => 'Top-up saldo OVO senilai Rp 10.000 langsung ke akun Anda.',
+                'poin_diperlukan'=> 10000,
+                'stok'           => 50,
+                'aktif'          => true,
             ],
             [
-                'nama' => 'Diskon Laundry',
-                'deskripsi' => 'Diskon 20% untuk layanan laundry selama 1 bulan',
-                'poin_diperlukan' => 75,
-                'stok' => 30,
-                'aktif' => true,
+                'nama'           => 'Voucher Listrik',
+                'deskripsi'      => 'Token listrik PLN senilai Rp 25.000 untuk kebutuhan rumah tangga.',
+                'poin_diperlukan'=> 25000,
+                'stok'           => 30,
+                'aktif'          => true,
             ],
             [
-                'nama' => 'Paket Eco-Friendly',
-                'deskripsi' => 'Paket lengkap produk ramah lingkungan (tas kain, botol reusable, dll)',
-                'poin_diperlukan' => 150,
-                'stok' => 20,
-                'aktif' => true,
+                'nama'           => 'Minyak Goreng 1L',
+                'deskripsi'      => 'Minyak goreng kemasan 1 liter, dapat diambil di kantor bank sampah.',
+                'poin_diperlukan'=> 15000,
+                'stok'           => 40,
+                'aktif'          => true,
             ],
             [
-                'nama' => 'Donasi Pohon',
-                'deskripsi' => 'Donasi penanaman 1 pohon di area hijau kota',
-                'poin_diperlukan' => 50,
-                'stok' => 100,
-                'aktif' => true,
+                'nama'           => 'Paket Data 2GB',
+                'deskripsi'      => 'Kuota internet 2GB berlaku 7 hari untuk semua operator.',
+                'poin_diperlukan'=> 5000,
+                'stok'           => 100,
+                'aktif'          => true,
+            ],
+            [
+                'nama'           => 'Voucher Belanja 50rb',
+                'deskripsi'      => 'Voucher belanja senilai Rp 50.000 untuk toko retail terdekat.',
+                'poin_diperlukan'=> 40000,
+                'stok'           => 20,
+                'aktif'          => true,
+            ],
+            [
+                'nama'           => 'Bibit Tanaman',
+                'deskripsi'      => 'Paket 3 bibit tanaman sayuran pilihan untuk berkebun di rumah.',
+                'poin_diperlukan'=> 8000,
+                'stok'           => 60,
+                'aktif'          => true,
             ],
         ];
 
