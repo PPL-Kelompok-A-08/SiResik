@@ -109,6 +109,7 @@ class DashboardController extends Controller
         $pendingRequests = $permintaan->where('status', 'Menunggu')->values();
         $scheduledRequests = $permintaan->where('status', 'Diproses')->take(4)->values();
         $permintaanForStatus = $permintaan->values();
+        $permintaanForStatus = $permintaan;
 
         $stats = [
             'total_user' => User::count(),
