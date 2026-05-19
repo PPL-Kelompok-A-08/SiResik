@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\JadwalOperasionalController;
 use App\Http\Controllers\KategoriSampahController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\PetaLokasiController;
@@ -121,6 +122,9 @@ Route::middleware('auth')->group(function () {
     // Permintaan penjemputan
     Route::get('/permintaan-penjemputan', [PermintaanPenjemputanController::class, 'index'])->name('permintaan-penjemputan.index');
     Route::post('/permintaan-penjemputan', [PermintaanPenjemputanController::class, 'store'])->name('permintaan-penjemputan.store');
+    Route::post('/permintaan-penjemputan/{permintaanPenjemputan}/status', [PermintaanPenjemputanController::class, 'updateStatus'])
+        ->middleware('role:admin')
+        ->name('permintaan-penjemputan.update-status');
     Route::get('/permintaan-penjemputan/{permintaanPenjemputan}/success', [PermintaanPenjemputanController::class, 'success'])->name('permintaan-penjemputan.success');
 
     // Peta lokasi (masyarakat/petugas)
