@@ -4,12 +4,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\ReviewController; // Pastikan ini diimpor!
 use Illuminate\Support\Facades\Route;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +17,7 @@ use App\Http\Controllers\ReviewController;
 |--------------------------------------------------------------------------
 */
 
+// Rute Default - diarahkan ke registrasi (sesuai kode asli Anda)
 Route::get('/', function () {
     return view('auth.register');
 });
@@ -66,9 +67,18 @@ Route::middleware('auth')->group(function () {
     // Wishlist
     Route::get('/wishlists', [WishlistController::class, 'index'])->name('wishlists.index');
     Route::post('/wishlist/toggle/{product}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
-    Route::delete('/wishlist/{wishlist}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');});
+    Route::delete('/wishlist/{wishlist}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+});
 
+// Resource Routes Utama
 Route::resource('products', ProductController::class);
 Route::resource('categories', CategoryController::class);
+
+// >>> PERBAIKAN DITAMBAHKAN DI SINI <<<
+// Resource untuk Reviews (Ulasan), bersarang di bawah Products.
+// Ini akan menghasilkan rute 'reviews.store' yang Anda perlukan.
+Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+// Anda juga bisa menambahkan rute DELETE untuk menghapus ulasan, misalnya:
+// Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
 require __DIR__.'/auth.php';

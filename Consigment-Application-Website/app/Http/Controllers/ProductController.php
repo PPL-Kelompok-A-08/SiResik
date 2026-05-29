@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log; // Pastikan Log di-import jika digunakan
+use Illuminate\Support\Facades\Auth;
+
+$userId = Auth::id();
 
 class ProductController extends Controller
 {
@@ -18,7 +21,7 @@ class ProductController extends Controller
     {
         // === UBAH BAGIAN INI ===
         // Mulai query dengan mengambil produk milik user yang login saja
-        $query = Product::with('category')->where('user_id', auth()->id()); 
+        $query = Product::with('category')->where('user_id', Auth::id()); 
         // ========================
         
         if ($request->filled('search')) {
@@ -70,7 +73,7 @@ class ProductController extends Controller
         $data = $request->all();
 
         // Tambahkan ID user yang sedang login
-        $data['user_id'] = auth()->id();
+        $data['user_id'] = Auth::id();
 
         // Pastikan folder upload ada
         $uploadPath = storage_path('app/public/products');
