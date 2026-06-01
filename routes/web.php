@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/petugas', [AdminController::class, 'storePetugas'])->name('admin.petugas.store');
         Route::put('/petugas/{petugas}', [AdminController::class, 'updatePetugas'])->name('admin.petugas.update');
         Route::delete('/petugas/{petugas}', [AdminController::class, 'destroyPetugas'])->name('admin.petugas.destroy');
+    });
 
     // Poin & Reward (Masyarakat)
     Route::get('/poin', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'index'])
@@ -162,4 +163,3 @@ Route::middleware('auth')->group(function () {
         Route::post('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'uploadBukti'])->name('petugas.bukti.upload');
     });
 });
-
