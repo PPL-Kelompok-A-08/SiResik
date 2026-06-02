@@ -19,14 +19,19 @@ class PermintaanPenjemputan extends Model
         'nomor_telepon',
         'catatan',
         'total_estimasi_poin',
+        'total_tagihan',
         'pengguna_id',
         'petugas_id',
+        'bukti_penyelesaian',
+        'catatan_penyelesaian',
+        'diselesaikan_at',
     ];
 
     protected function casts(): array
     {
         return [
             'scheduled_at' => 'datetime',
+            'diselesaikan_at' => 'datetime',
         ];
     }
 
@@ -43,5 +48,25 @@ class PermintaanPenjemputan extends Model
     public function items(): HasMany
     {
         return $this->hasMany(PermintaanPenjemputanItem::class, 'permintaan_penjemputan_id');
+    }
+
+    /**
+     * Hitung total tagihan dari semua items
+     */
+    public function hitungTotalTagihan(): void
+    {
+        $this->total_tagihan = $this->items()->sum('total_tagihan');
+    }
+
+    /**
+     * Boot model untuk auto-calculate total tagihan sebelum save
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+            $model->hitungTotalTagihan();
+        });
     }
 }

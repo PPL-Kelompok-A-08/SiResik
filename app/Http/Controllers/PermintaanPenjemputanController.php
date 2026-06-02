@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KategoriSampah;
 use App\Models\PermintaanPenjemputan;
 use App\Models\User;
+use App\Notifications\ServiceStatusChanged;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -124,5 +125,66 @@ class PermintaanPenjemputanController extends Controller
             'permintaan' => $permintaanPenjemputan,
             'user' => $user,
         ]);
+    }
+
+    /**
+     * Update status permintaan penjemputan dan kirim notifikasi
+     */
+    public function updateStatus(Request $request, PermintaanPenjemputan $permintaanPenjemputan)
+    {
+        $user = auth()->user();
+
+        // Hanya admin yang bisa update status
+        abort_unless($user->role === 'admin', 403);
+
+        $validated = $request->validate([
+            'status' => ['required', 'string', 'in:Menunggu,Diproses,Selesai'],
+        ]);
+
+        $oldStatus = $permintaanPenjemputan->status;
+        $newStatus = $validated['status'];
+
+        // Jika status sama, kembalikan langsung
+        if ($oldStatus === $newStatus) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Status tidak berubah.',
+                ], 400);
+            }
+            return back()->with('info', 'Status tidak berubah.');
+        }
+
+        DB::transaction(function () use ($permintaanPenjemputan, $newStatus, $oldStatus) {
+            $permintaanPenjemputan->update([
+                'status' => $newStatus,
+            ]);
+
+            // Kirim notifikasi ke pengguna yang membuat permintaan
+            $permintaanPenjemputan->pengguna->notify(
+                new ServiceStatusChanged($permintaanPenjemputan, $oldStatus, $newStatus)
+            );
+
+            // Kirim notifikasi ke admin jika ada
+            $admins = User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                if ($admin->id !== auth()->id()) { // Jangan kirim ke admin yang melakukan update
+                    $admin->notify(
+                        new ServiceStatusChanged($permintaanPenjemputan, $oldStatus, $newStatus)
+                    );
+                }
+            }
+        });
+
+        $message = 'Status permintaan berhasil diperbarui menjadi ' . $newStatus;
+        
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+        }
+        
+        return back()->with('success', $message);
     }
 }

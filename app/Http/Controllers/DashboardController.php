@@ -6,6 +6,8 @@ use App\Models\PermintaanPenjemputan;
 use App\Models\User;
 use App\Models\Reward;
 use App\Models\TitikLayanan;
+use App\Models\ZonaLayanan;
+use App\Models\UsulanTitikLayanan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -72,6 +74,10 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         $permintaan = PermintaanPenjemputan::with('pengguna')
+            ->where(function ($q) use ($user) {
+                $q->where('petugas_id', $user->id)
+                  ->orWhereNull('petugas_id');
+            })
             ->latest()
             ->take(8)
             ->get();
@@ -95,8 +101,15 @@ class DashboardController extends Controller
         $petugas = User::where('role', 'petugas')->orderBy('name')->get();
         $rewards = Reward::orderBy('nama')->get();
         $titikLayanan = TitikLayanan::orderBy('nama')->get();
+        $zonaLayanan = ZonaLayanan::orderBy('nama')->get();
+        $usulanMenunggu = UsulanTitikLayanan::with('pengusul')
+            ->where('status', 'diajukan')
+            ->latest()
+            ->get();
         $pendingRequests = $permintaan->where('status', 'Menunggu')->values();
         $scheduledRequests = $permintaan->where('status', 'Diproses')->take(4)->values();
+        $permintaanForStatus = $permintaan->values();
+        $permintaanForStatus = $permintaan;
 
         $stats = [
             'total_user' => User::count(),
@@ -106,7 +119,7 @@ class DashboardController extends Controller
             'menunggu' => $pendingRequests->count(),
         ];
 
-        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan'));
+        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'permintaanForStatus', 'rewards', 'titikLayanan', 'zonaLayanan', 'usulanMenunggu'));
     }
 
     public function schedule(Request $request, PermintaanPenjemputan $permintaanPenjemputan): RedirectResponse
