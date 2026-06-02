@@ -22,4 +22,5 @@
 /vendor
 Homestead.json
 Homestead.yaml
-Thumbs.dbstorage/logs/*.log
+Thumbs.db
+storage/logs/*.log
