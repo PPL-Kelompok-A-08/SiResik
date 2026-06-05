@@ -27,27 +27,15 @@
                     ['label' => 'Sampah Liar', 'active' => false, 'disabled' => true],
                     ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
                     ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
-<<<<<<< HEAD
-<<<<<<< HEAD
                     ['label' => 'Edukasi Lingkungan', 'active' => false, 'disabled' => true],
                     ['label' => 'Kegiatan Lingkungan', 'active' => false, 'disabled' => true],
                     ['label' => 'Notifikasi', 'active' => false, 'disabled' => true],
-=======
-                    ['label' => 'Edukasi Lingkungan', 'active' => false],
-                    ['label' => 'Kegiatan Lingkungan', 'active' => false],
-                    ['label' => 'Notifikasi', 'active' => false],
->>>>>>> 445a879 (Sprint 2 - PBI 18 Pengajuan Usulan Titik Layanan Baru)
-=======
-                    ['label' => 'Edukasi Lingkungan', 'active' => false, 'disabled' => true],
-                    ['label' => 'Kegiatan Lingkungan', 'active' => false, 'disabled' => true],
-                    ['label' => 'Notifikasi', 'active' => false, 'disabled' => true],
->>>>>>> 0c596cb (Squashed commit of the following:)
                 ];
             @endphp
 
             <nav class="mt-14 space-y-2">
                 @foreach ($menuItems as $item)
-                    @if (!empty($item['href']))
+                    @if (!empty($item['href']) && empty($item['disabled']))
                         <a href="{{ $item['href'] }}"
                             class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition {{ $item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }}">
                             <span class="text-xl">{{ $item['active'] ? '◉' : '◦' }}</span>
@@ -141,7 +129,7 @@
                                     };
                                     $kategoriText = $item->items->pluck('kategoriSampah.nama')->filter()->take(2)->implode(', ');
                                     $beratText = $item->items->sum('berat_kg');
-                                @endphp
+                                \endphp
 
                                 <article class="rounded-[2rem] bg-white px-6 py-6 shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
                                     <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">

@@ -3,162 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiResik - Solusi Sampah Kampus</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>SIRESIK - Bojongsoang Bersih Lingkungan</title>
+    <!-- Hubungkan dengan file css Anda -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Menggunakan Tailwind untuk kemudahan desain -->
 </head>
+<body class="bg-gray-50 text-gray-800 font-sans">
 
-<body class="bg-gray-50 font-sans antialiased">
+    <!-- HERO SECTION -->
+    <header class="bg-emerald-600 text-white text-center py-20 px-4">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4">SIRESIK Bojongsoang</h1>
+        <p class="text-xl md:text-2xl max-w-2xl mx-auto mb-8">
+            Sistem Informasi Real-time Edukasi & Solusi Sampah Liar berbasis digital untuk mewujudkan kawasan Bojongsoang yang bersih, sehat, dan asri.
+        </p>
+        <div class="space-x-4">
+            <a href="#tentang" class="bg-white text-emerald-700 px-6 py-3 rounded-lg font-semibold shadow hover:bg-gray-100 transition">Pelajari Layanan</a>
+            <a href="#laporkan" class="bg-emerald-800 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-emerald-900 transition">Laporkan Sampah</a>
+        </div>
+    </header>
 
-<!-- NAVBAR -->
-<nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-emerald-100">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
-
-        <!-- LOGO -->
-        <div class="flex items-center gap-2">
-            <div class="bg-emerald-600 p-2 rounded-lg">
-                <i class="fas fa-recycle text-white"></i>
-            </div>
-            <span class="text-xl font-bold text-emerald-950">SiResik</span>
+    <!-- TENTANG APLIKASI -->
+    <section id="tentang" class="max-w-6xl mx-auto py-16 px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-emerald-700">Mengenal SIRESIK</h2>
+            <div class="w-24 h-1 bg-emerald-500 mx-auto mt-2"></div>
+            <p class="text-gray-600 mt-4 max-w-3xl mx-auto">
+                SIRESIK merupakan platform digital yang dirancang khusus untuk mendeteksi, melaporkan, dan mengelola titik penumpukan sampah liar di wilayah Bojongsoang secara cepat, transparan, dan terintegrasi dengan petugas bank sampah setempat.
+            </p>
         </div>
 
-        <!-- MENU -->
-        <div class="hidden md:flex gap-8 text-sm font-semibold text-emerald-900 items-center">
+        <!-- FITUR UTAMA -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                <div class="text-emerald-600 font-bold text-xl mb-2">📍 Peta Titik Layanan</div>
+                <p class="text-gray-600 text-sm">Visualisasi lokasi penjemputan, bank sampah aktif, dan area rawan pembuangan sampah liar di Bojongsoang secara akurat.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                <div class="text-emerald-600 font-bold text-xl mb-2">📸 Pelaporan Sampah Liar</div>
+                <p class="text-gray-600 text-sm">Laporkan penumpukan sampah ilegal secara instan dengan melampirkan foto beserta koordinat lokasi terkini Anda.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                <div class="text-emerald-600 font-bold text-xl mb-2">🎁 Tukar Poin & Reward</div>
+                <p class="text-gray-600 text-sm">Setiap sampah yang berhasil disetorkan atau diverifikasi akan menghasilkan poin yang dapat ditukar dengan merchandise menarik.</p>
+            </div>
+        </div>
+    </section>
 
-            <a href="#" class="hover:text-emerald-600">Tentang</a>
+    <!-- KATEGORI SAMPAH -->
+    <section class="bg-emerald-50 py-16 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-emerald-700">Panduan Kategori Sampah</h2>
+                <p class="text-gray-600 mt-2">Kenali jenis sampahmu sebelum menyetorkannya ke fasilitas pengelolaan terdekat.</p>
+            </div>
 
-            <!-- DROPDOWN FITUR -->
-            <div class="relative">
-                <button onclick="toggleDropdown()" class="hover:text-emerald-600 flex items-center gap-1">
-                    Fitur
-                    <i class="fas fa-chevron-down text-xs"></i>
-                </button>
-
-                <div id="dropdownMenu" class="hidden absolute mt-3 w-52 bg-white rounded-xl shadow-lg border border-emerald-100 overflow-hidden">
-
-                    <a href="/kategori" class="block px-4 py-3 text-sm hover:bg-emerald-50">
-                        ♻️ Kategori Sampah
-                    </a>
-
-                    <a href="/permintaan-penjemputan" class="block px-4 py-3 text-sm hover:bg-emerald-50">
-                        Penjemputan Sampah
-                    </a>
-
-                    <a href="/maps" class="block px-4 py-3 text-sm hover:bg-emerald-50">
-                        📍 Maps Lokasi
-                    </a>
-
-                    <a href="/reward" class="block px-4 py-3 text-sm hover:bg-emerald-50">
-                        🎁 Reward
-                    </a>
-
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Organik -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border-t-4 border-amber-500">
+                    <span class="text-2xl">🍂</span>
+                    <h3 class="font-bold text-lg text-gray-800 my-2">Sampah Organik</h3>
+                    <p class="text-gray-600 text-xs leading-relaxed">Sisa makanan, dedaunan, dan bahan mudah membusuk. Diolah menjadi kompos berkualitas oleh tim lingkungan Bojongsoang.</p>
+                </div>
+                <!-- Anorganik Plastik -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border-t-4 border-blue-500">
+                    <span class="text-2xl">🥤</span>
+                    <h3 class="font-bold text-lg text-gray-800 my-2">Anorganik (Plastik)</h3>
+                    <p class="text-gray-600 text-xs leading-relaxed">Botol mineral, kantong kresek, kemasan plastik, gelas plastik. Memiliki nilai konversi poin tinggi untuk didaur ulang.</p>
+                </div>
+                <!-- Kertas & Karton -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border-t-4 border-yellow-600">
+                    <span class="text-2xl">📦</span>
+                    <h3 class="font-bold text-lg text-gray-800 my-2">Kertas / Karton</h3>
+                    <p class="text-gray-600 text-xs leading-relaxed">Kardus bekas, koran, majalah, kertas dokumen. Pastikan dalam kondisi kering sebelum diserahkan ke kurir penjemput.</p>
+                </div>
+                <!-- Residu / B3 -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border-t-4 border-red-500">
+                    <span class="text-2xl">🔋</span>
+                    <h3 class="font-bold text-lg text-gray-800 my-2">B3 & Residu</h3>
+                    <p class="text-gray-600 text-xs leading-relaxed">Baterai, lampu bekas, masker medis, popok sekali pakai. Memerlukan penanganan khusus demi keamanan ekosistem darat dan air.</p>
                 </div>
             </div>
-
-            <a href="#" class="hover:text-emerald-600">Konten Edukasi</a>
         </div>
+    </section>
 
-        <!-- BUTTON -->
-        @auth
-            <a href="{{ route('dashboard') }}" class="bg-emerald-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-emerald-700 inline-flex items-center">
-                Dashboard
-            </a>
-        @else
-            <a href="{{ route('login') }}" class="bg-emerald-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-emerald-700 inline-flex items-center">
-                Login
-            </a>
-        @endauth
-
-    </div>
-</nav>
-
-<!-- HERO -->
-<section class="pt-32 pb-20 px-6">
-    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-
-        <div>
-            <span class="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase">
-                Inovasi Lingkungan
-            </span>
-
-            <h1 class="text-5xl lg:text-7xl font-extrabold text-emerald-950 mt-6 leading-tight">
-                Wujudkan <span class="text-emerald-600">Kampus Hijau</span> Tanpa Sampah.
-            </h1>
-
-            <p class="text-emerald-800/70 mt-6 text-lg">
-                Kelola sampah Anda, dapatkan poin, dan tukarkan dengan hadiah menarik.
-            </p>
-
-            <div class="mt-8 flex gap-4">
-                <a href="{{ auth()->check() ? route('permintaan-penjemputan.index') : route('login') }}" class="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-emerald-700 shadow-xl inline-flex items-center justify-center">
-                    Ajukan Penjemputan
-                </a>
-
-                <button class="border-2 border-emerald-100 bg-white text-emerald-900 px-8 py-4 rounded-2xl font-bold hover:bg-emerald-50">
-                    Lapor Sampah
-                </button>
-            </div>
-        </div>
-
-        <div class="relative">
-            <img src="https://picsum.photos/seed/nature/800/600" class="rounded-[2.5rem] shadow-2xl">
-
-            <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-3xl shadow-xl">
-                <p class="text-3xl font-bold text-emerald-600">98%</p>
-                <p class="text-xs text-gray-400">Kepuasan User</p>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<!-- STATISTICS -->
-<section class="py-16 bg-white border-y border-emerald-50">
-    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-
-        <div>
-            <p class="text-4xl font-bold text-emerald-950">{{ $stats['total_user'] ?? 0 }}+</p>
-            <p class="text-sm text-gray-400">Total Mahasiswa</p>
-        </div>
-
-        <div>
-            <p class="text-4xl font-bold text-emerald-950">{{ $stats['total_sampah'] ?? 0 }}</p>
-            <p class="text-sm text-gray-400">Daur Ulang</p>
-        </div>
-
-        <div>
-            <p class="text-4xl font-bold text-emerald-950">{{ $stats['poin_terbagi'] ?? 0 }}</p>
-            <p class="text-sm text-gray-400">Poin</p>
-        </div>
-
-        <div>
-            <p class="text-4xl font-bold text-emerald-950">{{ $stats['petugas_aktif'] ?? 0 }}</p>
-            <p class="text-sm text-gray-400">Petugas</p>
-        </div>
-
-    </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="py-10 text-center text-gray-400">
-    © 2024 SiResik
-</footer>
-
-<!-- SCRIPT -->
-<script>
-function toggleDropdown() {
-    document.getElementById('dropdownMenu').classList.toggle('hidden');
-}
-
-// klik luar untuk close
-window.addEventListener('click', function(e) {
-    const dropdown = document.getElementById('dropdownMenu');
-    if (!e.target.closest('.relative')) {
-        dropdown.classList.add('hidden');
-    }
-});
-</script>
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-400 py-8 text-center text-sm border-t border-gray-800">
+        <p>&copy; 2026 SIRESIK Kabupaten Bandung. Dikembangkan secara lokal untuk kenyamanan warga Kecamatan Bojongsoang.</p>
+    </footer>
 
 </body>
 </html>
