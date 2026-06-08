@@ -9,6 +9,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PetaLokasiController;
 use App\Http\Controllers\PermintaanPenjemputanController;
 use App\Http\Controllers\RiwayatLayananController;
+use App\Http\Controllers\StatusLayananController;
 use App\Http\Controllers\PetugasController;
 use Illuminate\Support\Facades\Route;
 
@@ -94,6 +95,10 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard.admin.usulan.reject');
 
     Route::get('/api/titik-layanan', [PetaLokasiController::class, 'titikLayananJson'])->name('api.titik-layanan');
+
+    Route::middleware('role:masyarakat')->group(function () {
+        Route::get('/status-layanan', [StatusLayananController::class, 'index'])->name('status-layanan.index');
+    });
 
         Route::middleware('role:masyarakat')->prefix('riwayat-layanan')->group(function () {
         Route::get('/', [RiwayatLayananController::class, 'index'])->name('riwayat-layanan.index');

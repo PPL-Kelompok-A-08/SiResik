@@ -14,9 +14,9 @@
 <body class="min-h-screen bg-[#f1f5f1] text-slate-900">
 <div class="min-h-screen xl:grid xl:grid-cols-[260px,1fr]">
 
-    {{-- ═══════════════════════ SIDEBAR ═══════════════════════ --}}
+    
     <aside class="bg-[#0c5b49] flex flex-col px-5 py-7 text-white">
-        {{-- Logo --}}
+        
         <div class="flex items-center gap-3 px-2">
             <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-xl">♻</div>
             <div>
@@ -25,8 +25,8 @@
             </div>
         </div>
 
-        {{-- Nav Menu --}}
-        @php
+        
+        <?php
             $nav = [
                 ['label' => 'Dashboard',           'icon' => '⊞', 'href' => route('dashboard.masyarakat'),           'active' => false],
                 ['label' => 'Penjemputan',          'icon' => '⊕', 'href' => route('permintaan-penjemputan.index'),   'active' => false],
@@ -40,24 +40,24 @@
                 ['label' => 'Kegiatan Lingkungan',  'icon' => '◨', 'href' => route('dashboard.masyarakat'),           'active' => false],
                 ['label' => 'Notifikasi',           'icon' => '◇', 'href' => route('notifications.index'),            'active' => false],
             ];
-        @endphp
+        ?>
 
         <nav class="mt-10 flex-1 space-y-0.5">
-            @foreach ($nav as $item)
-                <a href="{{ $item['href'] }}"
+            <?php $__currentLoopData = $nav; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <a href="<?php echo e($item['href']); ?>"
                    class="flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium transition-all
-                          {{ $item['active']
+                          <?php echo e($item['active']
                               ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-900/30'
-                              : 'text-emerald-50/80 hover:bg-white/8 hover:text-white' }}">
-                    <span class="w-5 text-center text-base opacity-80">{{ $item['icon'] }}</span>
-                    <span>{{ $item['label'] }}</span>
+                              : 'text-emerald-50/80 hover:bg-white/8 hover:text-white'); ?>">
+                    <span class="w-5 text-center text-base opacity-80"><?php echo e($item['icon']); ?></span>
+                    <span><?php echo e($item['label']); ?></span>
                 </a>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </nav>
 
-        {{-- Logout --}}
-        <form action="{{ route('logout') }}" method="POST" class="mt-4">
-            @csrf
+        
+        <form action="<?php echo e(route('logout')); ?>" method="POST" class="mt-4">
+            <?php echo csrf_field(); ?>
             <button type="submit"
                     class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium text-emerald-50/80 transition hover:bg-white/8 hover:text-white">
                 <span class="w-5 text-center">↪</span>
@@ -65,24 +65,25 @@
             </button>
         </form>
 
-        {{-- User Card --}}
+        
         <div class="mt-5 rounded-2xl bg-white/8 px-4 py-4">
             <div class="flex items-center gap-3">
                 <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-base font-black">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                    <?php echo e(strtoupper(substr($user->name, 0, 1))); ?>
+
                 </div>
                 <div class="min-w-0">
-                    <p class="truncate text-[15px] font-bold">{{ $user->name }}</p>
+                    <p class="truncate text-[15px] font-bold"><?php echo e($user->name); ?></p>
                     <p class="text-[10px] uppercase tracking-[0.15em] text-emerald-200">Warga Terverifikasi</p>
                 </div>
             </div>
         </div>
     </aside>
 
-    {{-- ═══════════════════════ MAIN ═══════════════════════ --}}
+    
     <main class="flex flex-col gap-6 px-8 py-6 lg:px-10">
 
-        {{-- Top Bar --}}
+        
         <header class="flex items-center justify-between">
             <h1 class="text-2xl font-black tracking-tight text-slate-800">Riwayat Penjemputan</h1>
             <button type="button"
@@ -91,17 +92,17 @@
             </button>
         </header>
 
-        {{-- Card Utama --}}
+        
         <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
 
-            {{-- Card Header --}}
+            
             <div class="flex flex-col gap-4 px-6 pt-5 pb-0 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h2 class="text-lg font-black text-slate-800">Riwayat Layanan</h2>
                     <p class="mt-0.5 text-sm text-slate-500">Daftar lengkap transaksi dan partisipasi kebersihan Anda.</p>
                 </div>
 
-                {{-- Filter Tabs --}}
+                
                 <div class="flex shrink-0 items-center gap-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 text-xs font-bold">
                     <button id="tab-semua"
                             onclick="setTab('semua')"
@@ -121,7 +122,7 @@
                 </div>
             </div>
 
-            {{-- Table --}}
+            
             <div class="mt-4 overflow-x-auto px-1">
                 <table class="w-full text-sm">
                     <thead>
@@ -136,8 +137,8 @@
                         </tr>
                     </thead>
                     <tbody id="table-body" class="divide-y divide-slate-50">
-                        @forelse ($riwayat as $item)
-                            @php
+                        <?php $__empty_1 = true; $__currentLoopData = $riwayat; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <?php
                                 // Semua permintaan dari sistem ini adalah tipe Penjemputan
                                 $jenis     = 'penjemputan';
                                 $jenisIcon = '🚛';
@@ -159,53 +160,56 @@
                                 $poinFormatted = $item->total_estimasi_poin >= 1000
                                     ? '+' . number_format($item->total_estimasi_poin / 1000, 1) . 'k Pts'
                                     : '+' . number_format($item->total_estimasi_poin) . ' Pts';
-                            @endphp
-                            <tr class="table-row group transition hover:bg-slate-50/60" data-jenis="{{ $jenis }}">
+                            ?>
+                            <tr class="table-row group transition hover:bg-slate-50/60" data-jenis="<?php echo e($jenis); ?>">
                                 <td class="px-5 py-4">
-                                    <span class="font-bold text-slate-700">{{ $trkId }}</span>
+                                    <span class="font-bold text-slate-700"><?php echo e($trkId); ?></span>
                                 </td>
                                 <td class="px-4 py-4">
                                     <div class="flex items-center gap-1.5 text-slate-600">
-                                        <span class="text-base">{{ $jenisIcon }}</span>
-                                        <span class="font-medium">{{ $jenisLabel }}</span>
+                                        <span class="text-base"><?php echo e($jenisIcon); ?></span>
+                                        <span class="font-medium"><?php echo e($jenisLabel); ?></span>
                                     </div>
                                 </td>
                                 <td class="px-4 py-4 text-slate-500">
-                                    {{ \Illuminate\Support\Carbon::parse($item->tanggal)->translatedFormat('d M Y') }}
+                                    <?php echo e(\Illuminate\Support\Carbon::parse($item->tanggal)->translatedFormat('d M Y')); ?>
+
                                 </td>
                                 <td class="px-4 py-4">
-                                    <span class="font-semibold text-slate-700">{{ Str::limit($item->alamat, 20) }}</span>
+                                    <span class="font-semibold text-slate-700"><?php echo e(Str::limit($item->alamat, 20)); ?></span>
                                 </td>
                                 <td class="px-4 py-4 text-slate-500">
-                                    {{ $detailItems ?: '-' }}
-                                    @if($item->items->count() > 2)
-                                        <span class="text-slate-400">&amp; {{ $item->items->count() - 2 }} lainnya</span>
-                                    @endif
+                                    <?php echo e($detailItems ?: '-'); ?>
+
+                                    <?php if($item->items->count() > 2): ?>
+                                        <span class="text-slate-400">&amp; <?php echo e($item->items->count() - 2); ?> lainnya</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="px-4 py-4 text-right">
-                                    <span class="font-black text-emerald-600">{{ $poinFormatted }}</span>
+                                    <span class="font-black text-emerald-600"><?php echo e($poinFormatted); ?></span>
                                 </td>
                                 <td class="px-5 py-4">
-                                    <span class="inline-flex rounded-md px-2.5 py-1 text-[11px] font-black {{ $statusMeta['class'] }}">
-                                        {{ $statusMeta['label'] }}
+                                    <span class="inline-flex rounded-md px-2.5 py-1 text-[11px] font-black <?php echo e($statusMeta['class']); ?>">
+                                        <?php echo e($statusMeta['label']); ?>
+
                                     </span>
                                 </td>
                             </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr id="empty-row">
                                 <td colspan="7" class="py-16 text-center">
                                     <p class="text-4xl">📭</p>
                                     <p class="mt-3 font-bold text-slate-500">Belum ada riwayat layanan.</p>
                                     <p class="mt-1 text-sm text-slate-400">Riwayat penjemputan Anda akan muncul di sini.</p>
-                                    <a href="{{ route('permintaan-penjemputan.index') }}"
+                                    <a href="<?php echo e(route('permintaan-penjemputan.index')); ?>"
                                        class="mt-5 inline-block rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-600 transition">
                                         + Ajukan Penjemputan
                                     </a>
                                 </td>
                             </tr>
-                        @endforelse
+                        <?php endif; ?>
 
-                        {{-- Empty state per tab (disembunyikan oleh JS) --}}
+                        
                         <tr id="no-filter-result" class="hidden">
                             <td colspan="7" class="py-12 text-center text-slate-400 text-sm">
                                 Tidak ada data untuk filter ini.
@@ -215,25 +219,26 @@
                 </table>
             </div>
 
-            {{-- Pagination --}}
-            @if($riwayat->hasPages())
+            
+            <?php if($riwayat->hasPages()): ?>
                 <div class="border-t border-slate-100 px-6 py-4">
-                    {{ $riwayat->links() }}
+                    <?php echo e($riwayat->links()); ?>
+
                 </div>
-            @else
+            <?php else: ?>
                 <div class="pb-2"></div>
-            @endif
+            <?php endif; ?>
         </section>
 
-        {{-- ═══════ Banner Statistik Kontribusi ═══════ --}}
-        @php
+        
+        <?php
             $totalBeratFmt = number_format($stats['total_berat'], 0, '.', '.');
             $poinFmt       = $stats['total_poin'] >= 1000
                 ? number_format($stats['total_poin'] / 1000, 0) . 'k'
                 : number_format($stats['total_poin']);
-        @endphp
+        ?>
         <section class="relative overflow-hidden rounded-2xl bg-[#0d1f1a] px-8 py-6 text-white shadow-xl">
-            {{-- decorative blurred circle --}}
+            
             <div class="pointer-events-none absolute -right-10 -top-10 h-52 w-52 rounded-full bg-emerald-600/20 blur-3xl"></div>
             <div class="pointer-events-none absolute right-40 bottom-0 h-32 w-32 rounded-full bg-teal-500/10 blur-2xl"></div>
 
@@ -241,18 +246,19 @@
                 <div>
                     <p class="text-[11px] font-black uppercase tracking-[0.25em] text-emerald-400">Statistik Kontribusi</p>
                     <p class="mt-2 text-3xl font-black leading-tight">
-                        Total <span class="text-white">{{ $totalBeratFmt }} kg</span>
+                        Total <span class="text-white"><?php echo e($totalBeratFmt); ?> kg</span>
                         <span class="text-emerald-400">Sampah Terolah</span>
                     </p>
                 </div>
 
                 <div class="flex items-center gap-10 lg:gap-14">
                     <div class="relative">
-                        {{-- decorative large number watermark --}}
-                        <p class="pointer-events-none absolute -top-4 -right-4 text-7xl font-black text-white/5 select-none">{{ $stats['selesai'] }}</p>
+                        
+                        <p class="pointer-events-none absolute -top-4 -right-4 text-7xl font-black text-white/5 select-none"><?php echo e($stats['selesai']); ?></p>
                         <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Penjemputan</p>
                         <p class="mt-1 text-3xl font-black">
-                            {{ number_format($stats['selesai']) }}
+                            <?php echo e(number_format($stats['selesai'])); ?>
+
                             <span class="text-base font-semibold text-slate-400">Kali</span>
                         </p>
                     </div>
@@ -262,7 +268,8 @@
                     <div>
                         <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Poin Terkumpul</p>
                         <p class="mt-1 text-3xl font-black text-emerald-400">
-                            {{ $poinFmt }}
+                            <?php echo e($poinFmt); ?>
+
                             <span class="text-base font-semibold text-slate-400">Pts</span>
                         </p>
                     </div>
@@ -273,7 +280,7 @@
     </main>
 </div>
 
-{{-- ══════════════ Script Tab Filter ══════════════ --}}
+
 <script>
     const TAB_ACTIVE   = 'bg-[#0c5b49] text-white';
     const TAB_INACTIVE = 'text-slate-500 hover:text-slate-800 bg-slate-50';
@@ -311,3 +318,4 @@
 </script>
 </body>
 </html>
+<?php /**PATH C:\Users\Raffi\Documents\GitHub\SiResik\resources\views/riwayat-layanan/index.blade.php ENDPATH**/ ?>
