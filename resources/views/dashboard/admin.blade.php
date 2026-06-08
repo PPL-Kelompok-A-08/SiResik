@@ -57,47 +57,47 @@
 
             <!-- Nav -->
             <nav class="mt-10 space-y-2">
-                <a onclick="showPage('dashboard')"
+                <a data-page="dashboard" onclick="showPage('dashboard')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Admin Dashboard</span>
                 </a>
-                <a onclick="showPage('jadwal')"
+                <a data-page="jadwal" onclick="showPage('jadwal')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition bg-emerald-600 text-white shadow-lg shadow-emerald-900/20 cursor-pointer">
                     <span class="text-xl">▣</span>
                     <span>Kelola Jadwal</span>
                 </a>
-                <a onclick="showPage('verifikasi')"
+                <a data-page="verifikasi" onclick="showPage('verifikasi')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Verifikasi Laporan</span>
                 </a>
-                <a onclick="showPage('kategori')"
+                <a data-page="kategori" onclick="showPage('kategori')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Kategori & Reward</span>
                 </a>
-                <a onclick="showPage('reward')"
+                <a data-page="reward" onclick="showPage('reward')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Kelola Reward</span>
                 </a>
-                <a onclick="showPage('area')"
+                <a data-page="area" onclick="showPage('area')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Area Layanan</span>
                 </a>
-                <a onclick="showPage('petugas')"
+                <a data-page="petugas" onclick="showPage('petugas')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Pantau Petugas</span>
                 </a>
-                <a onclick="showPage('riwayat')"
+                <a data-page="riwayat" onclick="showPage('riwayat')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Riwayat Layanan</span>
                 </a>
-                <a onclick="showPage('laporan')"
+                <a data-page="laporan" onclick="showPage('laporan')"
                     class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
                     <span class="text-xl">◦</span>
                     <span>Laporan Periodik</span>
@@ -194,12 +194,26 @@
                             <input type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-600 mb-2">Category</label>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nama</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach(\App\Models\KategoriSampah::all() as $kategori)
+                                    <tr>
+                                        <td>{{ $kategori->nama }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <!-- <label class="block text-sm font-semibold text-slate-600 mb-2">Category</label>
                             <select class="w-full border border-slate-300 rounded-lg px-3 py-2">
                                 <option>All Categories</option>
                                 <option>Plastic</option>
                                 <option>Organic</option>
-                            </select>
+                            </select> -->
                         </div>
                     </div>
                 </div>
@@ -469,11 +483,19 @@
                 <div class="section-card">
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <h2 class="text-xl font-black text-slate-800">Daftar Laporan</h2>
-                        <span class="text-sm text-slate-500">Total: {{ $permintaan->count() }} laporan</span>
+                        <span class="text-sm text-slate-500">Total: {{ $permintaan->count() + $laporanSampahLiar->count() }} laporan</span>
                     </div>
                     <div class="grid gap-4 p-6 md:grid-cols-2">
-                        @forelse($permintaan as $laporan)
-                        <div class="rounded-2xl border border-slate-200 p-5">
+                        @if($permintaan->isEmpty() && $laporanSampahLiar->isEmpty())
+                        <div class="col-span-full text-center py-8 text-slate-500">
+                            Tidak ada laporan untuk diverifikasi.
+                        </div>
+                        @else
+                        @foreach($permintaan as $laporan)
+                        @php
+                            $statusFilter = $laporan->status === 'Selesai' ? 'disetujui' : 'menunggu';
+                        @endphp
+                        <div class="rounded-2xl border border-slate-200 p-5 verifikasi-card" data-status="{{ $statusFilter }}" data-type="permintaan">
                             <div class="flex items-start justify-between mb-4">
                                 <div>
                                     <p class="text-lg font-black text-slate-800">Laporan #{{ $laporan->id }}</p>
@@ -482,7 +504,8 @@
                                 <span class="status-badge {{ $laporan->status === 'Menunggu' ? 'status-menunggu' : ($laporan->status === 'Selesai' ? 'status-selesai' : 'status-dibatalkan') }}">{{ $laporan->status }}</span>
                             </div>
                             <p class="text-sm text-slate-600 mb-4">{{ $laporan->alamat ?? 'Tidak ada deskripsi' }}</p>
-                            <div class="flex gap-2">
+                            <div class="flex flex-wrap gap-2">
+                                <a href="{{ route('admin.permintaan.show', $laporan) }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Detail</a>
                                 @if($laporan->status === 'Menunggu')
                                 <form method="POST" action="{{ route('admin.verifikasi-laporan', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('disetujui'); return true;">
                                     @csrf
@@ -499,11 +522,41 @@
                                 @endif
                             </div>
                         </div>
-                        @empty
-                        <div class="col-span-full text-center py-8 text-slate-500">
-                            Tidak ada laporan untuk diverifikasi.
+                        @endforeach
+                        @foreach($laporanSampahLiar as $laporan)
+                        @php $statusFilter = $laporan->status === 'diverifikasi' ? 'disetujui' : 'menunggu'; @endphp
+                        <div class="rounded-2xl border border-slate-200 p-5 verifikasi-card" data-status="{{ $statusFilter }}" data-type="sampah_liar">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <p class="text-lg font-black text-slate-800">Laporan SL#{{ $laporan->id }}</p>
+                                    <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Sampah Liar</p>
+                                    <p class="text-sm text-slate-500">Oleh: {{ $laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                                </div>
+                                <span class="status-badge {{ $laporan->status === 'pending' ? 'status-menunggu' : ($laporan->status === 'diverifikasi' ? 'status-selesai' : 'status-dibatalkan') }}">
+                                    {{ $laporan->status === 'pending' ? 'Menunggu' : ($laporan->status === 'diverifikasi' ? 'Disetujui' : 'Ditolak') }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-4">{{ $laporan->lokasi ?? 'Tidak ada deskripsi' }}</p>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="{{ route('admin.sampah-liar.show', $laporan) }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Detail</a>
+                                @if($laporan->status === 'pending')
+                                <form method="POST" action="{{ route('admin.verifikasi-laporan-sampah-liar', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('disetujui'); return true;">
+                                    @csrf
+                                    <input type="hidden" name="status" value="disetujui">
+                                    <button type="submit" class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Setujui</button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.verifikasi-laporan-sampah-liar', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('ditolak'); return true;">
+                                    @csrf
+                                    <input type="hidden" name="status" value="ditolak">
+                                    <button type="submit" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Tolak</button>
+                                </form>
+                                @else
+                                <div class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: {{ $laporan->status === 'diverifikasi' ? 'Disetujui' : 'Ditolak' }}</div>
+                                @endif
+                            </div>
                         </div>
-                        @endforelse
+                        @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -527,6 +580,7 @@
                             <tr>
                                 <th>Nama</th>
                                 <th>Poin/kg</th>
+                                <th>Harga/kg</th>
                                 <th>Deskripsi</th>
                                 <th>Aksi</th>
                             </tr>
@@ -536,9 +590,10 @@
                             <tr>
                                 <td>{{ $kategori->nama }}</td>
                                 <td>{{ $kategori->poin_per_kg }}</td>
+                                <td>Rp {{ number_format($kategori->harga_per_kg, 0, ',', '.') }}</td>
                                 <td>{{ $kategori->deskripsi }}</td>
                                 <td>
-                                    <button onclick="editKategori({{ $kategori->id }}, '{{ $kategori->nama }}', '{{ $kategori->deskripsi }}', {{ $kategori->poin_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
+                                    <button onclick="editKategori({{ $kategori->id }}, '{{ $kategori->nama }}', '{{ $kategori->deskripsi }}', {{ $kategori->poin_per_kg }}, {{ $kategori->harga_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
                                     <form method="POST" action="{{ route('admin.kategori.destroy', $kategori) }}" style="display: inline;" onsubmit="return confirm('Yakin hapus kategori ini?')">
                                         @csrf
                                         @method('DELETE')
@@ -673,47 +728,75 @@
                         <h1 class="text-4xl font-black text-slate-900">Area Layanan</h1>
                         <p class="mt-1 text-slate-500">Manage service areas and zones.</p>
                     </div>
-                    <button class="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white">+ Tambah Area</button>
+                    <button type="button"
+                        onclick="var m=document.getElementById('modalTambahArea'); if(m){m.classList.add('open');} setTimeout(function(){ if(window.__initZonaRadiusMap) window.__initZonaRadiusMap(); },120);"
+                        class="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white">
+                        + Tambah Area
+                    </button>
                 </div>
 
-                <!-- Map Placeholder -->
-                <div class="section-card mb-6 p-6">
-                    <h2 class="text-xl font-black text-slate-800 mb-4">Peta Area Layanan</h2>
-                    <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between mb-6">
+                @include('peta._leaflet-area-admin-map', ['titikLayanan' => $titikLayanan, 'zonaLayanan' => $zonaLayanan, 'usulanMenunggu' => $usulanMenunggu])
+
+                <div class="section-card mt-6">
+                    <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <div>
-                            <h3 class="text-4xl font-black tracking-tight text-slate-800">Pemetaan komprehensif</h3>
-                            <p class="mt-2 text-xl text-slate-500">Koordinat dari basis data; pembaruan dilakukan lewat pengelolaan data titik layanan.</p>
+                            <h2 class="text-xl font-black text-slate-800">Usulan Titik Layanan Menunggu Verifikasi</h2>
+                            <p class="mt-1 text-sm text-slate-500">Usulan dari masyarakat akan tampil sebagai marker oranye di peta.</p>
                         </div>
-                        <div class="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">
-                            <label class="relative flex-1 min-w-[220px]">
-                                <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400">⌕</span>
-                                <input type="search" id="cari-lokasi" autocomplete="off" placeholder="Cari nama atau alamat..."
-                                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-lg text-slate-800 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200">
-                            </label>
-                            <button type="button" id="peta-lokasi-saya"
-                                class="whitespace-nowrap rounded-2xl border border-emerald-600 bg-emerald-50 px-5 py-3 text-lg font-semibold text-emerald-900 transition hover:bg-emerald-100">
-                                Lokasi saya
-                            </button>
-                        </div>
+                        <p class="text-sm font-semibold text-slate-500">{{ $usulanMenunggu->count() }} usulan menunggu</p>
                     </div>
+                    <div class="p-6 space-y-4">
+                        @forelse ($usulanMenunggu as $usulan)
+                            <article class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-5">
+                                <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                                    <div>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <span class="rounded-xl bg-amber-100 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-amber-700">Diajukan</span>
+                                            <span class="rounded-xl bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-700">
+                                                {{ $usulan->jenis_layanan === 'bank_sampah' ? 'Bank Sampah' : 'Titik Sampah' }}
+                                            </span>
+                                        </div>
 
-                    <div class="flex flex-wrap gap-6 text-sm font-semibold text-slate-600 mb-6">
-                        <span class="inline-flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-green-600"></span> TPS</span>
-                        <span class="inline-flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-blue-600"></span> Bank Sampah</span>
-                        <span class="inline-flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-amber-600"></span> Usulan baru</span>
+                                        <p class="mt-3 text-lg font-bold text-slate-800">{{ $usulan->alamat_detail }}</p>
+                                        <p class="mt-1 text-sm text-slate-600">Koordinat: {{ number_format($usulan->latitude, 6) }}, {{ number_format($usulan->longitude, 6) }}</p>
+                                        <p class="mt-2 text-sm text-slate-600">Alasan: {{ $usulan->deskripsi_alasan }}</p>
+                                        <p class="mt-2 text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">
+                                            Pengusul: {{ $usulan->pengusul?->name ?? 'Pengguna' }} • {{ optional($usulan->created_at)->translatedFormat('d M Y H:i') }}
+                                        </p>
+                                    </div>
+
+                                    <div class="flex w-full flex-col gap-2 sm:w-auto">
+                                        <form method="POST" action="{{ route('dashboard.admin.usulan.approve', $usulan) }}">
+                                            @csrf
+                                            <button type="submit" class="w-full rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-700">
+                                                Setujui & Jadikan Titik Layanan
+                                            </button>
+                                        </form>
+
+                                        <form method="POST" action="{{ route('dashboard.admin.usulan.reject', $usulan) }}" class="space-y-2">
+                                            @csrf
+                                            <input type="text" name="catatan_verifikasi" placeholder="Alasan penolakan (opsional)"
+                                                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-100">
+                                            <button type="submit" class="w-full rounded-xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-bold text-red-700 transition hover:bg-red-100">
+                                                Tolak Usulan
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </article>
+                        @empty
+                            <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-10 text-center text-sm text-slate-500">
+                                Tidak ada usulan yang menunggu verifikasi saat ini.
+                            </div>
+                        @endforelse
                     </div>
-
-                    @php
-                        $titikLayanan = \App\Models\TitikLayanan::orderBy('nama')->get();
-                    @endphp
-                    @include('peta._leaflet-map', ['titikLayanan' => $titikLayanan])
                 </div>
 
                 <!-- Zone List -->
                 <div class="section-card">
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <h2 class="text-xl font-black text-slate-800">Daftar Titik Layanan</h2>
-                        <button onclick="openModal('modal-tambah-titik-layanan')" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">+ Tambah Titik Layanan</button>
+                        <button id="btn-open-titik-layanan-modal" onclick="openModal('modal-tambah-titik-layanan')" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">+ Tambah Titik Layanan</button>
                     </div>
                     <table>
                         <thead>
@@ -740,6 +823,7 @@
                                             @method('DELETE')
                                             <button type="submit" class="text-slate-400 hover:text-red-600 text-sm">✕</button>
                                         </form>
+                                        <a href="{{ route('admin.jadwal.index', $titik->id) }}" class="text-emerald-500 hover:text-emerald-700 text-sm font-semibold ml-2">🕒 Jadwal</a>
                                     </div>
                                 </td>
                             </tr>
@@ -1086,37 +1170,101 @@
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Jenis</label>
                         <select name="jenis" id="titik-layanan-jenis" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
-                            <option value="TPS">TPS (Tempat Pembuangan Sementara)</option>
-                            <option value="Bank Sampah">Bank Sampah</option>
-                            <option value="Drop Point">Drop Point</option>
+                            <option value="tps">TPS (Tempat Pembuangan Sementara)</option>
+                            <option value="bank_sampah">Bank Sampah</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Alamat</label>
-                        <textarea name="alamat" id="titik-layanan-alamat" rows="2" placeholder="Alamat lengkap..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm resize-none" required></textarea>
+                        <textarea name="alamat" id="titik-layanan-alamat" rows="2" placeholder="Alamat lengkap (opsional)..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Pilih Lokasi di Peta</label>
+                        <div id="titik-layanan-map" class="h-[220px] overflow-hidden rounded-xl border border-slate-200 bg-slate-50"></div>
+                        <p id="titik-layanan-koordinat" class="mt-2 text-xs text-slate-500">Klik peta untuk menentukan titik layanan.</p>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Latitude</label>
-                            <input type="number" step="any" name="latitude" id="titik-layanan-latitude" placeholder="-6.2088" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                            <input type="text" id="titik-layanan-latitude-display" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50" readonly>
+                            <input type="hidden" name="latitude" id="titik-layanan-latitude" required>
                         </div>
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Longitude</label>
-                            <input type="number" step="any" name="longitude" id="titik-layanan-longitude" placeholder="106.8166" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                            <input type="text" id="titik-layanan-longitude-display" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50" readonly>
+                            <input type="hidden" name="longitude" id="titik-layanan-longitude" required>
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Jam Operasional</label>
-                        <input type="text" name="jam_operasional" id="titik-layanan-jam" placeholder="Contoh: 08:00 - 17:00" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        <input type="text" name="jam_operasional" id="titik-layanan-jam" placeholder="Contoh: 08:00 - 17:00 (opsional)" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Jenis Sampah Diterima</label>
-                        <input type="text" name="jenis_sampah_diterima" id="titik-layanan-sampah" placeholder="Contoh: Plastik, Organik, Kertas" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        <input type="text" name="jenis_sampah_diterima" id="titik-layanan-sampah" placeholder="Contoh: Plastik, Organik, Kertas (opsional)" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm">
                     </div>
                 </div>
                 <div class="mt-6 flex gap-3">
                     <button type="button" onclick="closeModal('modal-tambah-titik-layanan')" class="flex-1 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-600">Batal</button>
                     <button type="submit" class="flex-1 rounded-xl bg-emerald-500 py-3 text-sm font-bold text-white">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Tambah Area Layanan (Zona) -->
+    <div id="modalTambahArea" class="modal-overlay" onclick="closeModalOutside(event,'modalTambahArea')">
+        <div class="modal" style="width: 920px; max-width: 92vw;">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-black text-slate-800">Tambah Area Layanan</h3>
+                <button type="button" onclick="closeModal('modalTambahArea')" class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
+            </div>
+            <form id="formTambahArea" method="POST" action="{{ route('admin.zona-layanan.store') }}">
+                @csrf
+                <div class="grid grid-cols-1 gap-6 lg:grid-cols-[360px,1fr]">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Nama Zona</label>
+                            <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Contoh: Zona A - Gedung Kuliah"
+                                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Warna Zona</label>
+                            <div class="flex items-center gap-3 border border-slate-200 rounded-xl px-3 py-2">
+                                <input type="color" id="zona-warna" name="warna" value="{{ old('warna', '#16a34a') }}" class="h-10 w-14 rounded-lg border border-slate-200 bg-white p-1">
+                                <input type="text" id="zona-warna-text" value="{{ old('warna', '#16a34a') }}" readonly class="flex-1 border border-slate-200 rounded-lg px-3 py-2 text-sm bg-slate-50 font-semibold text-slate-700">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Cakupan Wilayah (Radius)</label>
+                            <input type="number" id="zona-radius-km" inputmode="decimal" step="0.1" min="0.1" placeholder="Radius (km). Contoh: 1.0"
+                                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm">
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <button type="button" class="zona-radius-preset px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-700" data-km="0.25">0.25 km</button>
+                                <button type="button" class="zona-radius-preset px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-700" data-km="0.5">0.5 km</button>
+                                <button type="button" class="zona-radius-preset px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-700" data-km="1">1 km</button>
+                                <button type="button" class="zona-radius-preset px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-700" data-km="2">2 km</button>
+                                <button type="button" class="zona-radius-preset px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-700" data-km="5">5 km</button>
+                            </div>
+                            <p class="mt-3 text-xs text-slate-500">Klik peta untuk menentukan titik pusat. Area akan terbentuk berdasarkan radius.</p>
+                        </div>
+
+                        <input type="hidden" name="geojson" id="zona-geojson" value="{{ old('geojson') }}">
+                        <input type="hidden" id="zona-center-lat" value="">
+                        <input type="hidden" id="zona-center-lng" value="">
+
+                        <div class="mt-6 flex gap-3">
+                            <button type="button" onclick="closeModal('modalTambahArea')" class="flex-1 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-600">Batal</button>
+                            <button type="submit" class="flex-1 rounded-xl bg-emerald-500 py-3 text-sm font-bold text-white">Simpan Area</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Pilih Lokasi di Peta</label>
+                        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                            <div id="zona-form-map" style="height: 420px; width: 100%;"></div>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -1136,9 +1284,15 @@
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Nama Kategori</label>
                         <input type="text" name="nama" id="kategori-nama" placeholder="Contoh: Plastik" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
                     </div>
-                    <div>
-                        <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Poin per kg</label>
-                        <input type="number" name="poin_per_kg" id="kategori-poin" placeholder="Contoh: 50" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Poin per kg</label>
+                            <input type="number" name="poin_per_kg" id="kategori-poin" placeholder="Contoh: 50" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Harga per kg (Rp)</label>
+                            <input type="number" name="harga_per_kg" id="kategori-harga" placeholder="Contoh: 5000" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Deskripsi</label>
@@ -1237,6 +1391,20 @@
             return true;
         }
 
+        function filterVerifikasi(btn, filter) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.verifikasi-card').forEach(card => {
+                const status = card.dataset.status;
+                if (filter === 'semua' || status === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
         // Navigation
         function showPage(name) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1247,8 +1415,11 @@
                 n.querySelector('span:first-child').textContent = '◦';
             });
             
-            // Find the clicked element
-            const clickedElement = event.currentTarget;
+            // Find the clicked element (or fall back to matching nav item)
+            const clickedElement = (typeof event !== 'undefined' && event && event.currentTarget)
+                ? event.currentTarget
+                : document.querySelector('nav a[data-page="' + name + '"]');
+            if (!clickedElement) return;
             clickedElement.classList.remove('text-emerald-50', 'hover:bg-white/5');
             clickedElement.classList.add('bg-emerald-600', 'text-white', 'shadow-lg', 'shadow-emerald-900/20');
             clickedElement.querySelector('span:first-child').textContent = '▣';
@@ -1261,19 +1432,100 @@
             }
         }
 
+        window.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const page = params.get('page');
+            if (page) {
+                showPage(page);
+            }
+        });
+
         // Modal
-        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function openModal(id) {
+            document.getElementById(id).classList.add('open');
+            if (id === 'modal-tambah-titik-layanan') {
+                setTimeout(function () {
+                    setupTitikLayananMap();
+                }, 100);
+            }
+            if (id === 'modalTambahArea') {
+                setTimeout(function () {
+                    if (window.__initZonaRadiusMap) window.__initZonaRadiusMap();
+                }, 120);
+            }
+        }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
         function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
 
+        function openModalTambahArea() {
+            openModal('modalTambahArea');
+        }
+
+        let titikLayananMap = null;
+        let titikLayananMarker = null;
+
+        function setTitikLayananPoint(lat, lng) {
+            const latValue = Number(lat).toFixed(7);
+            const lngValue = Number(lng).toFixed(7);
+            document.getElementById('titik-layanan-latitude').value = latValue;
+            document.getElementById('titik-layanan-longitude').value = lngValue;
+            document.getElementById('titik-layanan-latitude-display').value = latValue;
+            document.getElementById('titik-layanan-longitude-display').value = lngValue;
+            document.getElementById('titik-layanan-koordinat').textContent = `Koordinat terpilih: ${latValue}, ${lngValue}`;
+
+            if (titikLayananMarker) {
+                titikLayananMarker.setLatLng([lat, lng]);
+            } else {
+                titikLayananMarker = L.marker([lat, lng]).addTo(titikLayananMap);
+            }
+        }
+
+        function setupTitikLayananMap(initialLat = null, initialLng = null) {
+            const fallbackLat = -6.9175;
+            const fallbackLng = 107.6191;
+            const hasInitial = initialLat !== null && initialLng !== null;
+            const startLat = hasInitial ? initialLat : fallbackLat;
+            const startLng = hasInitial ? initialLng : fallbackLng;
+
+            if (!titikLayananMap) {
+                titikLayananMap = L.map('titik-layanan-map', { scrollWheelZoom: true }).setView([startLat, startLng], hasInitial ? 15 : 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                }).addTo(titikLayananMap);
+
+                titikLayananMap.on('click', function (event) {
+                    setTitikLayananPoint(event.latlng.lat, event.latlng.lng);
+                });
+            } else {
+                titikLayananMap.setView([startLat, startLng], hasInitial ? 15 : 13);
+                titikLayananMap.invalidateSize();
+            }
+
+            if (hasInitial) {
+                setTitikLayananPoint(initialLat, initialLng);
+            } else {
+                if (titikLayananMarker) {
+                    titikLayananMap.removeLayer(titikLayananMarker);
+                    titikLayananMarker = null;
+                }
+                document.getElementById('titik-layanan-latitude').value = '';
+                document.getElementById('titik-layanan-longitude').value = '';
+                document.getElementById('titik-layanan-latitude-display').value = '';
+                document.getElementById('titik-layanan-longitude-display').value = '';
+                document.getElementById('titik-layanan-koordinat').textContent = 'Klik peta untuk menentukan titik layanan.';
+            }
+        }
+
         // Kategori
-        function editKategori(id, nama, deskripsi, poin) {
+        function editKategori(id, nama, deskripsi, poin, harga) {
             document.getElementById('modal-title').textContent = 'Edit Kategori Sampah';
             document.getElementById('kategori-form').action = `/admin/kategori/${id}`;
             document.getElementById('kategori-form').insertAdjacentHTML('afterbegin', '<input type="hidden" name="_method" value="PUT">');
             document.getElementById('kategori-nama').value = nama;
             document.getElementById('kategori-deskripsi').value = deskripsi;
             document.getElementById('kategori-poin').value = poin;
+            document.getElementById('kategori-harga').value = harga;
             openModal('modal-tambah-kategori');
         }
 
@@ -1345,24 +1597,35 @@
             document.getElementById('titik-layanan-jenis').value = jenis;
             document.getElementById('titik-layanan-alamat').value = alamat;
             document.getElementById('titik-layanan-jam').value = jam;
-            document.getElementById('titik-layanan-latitude').value = latitude;
-            document.getElementById('titik-layanan-longitude').value = longitude;
             document.getElementById('titik-layanan-sampah').value = sampah;
             openModal('modal-tambah-titik-layanan');
+            setTimeout(function () {
+                setupTitikLayananMap(Number(latitude), Number(longitude));
+            }, 120);
         }
 
         // Reset form when opening modal for new titik layanan
-        document.querySelector('[onclick*="modal-tambah-titik-layanan"]').addEventListener('click', function() {
+        document.getElementById('btn-open-titik-layanan-modal').addEventListener('click', function() {
             document.getElementById('modal-titik-layanan-title').textContent = 'Tambah Titik Layanan';
             document.getElementById('titik-layanan-form').action = '{{ route("admin.titik-layanan.store") }}';
             const methodInput = document.querySelector('#titik-layanan-form input[name="_method"]');
             if (methodInput) methodInput.remove();
             document.getElementById('titik-layanan-form').reset();
+            setupTitikLayananMap();
         });
 
         function filterVerifikasi(btn, filter) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+
+            document.querySelectorAll('.verifikasi-card').forEach(card => {
+                const status = card.dataset.status;
+                if (filter === 'semua' || status === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
         }
 
         // Charts (Dashboard)
