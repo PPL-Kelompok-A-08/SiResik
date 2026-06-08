@@ -140,6 +140,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/{permintaanPenjemputan}', [RiwayatLayananController::class, 'show'])->name('riwayat-layanan.show');
     });
 
+    // Edukasi & Kegiatan Lingkungan (Masyarakat)
+    Route::middleware('role:masyarakat')->group(function () {
+        Route::get('/edukasi-lingkungan', fn() => view('edukasi-lingkungan.index', ['user' => auth()->user()]))->name('edukasi-lingkungan.index');
+        Route::get('/kegiatan-lingkungan', fn() => view('kegiatan-lingkungan.index', ['user' => auth()->user()]))->name('kegiatan-lingkungan.index');
+    });
+
     // Petugas - Bukti Penyelesaian Tugas
     Route::middleware('role:petugas,admin')->prefix('petugas')->group(function () {
         Route::get('/riwayat', [PetugasController::class, 'riwayat'])->name('petugas.riwayat');
