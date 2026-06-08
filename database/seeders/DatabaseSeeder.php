@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call(TitikLayananSeeder::class);
         $this->call(ZonaLayananSeeder::class);
         $this->call(RewardSeeder::class);
+        $this->call(PBI23Seeder::class);
     }
 }

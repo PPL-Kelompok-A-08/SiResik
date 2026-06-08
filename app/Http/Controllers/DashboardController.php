@@ -98,14 +98,17 @@ class DashboardController extends Controller
         $permintaan = PermintaanPenjemputan::with(['pengguna', 'items.kategoriSampah', 'petugas'])
             ->latest()
             ->get();
+            
         $petugas = User::where('role', 'petugas')->orderBy('name')->get();
         $rewards = Reward::orderBy('nama')->get();
         $titikLayanan = TitikLayanan::orderBy('nama')->get();
         $zonaLayanan = ZonaLayanan::orderBy('nama')->get();
+        
         $usulanMenunggu = UsulanTitikLayanan::with('pengusul')
             ->where('status', 'diajukan')
             ->latest()
             ->get();
+            
         $pendingRequests = $permintaan->where('status', 'Menunggu')->values();
         $scheduledRequests = $permintaan->where('status', 'Diproses')->take(4)->values();
 
@@ -117,18 +120,14 @@ class DashboardController extends Controller
             'menunggu' => $pendingRequests->count(),
         ];
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-        // Data untuk manajemen status
+        // Data untuk manajemen status penjemputan
         $permintaanForStatus = $permintaan->take(10);
 
-        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan', 'permintaanForStatus'));
-=======
-        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan', 'zonaLayanan', 'usulanMenunggu'));
->>>>>>> c48b37a (PBI 17 - Informasi Area Cakupan Layanan)
-=======
-        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'rewards', 'titikLayanan', 'zonaLayanan', 'usulanMenunggu'));
->>>>>>> 37dc932 (PBI 17 - Informasi Area Cakupan Layanan)
+        return view('dashboard.admin', compact(
+            'user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 
+            'scheduledRequests', 'rewards', 'titikLayanan', 'zonaLayanan', 
+            'usulanMenunggu', 'permintaanForStatus'
+        ));
     }
 
     public function schedule(Request $request, PermintaanPenjemputan $permintaanPenjemputan): RedirectResponse

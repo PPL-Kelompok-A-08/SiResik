@@ -130,3 +130,26 @@ Route::middleware('auth')->group(function () {
         });
     });
 });
+
+
+use App\Http\Controllers\KegiatanController;
+use App\Http\Controllers\PengumumanController;
+use App\Http\Controllers\Admin\AdminKegiatanController;
+use App\Http\Controllers\Admin\AdminPengumumanController;
+
+// --- RUTE HALAMAN PUBLIK / WARGA ---
+Route::get('/kegiatan', [KegiatanController::class, 'index'])->name('kegiatan.index');
+Route::get('/kegiatan/{id}', [KegiatanController::class, 'show'])->name('kegiatan.show');
+Route::post('/kegiatan/{id}/daftar', [KegiatanController::class, 'daftar'])->name('kegiatan.daftar')->middleware('auth');
+
+Route::get('/pengumuman', [PengumumanController::class, 'index'])->name('pengumuman.index');
+Route::get('/pengumuman/{id}', [PengumumanController::class, 'show'])->name('pengumuman.show');
+
+// --- RUTE MANAJEMEN SISTEM ADMINISTRATOR ---
+// Catatan: Ganti middleware 'role:admin' sesuai dengan middleware otorisasi admin milik kelompok Anda
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // CRUD Kegiatan
+    Route::resource('kegiatan', AdminKegiatanController::class);
+    // CRUD Pengumuman
+    Route::resource('pengumuman', AdminPengumumanController::class)->except(['show']);
+});
