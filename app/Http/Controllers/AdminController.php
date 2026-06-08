@@ -174,6 +174,24 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Laporan berhasil diverifikasi.');
     }
 
+    public function verifikasiLaporanSampahLiar(Request $request, SampahLiar $sampahLiar): RedirectResponse
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:disetujui,ditolak',
+        ]);
+
+        $status = $validated['status'] === 'disetujui' ? 'diverifikasi' : 'ditolak';
+
+        $sampahLiar->update(['status' => $status]);
+
+        return redirect()->back()->with('success', 'Laporan sampah liar berhasil diverifikasi.');
+    }
+
+    public function showSampahLiar(SampahLiar $sampahLiar)
+    {
+        return view('sampah-liar.show', compact('sampahLiar'));
+    }
+
     // === KONFIGURASI POIN ===
     public function updateKonfigurasiPoin(Request $request): RedirectResponse
     {

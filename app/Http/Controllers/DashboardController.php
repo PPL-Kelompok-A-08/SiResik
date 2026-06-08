@@ -8,6 +8,7 @@ use App\Models\Reward;
 use App\Models\TitikLayanan;
 use App\Models\ZonaLayanan;
 use App\Models\UsulanTitikLayanan;
+use App\Models\SampahLiar;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -106,6 +107,9 @@ class DashboardController extends Controller
             ->where('status', 'diajukan')
             ->latest()
             ->get();
+        $laporanSampahLiar = SampahLiar::with('pengguna')
+            ->latest()
+            ->get();
         $pendingRequests = $permintaan->where('status', 'Menunggu')->values();
         $scheduledRequests = $permintaan->where('status', 'Diproses')->take(4)->values();
         $permintaanForStatus = $permintaan->values();
@@ -119,7 +123,7 @@ class DashboardController extends Controller
             'menunggu' => $pendingRequests->count(),
         ];
 
-        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'permintaanForStatus', 'rewards', 'titikLayanan', 'zonaLayanan', 'usulanMenunggu'));
+        return view('dashboard.admin', compact('user', 'permintaan', 'stats', 'petugas', 'pendingRequests', 'scheduledRequests', 'permintaanForStatus', 'rewards', 'titikLayanan', 'zonaLayanan', 'usulanMenunggu', 'laporanSampahLiar'));
     }
 
     public function schedule(Request $request, PermintaanPenjemputan $permintaanPenjemputan): RedirectResponse

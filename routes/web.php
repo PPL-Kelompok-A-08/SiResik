@@ -96,6 +96,9 @@ Route::middleware('auth')->group(function () {
 
         // Verifikasi Laporan
         Route::post('/verifikasi-laporan/{permintaan}', [AdminController::class, 'verifikasiLaporan'])->name('admin.verifikasi-laporan');
+        Route::post('/verifikasi-laporan-sampah-liar/{sampahLiar}', [AdminController::class, 'verifikasiLaporanSampahLiar'])->name('admin.verifikasi-laporan-sampah-liar');
+        Route::get('/permintaan-penjemputan/{permintaanPenjemputan}', [PermintaanPenjemputanController::class, 'show'])->name('admin.permintaan.show');
+        Route::get('/sampah-liar/{sampahLiar}', [AdminController::class, 'showSampahLiar'])->name('admin.sampah-liar.show');
 
         // Konfigurasi Poin
         Route::post('/konfigurasi-poin', [AdminController::class, 'updateKonfigurasiPoin'])->name('admin.konfigurasi-poin.update');
