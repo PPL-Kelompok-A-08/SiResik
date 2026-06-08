@@ -79,7 +79,7 @@
             @endif
 
             <header class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between mb-8">
-                <a href="{{ route('sampah-liar.index') }}" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold">
+                <a href="{{ auth()->user()->role === 'admin' ? route('dashboard.admin') : route('sampah-liar.index') }}" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold">
                     ← Kembali ke Daftar Laporan
                 </a>
             </header>
