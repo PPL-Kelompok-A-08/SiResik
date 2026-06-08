@@ -24,7 +24,7 @@
                     ['label' => 'Status Layanan', 'active' => true, 'href' => route('dashboard.masyarakat')],
                     ['label' => 'Riwayat Layanan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
                     ['label' => 'Poin & Reward', 'active' => false, 'href' => route('poin.index')],
-                    ['label' => 'Sampah Liar', 'active' => false, 'disabled' => true],
+                    ['label' => 'Sampah Liar', 'active' => false, 'href' => route('sampah-liar.index')],
                     ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
                     ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
                     ['label' => 'Edukasi Lingkungan', 'active' => false, 'disabled' => true],

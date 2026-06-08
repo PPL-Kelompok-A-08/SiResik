@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\PermintaanPenjemputan;
 use App\Models\Reward;
 use App\Models\ZonaLayanan;
+use App\Models\SampahLiar;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;

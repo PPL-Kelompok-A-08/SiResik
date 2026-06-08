@@ -10,6 +10,7 @@ use App\Http\Controllers\PetaLokasiController;
 use App\Http\Controllers\PermintaanPenjemputanController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\RiwayatLayananController;
+use App\Http\Controllers\SampahLiarController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingPageController::class, 'index']);
@@ -114,6 +115,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/titik-layanan/{titikLayanan}/jadwal', [App\Http\Controllers\JadwalOperasionalController::class, 'store'])->name('admin.jadwal.store');
         Route::put('/jadwal/{jadwal}', [App\Http\Controllers\JadwalOperasionalController::class, 'update'])->name('admin.jadwal.update');
         Route::delete('/jadwal/{jadwal}', [App\Http\Controllers\JadwalOperasionalController::class, 'destroy'])->name('admin.jadwal.destroy');
+
+
     });
 
     // Kategori (akses dalam sistem)
@@ -127,6 +130,17 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:admin')
         ->name('permintaan-penjemputan.update-status');
     Route::get('/permintaan-penjemputan/{permintaanPenjemputan}/success', [PermintaanPenjemputanController::class, 'success'])->name('permintaan-penjemputan.success');
+
+    // Sampah Liar (Masyarakat)
+    Route::middleware('role:masyarakat')->group(function () {
+        Route::get('/sampah-liar', [SampahLiarController::class, 'index'])->name('sampah-liar.index');
+        Route::get('/sampah-liar/create', [SampahLiarController::class, 'create'])->name('sampah-liar.create');
+        Route::post('/sampah-liar', [SampahLiarController::class, 'store'])->name('sampah-liar.store');
+        Route::get('/sampah-liar/{sampahLiar}', [SampahLiarController::class, 'show'])->name('sampah-liar.show');
+        Route::get('/sampah-liar/{sampahLiar}/edit', [SampahLiarController::class, 'edit'])->name('sampah-liar.edit');
+        Route::put('/sampah-liar/{sampahLiar}', [SampahLiarController::class, 'update'])->name('sampah-liar.update');
+        Route::delete('/sampah-liar/{sampahLiar}', [SampahLiarController::class, 'destroy'])->name('sampah-liar.destroy');
+    });
 
     // Peta lokasi (masyarakat/petugas)
     Route::get('/peta-lokasi', [PetaLokasiController::class, 'masyarakat'])
