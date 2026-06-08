@@ -194,13 +194,28 @@
                             <input type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-600 mb-2">Category</label>
+                            <table>
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(\App\Models\KategoriSampah::all() as $kategori)
+                            <tr>
+                                <td>{{ $kategori->nama }}</td>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                            <!-- <label class="block text-sm font-semibold text-slate-600 mb-2">Category</label>
                             <select class="w-full border border-slate-300 rounded-lg px-3 py-2">
                                 <option>All Categories</option>
                                 <option>Plastic</option>
                                 <option>Organic</option>
                             </select>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
