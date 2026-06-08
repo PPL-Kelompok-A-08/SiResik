@@ -176,6 +176,7 @@ Route::middleware('auth')->group(function () {
     // PBI 6 - Unggah Bukti Penyelesaian Tugas Petugas
     Route::middleware('role:petugas,admin')->prefix('petugas')->group(function () {
         Route::get('/riwayat', [PetugasController::class, 'riwayat'])->name('petugas.riwayat');
+        Route::post('/terima/{permintaanPenjemputan}', [PetugasController::class, 'terimaTugas'])->name('petugas.terima');
         Route::get('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'showBukti'])->name('petugas.bukti.show');
         Route::post('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'uploadBukti'])->name('petugas.bukti.upload');
     });

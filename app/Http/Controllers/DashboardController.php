@@ -74,20 +74,32 @@ class DashboardController extends Controller
     public function petugas(): View
     {
         $user = auth()->user();
-        $permintaan = PermintaanPenjemputan::with('pengguna')
+
+        $permintaanQuery = PermintaanPenjemputan::with(['pengguna', 'petugas', 'items.kategoriSampah'])
             ->where(function ($q) use ($user) {
                 $q->where('petugas_id', $user->id)
                   ->orWhereNull('petugas_id');
-            })
-            ->latest()
-            ->take(8)
-            ->get();
+            });
+
+        $permintaan = $permintaanQuery->latest()->take(12)->get();
 
         $stats = [
-            'jadwal_hari_ini' => PermintaanPenjemputan::where('tanggal', now()->toDateString())->count(),
-            'menunggu' => PermintaanPenjemputan::where('status', 'Menunggu')->count(),
-            'diproses' => PermintaanPenjemputan::where('status', 'Diproses')->count(),
-            'selesai' => PermintaanPenjemputan::where('status', 'Selesai')->count(),
+            'jadwal_hari_ini' => PermintaanPenjemputan::whereDate('tanggal', now()->toDateString())
+                ->where('petugas_id', $user->id)
+                ->count(),
+            'all' => $permintaanQuery->count(),
+            'pending' => PermintaanPenjemputan::where('status', 'Menunggu')
+                ->where(function ($q) use ($user) {
+                    $q->where('petugas_id', $user->id)
+                      ->orWhereNull('petugas_id');
+                })
+                ->count(),
+            'ongoing' => PermintaanPenjemputan::where('status', 'Diproses')
+                ->where('petugas_id', $user->id)
+                ->count(),
+            'completed' => PermintaanPenjemputan::where('status', 'Selesai')
+                ->where('petugas_id', $user->id)
+                ->count(),
         ];
 
         return view('dashboard.petugas', compact('user', 'permintaan', 'stats'));
