@@ -34,42 +34,54 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
-        $trackingRequests = $permintaan->take(3)->values();
+        $trackingRequests = $permintaan->take(5)->values();
+
         $upcomingRequest = $permintaan
             ->where('status', 'Diproses')
             ->sortBy('scheduled_at')
             ->first();
 
+        // Hitung total berat setoran (semua permintaan)
+        $totalBerat = $permintaan->flatMap(fn($p) => $p->items)->sum('berat_kg');
+
+        // Hitung total poin dari permintaan selesai
+        $totalPoin = $permintaan->where('status', 'Selesai')->sum('total_estimasi_poin');
+
+        // Kontribusi CO2 (estimasi: setiap 1 kg sampah daur ulang = ~0.087 kg CO2 hemat)
+        $kontribusiCo2 = round($totalBerat * 0.087, 1);
+
+        // Jadwal terdekat
+        if ($upcomingRequest && $upcomingRequest->scheduled_at) {
+            $jadwalTerdekat = \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)
+                ->translatedFormat('d M, H:i') . ' WIB';
+        } else {
+            $jadwalTerdekat = 'Belum ada';
+        }
+
         $stats = [
-            'total' => $permintaan->count(),
-            'menunggu' => $permintaan->where('status', 'Menunggu')->count(),
-            'diproses' => $permintaan->where('status', 'Diproses')->count(),
-            'selesai' => $permintaan->where('status', 'Selesai')->count(),
+            'total'          => $permintaan->count(),
+            'menunggu'       => $permintaan->where('status', 'Menunggu')->count(),
+            'diproses'       => $permintaan->where('status', 'Diproses')->count(),
+            'selesai'        => $permintaan->where('status', 'Selesai')->count(),
+            'total_berat'    => $totalBerat,
+            'total_poin'     => $totalPoin,
+            'kontribusi_co2' => $kontribusiCo2,
+            'jadwal_terdekat'=> $jadwalTerdekat,
         ];
 
-        $weeklySchedules = [
-            [
-                'hari' => 'Senin',
-                'kategori' => 'Organik (Sisa Makanan)',
-                'jam' => '08:00 - 10:00',
-                'zona' => 'Zona A',
-            ],
-            [
-                'hari' => 'Rabu',
-                'kategori' => 'Anorganik (Plastik, Kertas)',
-                'jam' => '08:00 - 10:00',
-                'zona' => 'Zona A',
-            ],
-            [
-                'hari' => 'Jumat',
-                'kategori' => 'Residu (Popok, Tisu)',
-                'jam' => '09:00 - 11:00',
-                'zona' => 'Zona A',
-            ],
-        ];
+        // Titik layanan untuk peta
+        $titikLayanan = TitikLayanan::all();
 
-        return view('dashboard.masyarakat', compact('user', 'permintaan', 'stats', 'trackingRequests', 'upcomingRequest', 'weeklySchedules'));
+        // Total warga aktif (role masyarakat)
+        $totalWarga = User::where('role', 'masyarakat')->count();
+
+        return view('dashboard.masyarakat', compact(
+            'user', 'permintaan', 'stats',
+            'trackingRequests', 'upcomingRequest',
+            'titikLayanan', 'totalWarga'
+        ));
     }
+
 
     public function petugas(): View
     {
