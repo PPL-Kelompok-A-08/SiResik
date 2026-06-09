@@ -549,18 +549,41 @@
                         </thead>
                         <tbody>
                             @foreach(\App\Models\KategoriSampah::all() as $kategori)
-                            <tr>
-                                <td>{{ $kategori->nama }}</td>
+                            <tr class="cursor-pointer hover:bg-slate-50" onclick="toggleKategoriRow({{ $kategori->id }})">
+                                <td class="py-4 px-3">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span>{{ $kategori->nama }}</span>
+                                        <span id="kategori-arrow-{{ $kategori->id }}" class="text-slate-400">▸</span>
+                                    </div>
+                                </td>
                                 <td>{{ $kategori->poin_per_kg }}</td>
                                 <td>Rp {{ number_format($kategori->harga_per_kg, 0, ',', '.') }}</td>
-                                <td>{{ $kategori->deskripsi }}</td>
+                                <td>{{ Str::limit($kategori->deskripsi, 35) }}</td>
                                 <td>
-                                    <button onclick="editKategori({{ $kategori->id }}, '{{ $kategori->nama }}', '{{ $kategori->deskripsi }}', {{ $kategori->poin_per_kg }}, {{ $kategori->harga_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
-                                    <form method="POST" action="{{ route('admin.kategori.destroy', $kategori) }}" style="display: inline;" onsubmit="return confirm('Yakin hapus kategori ini?')">
+                                    <button onclick="event.stopPropagation(); editKategori({{ $kategori->id }}, @json($kategori->nama), @json($kategori->deskripsi), {{ $kategori->poin_per_kg }}, {{ $kategori->harga_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
+                                    <form method="POST" action="{{ route('admin.kategori.destroy', $kategori) }}" style="display: inline;" onsubmit="event.stopPropagation(); return confirm('Yakin hapus kategori ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-500 hover:text-red-700 ml-2">Hapus</button>
                                     </form>
+                                </td>
+                            </tr>
+                            <tr id="kategori-{{ $kategori->id }}" class="hidden bg-slate-50">
+                                <td colspan="5" class="px-4 py-4">
+                                    <div class="grid gap-4 md:grid-cols-[2fr,1fr] items-center">
+                                        <div>
+                                            <p class="text-sm font-semibold text-slate-700">Deskripsi</p>
+                                            <p class="mt-2 text-sm text-slate-600">{{ $kategori->deskripsi }}</p>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2 justify-end">
+                                            <button onclick="event.stopPropagation(); editKategori({{ $kategori->id }}, @json($kategori->nama), @json($kategori->deskripsi), {{ $kategori->poin_per_kg }}, {{ $kategori->harga_per_kg }})" class="rounded-xl border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 hover:bg-emerald-50">Edit</button>
+                                            <form method="POST" action="{{ route('admin.kategori.destroy', $kategori) }}" class="inline" onsubmit="event.stopPropagation(); return confirm('Yakin hapus kategori ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="rounded-xl border border-red-500 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">Hapus</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach
@@ -1497,6 +1520,14 @@
             document.getElementById('reward-stok').value = stok;
             document.getElementById('reward-aktif').checked = aktif;
             openModal('modal-tambah-reward');
+        }
+
+        function toggleKategoriRow(id) {
+            const detailsRow = document.getElementById(`kategori-${id}`);
+            const arrow = document.getElementById(`kategori-arrow-${id}`);
+            if (!detailsRow) return;
+            const expanded = !detailsRow.classList.toggle('hidden');
+            if (arrow) arrow.textContent = expanded ? '▾' : '▸';
         }
 
         // Reset form when opening modal for new reward
