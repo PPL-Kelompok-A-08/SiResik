@@ -30,6 +30,24 @@ class PetugasController extends Controller
         ]);
     }
 
+    public function terimaTugas(PermintaanPenjemputan $permintaanPenjemputan): RedirectResponse
+    {
+        $user = auth()->user();
+
+        abort_unless($user->role === 'petugas', 403);
+        abort_unless($permintaanPenjemputan->status === 'Menunggu', 403, 'Tugas hanya dapat diterima saat status Menunggu.');
+        abort_unless(is_null($permintaanPenjemputan->petugas_id), 403, 'Tugas sudah diambil petugas lain.');
+
+        $permintaanPenjemputan->update([
+            'petugas_id' => $user->id,
+            'status' => 'Diproses',
+        ]);
+
+        return redirect()
+            ->route('dashboard.petugas')
+            ->with('success', 'Tugas berhasil diterima. Silakan unggah bukti setelah selesai.');
+    }
+
     public function uploadBukti(Request $request, PermintaanPenjemputan $permintaanPenjemputan): RedirectResponse
     {
         $user = auth()->user();
