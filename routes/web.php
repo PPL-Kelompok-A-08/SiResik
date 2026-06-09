@@ -3,14 +3,15 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\JadwalOperasionalController;
 use App\Http\Controllers\KategoriSampahController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PetaLokasiController;
 use App\Http\Controllers\PermintaanPenjemputanController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\RiwayatLayananController;
 use App\Http\Controllers\SampahLiarController;
+use App\Http\Controllers\StatusLayananController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingPageController::class, 'index']);
@@ -22,60 +23,23 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
     Route::get('/dashboard', [DashboardController::class, 'redirect'])->name('dashboard');
-    Route::get('/dashboard/masyarakat', [DashboardController::class, 'masyarakat'])
-        ->middleware('role:masyarakat')
-        ->name('dashboard.masyarakat');
-    Route::get('/dashboard/petugas', [DashboardController::class, 'petugas'])
-        ->middleware('role:petugas')
-        ->name('dashboard.petugas');
-    Route::get('/dashboard/admin', [DashboardController::class, 'admin'])
-        ->middleware('role:admin')
-        ->name('dashboard.admin');
-    Route::post('/dashboard/admin/permintaan/{permintaanPenjemputan}/schedule', [DashboardController::class, 'schedule'])
-        ->middleware('role:admin')
-        ->name('dashboard.admin.schedule');
+
+    // Notification routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
+
+    // Dashboard
+    Route::get('/dashboard/masyarakat', [DashboardController::class, 'masyarakat'])->middleware('role:masyarakat')->name('dashboard.masyarakat');
+    Route::get('/dashboard/petugas', [DashboardController::class, 'petugas'])->middleware('role:petugas')->name('dashboard.petugas');
+    Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->middleware('role:admin')->name('dashboard.admin');
+    Route::post('/dashboard/admin/permintaan/{permintaanPenjemputan}/schedule', [DashboardController::class, 'schedule'])->middleware('role:admin')->name('dashboard.admin.schedule');
 
     // Poin & Reward (Masyarakat)
-    Route::get('/poin', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'index'])
-        ->middleware('role:masyarakat')
-        ->name('poin.index');
-    Route::get('/reward', [App\Http\Controllers\PenukaranRewardController::class, 'index'])
-        ->middleware('role:masyarakat')
-        ->name('reward.index');
-    Route::post('/reward/{id}/redeem', [App\Http\Controllers\PenukaranRewardController::class, 'redeem'])
-        ->middleware('role:masyarakat')
-        ->name('reward.redeem');
-
-    // Admin CRUD routes
-    Route::middleware('role:admin')->prefix('admin')->group(function () {
-        // Kategori Sampah
-        Route::post('/kategori', [AdminController::class, 'storeKategori'])->name('admin.kategori.store');
-        Route::put('/kategori/{kategori}', [AdminController::class, 'updateKategori'])->name('admin.kategori.update');
-        Route::delete('/kategori/{kategori}', [AdminController::class, 'destroyKategori'])->name('admin.kategori.destroy');
-
-        // Titik Layanan
-        Route::post('/titik-layanan', [AdminController::class, 'storeTitikLayanan'])->name('admin.titik-layanan.store');
-        Route::put('/titik-layanan/{titikLayanan}', [AdminController::class, 'updateTitikLayanan'])->name('admin.titik-layanan.update');
-        Route::delete('/titik-layanan/{titikLayanan}', [AdminController::class, 'destroyTitikLayanan'])->name('admin.titik-layanan.destroy');
-
-        // Petugas
-        Route::post('/petugas', [AdminController::class, 'storePetugas'])->name('admin.petugas.store');
-        Route::put('/petugas/{petugas}', [AdminController::class, 'updatePetugas'])->name('admin.petugas.update');
-        Route::delete('/petugas/{petugas}', [AdminController::class, 'destroyPetugas'])->name('admin.petugas.destroy');
-    });
-
-    // Poin & Reward (Masyarakat)
-    Route::get('/poin', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'index'])
-        ->middleware('role:masyarakat')
-        ->name('poin.index');
-    Route::get('/reward', [App\Http\Controllers\PenukaranRewardController::class, 'index'])
-        ->middleware('role:masyarakat')
-        ->name('reward.index');
-    Route::post('/reward/{id}/redeem', [App\Http\Controllers\PenukaranRewardController::class, 'redeem'])
-        ->middleware('role:masyarakat')
-        ->name('reward.redeem');
+    Route::get('/poin', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'index'])->middleware('role:masyarakat')->name('poin.index');
+    Route::get('/reward', [App\Http\Controllers\PenukaranRewardController::class, 'index'])->middleware('role:masyarakat')->name('reward.index');
+    Route::post('/reward/{id}/redeem', [App\Http\Controllers\PenukaranRewardController::class, 'redeem'])->middleware('role:masyarakat')->name('reward.redeem');
 
     // Admin CRUD routes
     Route::middleware('role:admin')->prefix('admin')->group(function () {
@@ -108,7 +72,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/reward/{reward}', [AdminController::class, 'updateReward'])->name('admin.reward.update');
         Route::delete('/reward/{reward}', [AdminController::class, 'destroyReward'])->name('admin.reward.destroy');
 
-        // Zona Layanan (Area Cakupan)
+        // Zona Layanan
         Route::post('/zona-layanan', [AdminController::class, 'storeZonaLayanan'])->name('admin.zona-layanan.store');
         Route::put('/zona-layanan/{zonaLayanan}', [AdminController::class, 'updateZonaLayanan'])->name('admin.zona-layanan.update');
         Route::delete('/zona-layanan/{zonaLayanan}', [AdminController::class, 'destroyZonaLayanan'])->name('admin.zona-layanan.destroy');
@@ -118,21 +82,17 @@ Route::middleware('auth')->group(function () {
         Route::post('/titik-layanan/{titikLayanan}/jadwal', [App\Http\Controllers\JadwalOperasionalController::class, 'store'])->name('admin.jadwal.store');
         Route::put('/jadwal/{jadwal}', [App\Http\Controllers\JadwalOperasionalController::class, 'update'])->name('admin.jadwal.update');
         Route::delete('/jadwal/{jadwal}', [App\Http\Controllers\JadwalOperasionalController::class, 'destroy'])->name('admin.jadwal.destroy');
-
-
     });
 
-    // Kategori (akses dalam sistem)
+    // Kategori
     Route::get('/kategori', [KategoriSampahController::class, 'index']);
     Route::post('/kategori/hitung', [KategoriSampahController::class, 'hitung']);
 
-    // Permintaan penjemputan
+    // Permintaan Penjemputan
     Route::get('/permintaan-penjemputan', [PermintaanPenjemputanController::class, 'index'])->name('permintaan-penjemputan.index');
     Route::post('/permintaan-penjemputan', [PermintaanPenjemputanController::class, 'store'])->name('permintaan-penjemputan.store');
-    Route::post('/permintaan-penjemputan/{permintaanPenjemputan}/status', [PermintaanPenjemputanController::class, 'updateStatus'])
-        ->middleware('role:admin')
-        ->name('permintaan-penjemputan.update-status');
     Route::get('/permintaan-penjemputan/{permintaanPenjemputan}/success', [PermintaanPenjemputanController::class, 'success'])->name('permintaan-penjemputan.success');
+    Route::put('/permintaan-penjemputan/{permintaanPenjemputan}/status', [PermintaanPenjemputanController::class, 'updateStatus'])->middleware('role:admin')->name('permintaan-penjemputan.update-status');
 
     // Sampah Liar (Masyarakat)
     Route::middleware('role:masyarakat')->group(function () {
@@ -145,7 +105,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/sampah-liar/{sampahLiar}', [SampahLiarController::class, 'destroy'])->name('sampah-liar.destroy');
     });
 
-    // Peta lokasi (masyarakat/petugas)
+    // Peta Lokasi
     Route::get('/peta-lokasi', [PetaLokasiController::class, 'masyarakat'])
         ->middleware('role:masyarakat,petugas')
         ->name('peta.lokasi');
@@ -156,7 +116,9 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:masyarakat')
         ->name('peta.usulan-titik.store');
 
-    // Usulan titik (admin)
+    Route::get('/dashboard/admin/peta-titik-layanan', [PetaLokasiController::class, 'admin'])
+        ->middleware('role:admin')
+        ->name('dashboard.admin.peta');
     Route::post('/dashboard/admin/usulan-titik/{usulan}/approve', [PetaLokasiController::class, 'approveUsulan'])
         ->middleware('role:admin')
         ->name('dashboard.admin.usulan.approve');
@@ -167,13 +129,24 @@ Route::middleware('auth')->group(function () {
     // API
     Route::get('/api/titik-layanan', [PetaLokasiController::class, 'titikLayananJson'])->name('api.titik-layanan');
 
-    // Riwayat layanan (masyarakat)
+    // Status Layanan (Masyarakat) - PBI Raffi
+    Route::middleware('role:masyarakat')->group(function () {
+        Route::get('/status-layanan', [StatusLayananController::class, 'index'])->name('status-layanan.index');
+    });
+
+    // Riwayat Layanan (Masyarakat)
     Route::middleware('role:masyarakat')->prefix('riwayat-layanan')->group(function () {
         Route::get('/', [RiwayatLayananController::class, 'index'])->name('riwayat-layanan.index');
         Route::get('/{permintaanPenjemputan}', [RiwayatLayananController::class, 'show'])->name('riwayat-layanan.show');
     });
 
-    // PBI 6 - Unggah Bukti Penyelesaian Tugas Petugas
+    // Edukasi & Kegiatan Lingkungan (Masyarakat)
+    Route::middleware('role:masyarakat')->group(function () {
+        Route::get('/edukasi-lingkungan', fn() => view('edukasi-lingkungan.index', ['user' => auth()->user()]))->name('edukasi-lingkungan.index');
+        Route::get('/kegiatan-lingkungan', fn() => view('kegiatan-lingkungan.index', ['user' => auth()->user()]))->name('kegiatan-lingkungan.index');
+    });
+
+    // Petugas - Bukti Penyelesaian Tugas
     Route::middleware('role:petugas,admin')->prefix('petugas')->group(function () {
         Route::get('/riwayat', [PetugasController::class, 'riwayat'])->name('petugas.riwayat');
         Route::post('/terima/{permintaanPenjemputan}', [PetugasController::class, 'terimaTugas'])->name('petugas.terima');
