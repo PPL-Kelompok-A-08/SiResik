@@ -153,3 +153,23 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // CRUD Pengumuman
     Route::resource('pengumuman', AdminPengumumanController::class)->except(['show']);
 });
+
+use App\Http\Controllers\EdukasiController;
+use App\Http\Controllers\Admin\AdminEdukasiController;
+
+
+// ================= AKSI PUBLIK USER =================
+// Daftar artikel & pencarian edukasi
+Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
+// Detail membaca artikel (SEO friendly slug)
+Route::get('/edukasi/{slug}', [EdukasiController::class, 'show'])->name('edukasi.show');
+
+
+// ================= PORTAL MANAGEMENT ADMIN =================
+// Menyatukan resource route ke dalam grup route admin yang sudah ada di SiResik
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
+    
+    // CRUD penanganan controller edukasi
+    Route::resource('edukasi', AdminEdukasiController::class);
+    
+});
