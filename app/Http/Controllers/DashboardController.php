@@ -167,6 +167,7 @@ class DashboardController extends Controller
             'titikLayanan',
             'zonaLayanan',
             'usulanMenunggu',
+            'laporanSampahLiar',
             'reportFilters',
             'periodicReports',
             'periodicSummary',
