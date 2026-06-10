@@ -86,7 +86,7 @@
 
                 <div class="rounded-[2rem] bg-white px-7 py-5 shadow-xl shadow-slate-200/60 shrink-0">
                     <p class="text-sm font-black uppercase tracking-[0.18em] text-slate-500">Jam Operasional</p>
-                    <p class="mt-2 text-3xl font-black text-slate-800">{{ $operationalHours }}</p>
+                    <p class="mt-2 text-3xl font-black text-slate-800">{{ $operationalHours[0]['jam'] ?? '08:00 - 16:00' }}</p>
                     <p class="mt-1 text-lg text-slate-500">Layanan penjemputan tersedia pada jam operasional resmi.</p>
                 </div>
             </div>
@@ -300,7 +300,7 @@
                 <span class="hidden sm:block h-4 w-px bg-slate-200"></span>
                 <span>
                     <span class="font-black text-slate-700">Total Warga Aktif:</span>
-                    <span class="ml-1 text-emerald-600 font-semibold">{{ number_format($totalWarga) }} Warga</span>
+                    <span class="ml-1 text-emerald-600 font-semibold">{{ number_format($stats['total'] ?? 0) }} Setoran</span>
                 </span>
                 <span class="ml-auto flex items-center gap-1.5 text-emerald-600 font-bold">
                     <span class="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -316,7 +316,7 @@
 <script>
 (function () {
     // Titik layanan dari server
-    const titikLayanan = @json($titikLayanan);
+    const titikLayanan = @json($titikLayanan ?? []);
 
     // Default center: Jakarta Timur jika tidak ada data
     const defaultLat = titikLayanan.length > 0 ? titikLayanan[0].latitude  : -6.2146;

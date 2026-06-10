@@ -96,6 +96,14 @@ class DashboardController extends Controller
 
         $totalPoints = (int) $permintaan->sum('total_estimasi_poin');
 
+        $totalKg = round($totalBerat, 2);
+
+        $operationalHours = [
+            ['hari' => 'Senin - Jumat', 'jam' => '08:00 - 16:00'],
+            ['hari' => 'Sabtu',         'jam' => '08:00 - 12:00'],
+            ['hari' => 'Minggu',        'jam' => 'Libur'],
+        ];
+
         return view('dashboard.masyarakat', compact('user', 'permintaan', 'stats', 'trackingRequests', 'upcomingRequest', 'weeklySchedules', 'operationalHours', 'totalKg', 'totalPickups', 'totalPoints'));
     }
 
