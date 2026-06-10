@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\PermintaanPenjemputan;
 use App\Models\Reward;
 use App\Models\ZonaLayanan;
+use App\Models\SampahLiar;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -171,6 +172,24 @@ class AdminController extends Controller
         $permintaan->update(['status' => $status]);
 
         return redirect()->back()->with('success', 'Laporan berhasil diverifikasi.');
+    }
+
+    public function verifikasiLaporanSampahLiar(Request $request, SampahLiar $sampahLiar): RedirectResponse
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:disetujui,ditolak',
+        ]);
+
+        $status = $validated['status'] === 'disetujui' ? 'diverifikasi' : 'ditolak';
+
+        $sampahLiar->update(['status' => $status]);
+
+        return redirect()->back()->with('success', 'Laporan sampah liar berhasil diverifikasi.');
+    }
+
+    public function showSampahLiar(SampahLiar $sampahLiar)
+    {
+        return view('sampah-liar.show', compact('sampahLiar'));
     }
 
     // === KONFIGURASI POIN ===

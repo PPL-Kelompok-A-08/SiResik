@@ -4,13 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Jadwal Penjemputan - SiResik</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @else
+        <script src="https://cdn.tailwindcss.com"></script>
+    @endif
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; }
-        .stat-card { border-radius: 16px; padding: 20px 24px; }
-        .section-card { background: white; border-radius: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; }
+        .stat-card { border-radius: 16px; padding: 16px 18px; min-height: 80px; display: flex; align-items: center; justify-content: space-between; }
+        .section-card { background: white; border-radius: 18px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; }
+        .chart-panel { position: relative; height: 200px; min-height: 0; }
+        .chart-panel-sm { height: 170px; }
+        .chart-panel-md { height: 220px; }
+        .chart-panel canvas { display: block; width: 100% !important; height: 100% !important; }
+        .stat-gradient { background: linear-gradient(135deg, #064e3b 0%, #059669 55%, #10b981 100%); color: #fff; }
+        .stat-card-plain { background: #fff; border: 1px solid #e2e8f0; color: #064e3b; }
+        .filter-chip { border-radius: 999px; border: 1px solid #cbd5e1; padding: 9px 14px; font-size: 13px; font-weight: 700; color: #475569; background: #fff; }
+        .filter-chip.active { border-color: #10b981; background: #ecfdf5; color: #047857; }
         .badge { border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 700; }
         .page { display: none; }
         .page.active { display: block; }
@@ -40,7 +53,9 @@
     <div class="min-h-screen xl:grid xl:grid-cols-[300px,1fr]">
         <aside class="bg-[#0c5b49] px-6 py-8 text-white">
             <div class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/20 text-2xl">♻</div>
+                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/20">
+                    <i class="fas fa-recycle text-xl text-emerald-200"></i>
+                </div>
                 <div>
                     <p class="text-4xl font-black tracking-tight">SiResik</p>
                     <p class="mt-1 text-xs uppercase tracking-[0.2em] text-emerald-100">Sistem Informasi Resik</p>
@@ -55,59 +70,39 @@
                 </div>
             </div>
 
-            <!-- Nav -->
-            <nav class="mt-10 space-y-2">
-                <a data-page="dashboard" onclick="showPage('dashboard')"
-                    class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                    <span class="text-xl">◦</span>
-                    <span>Admin Dashboard</span>
-                </a>
-                <a data-page="jadwal" onclick="showPage('jadwal')"
-                    class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition bg-emerald-600 text-white shadow-lg shadow-emerald-900/20 cursor-pointer">
-                    <span class="text-xl">▣</span>
-                    <span>Kelola Jadwal</span>
-                </a>
-                <a data-page="verifikasi" onclick="showPage('verifikasi')"
-                    class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                    <span class="text-xl">◦</span>
-                    <span>Verifikasi Laporan</span>
-                </a>
-                <a data-page="kategori" onclick="showPage('kategori')"
-                    class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                    <span class="text-xl">◦</span>
-                    <span>Kategori & Reward</span>
-                </a>
-                <a data-page="reward" onclick="showPage('reward')"
-                    class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                    <span class="text-xl">◦</span>
-                    <span>Kelola Reward</span>
-                </a>
-                <a data-page="area" onclick="showPage('area')"
-                    class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                    <span class="text-xl">◦</span>
-                    <span>Area Layanan</span>
-                </a>
-                <a data-page="petugas" onclick="showPage('petugas')"
-                    class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                    <span class="text-xl">◦</span>
-                    <span>Pantau Petugas</span>
-                </a>
-                <a data-page="riwayat" onclick="showPage('riwayat')"
-                    class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                    <span class="text-xl">◦</span>
-                    <span>Riwayat Layanan</span>
-                </a>
-                <a data-page="laporan" onclick="showPage('laporan')"
-                    class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                    <span class="text-xl">◦</span>
-                    <span>Laporan Periodik</span>
-                </a>
+            @php
+                $adminMenuItems = [
+                    ['label' => 'Admin Dashboard', 'page' => 'dashboard', 'icon' => 'fa-chart-pie'],
+                    ['label' => 'Kelola Jadwal', 'page' => 'jadwal', 'icon' => 'fa-calendar-check'],
+                    ['label' => 'Verifikasi Laporan', 'page' => 'verifikasi', 'icon' => 'fa-clipboard-check'],
+                    ['label' => 'Kategori & Reward', 'page' => 'kategori', 'icon' => 'fa-tags'],
+                    ['label' => 'Kelola Reward', 'page' => 'reward', 'icon' => 'fa-gift'],
+                    ['label' => 'Area Layanan', 'page' => 'area', 'icon' => 'fa-map-location-dot'],
+                    ['label' => 'Pantau Petugas', 'page' => 'petugas', 'icon' => 'fa-user-shield'],
+                    ['label' => 'Riwayat Layanan', 'page' => 'riwayat', 'icon' => 'fa-clock-rotate-left'],
+                    ['label' => 'Laporan Periodik', 'page' => 'laporan', 'icon' => 'fa-file-lines'],
+                ];
+            @endphp
+
+            <nav class="mt-14 space-y-2">
+                @foreach ($adminMenuItems as $item)
+                    <a onclick="showPage('{{ $item['page'] }}')"
+                        data-page="{{ $item['page'] }}"
+                        class="nav-item flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition cursor-pointer {{ $item['page'] === 'dashboard' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }}">
+                        <span class="flex w-6 shrink-0 items-center justify-center">
+                            <i class="fas {{ $item['icon'] }} text-base"></i>
+                        </span>
+                        <span>{{ $item['label'] }}</span>
+                    </a>
+                @endforeach
             </nav>
 
             <form action="{{ route('logout') }}" method="POST" class="mt-8">
                 @csrf
                 <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
-                    <span class="text-xl">↪</span>
+                    <span class="flex w-6 shrink-0 items-center justify-center">
+                        <i class="fas fa-right-from-bracket text-base"></i>
+                    </span>
                     <span>Keluar (Log Out)</span>
                 </button>
             </form>
@@ -126,140 +121,155 @@
         <main class="px-6 py-8 lg:px-10">
 
             <!-- ======================== PAGE: DASHBOARD ======================== -->
-            <div id="page-dashboard" class="page">
-                <div class="flex items-center justify-between mb-8">
+            <div id="page-dashboard" class="page active">
+                <div class="flex items-center justify-between mb-6">
                     <div>
                         <h1 class="text-4xl font-black text-slate-900">Admin Statistics Dashboard</h1>
                         <p class="mt-1 text-slate-500">Monitor waste management performance and user participation.</p>
                     </div>
+                    <a onclick="showPage('laporan')" class="cursor-pointer rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700 hover:bg-emerald-100">Laporan Periodik</a>
                 </div>
 
                 <!-- Key Metrics -->
-                <div class="section-card p-6 mb-6">
-                    <h2 class="text-lg font-black text-slate-800 mb-1">Key Metrics</h2>
-                    <p class="text-sm text-slate-400 mb-5">Overview of waste reports and user participation.</p>
-                    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div class="stat-card" style="background:#0c5b49;">
-                            <div class="text-white">
-                                <p class="text-sm opacity-80">Total Reports</p>
-                                <p class="text-2xl font-black">1,234</p>
-                            </div>
+                <div class="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                    <div class="stat-card stat-gradient">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide opacity-80">Total Reports</p>
+                            <p class="mt-1 text-2xl font-black">{{ $stats['total_permintaan'] }}</p>
                         </div>
-                        <div class="stat-card" style="background:#1e3a5f;">
-                            <div class="text-white">
-                                <p class="text-sm opacity-80">Active Users</p>
-                                <p class="text-2xl font-black">567</p>
-                            </div>
+                    </div>
+                    <div class="stat-card stat-gradient">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide opacity-80">Active Users</p>
+                            <p class="mt-1 text-2xl font-black">{{ $stats['masyarakat'] }}</p>
                         </div>
-                        <div class="stat-card" style="background:#7b6f00;">
-                            <div class="text-white">
-                                <p class="text-sm opacity-80">Waste Collected (kg)</p>
-                                <p class="text-2xl font-black">8,901</p>
-                            </div>
+                    </div>
+                    <div class="stat-card stat-gradient">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide opacity-80">Total Officers</p>
+                            <p class="mt-1 text-2xl font-black">{{ $stats['petugas'] }}</p>
                         </div>
-                        <div class="stat-card" style="background:#fee2e2; border:1px solid #fecaca;">
-                            <div class="text-slate-700">
-                                <p class="text-sm opacity-80">Pending Requests</p>
-                                <p class="text-2xl font-black">{{ $stats['menunggu'] ?? 0 }}</p>
-                            </div>
+                    </div>
+                    <div class="stat-card stat-gradient">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide opacity-80">Pending</p>
+                            <p class="mt-1 text-2xl font-black">{{ $stats['menunggu'] }}</p>
                         </div>
-                        <div class="stat-card" style="background:#f0fdf4; border:1px solid #bbf7d0;">
-                            <div class="text-slate-700">
-                                <p class="text-sm opacity-80">Completed Pickups</p>
-                                <p class="text-2xl font-black">345</p>
-                            </div>
+                    </div>
+                </div>
+
+                <div class="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-3">
+                    <div class="stat-card stat-card-plain">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Completed</p>
+                            <p class="mt-1 text-2xl font-black text-emerald-700">{{ $stats['selesai'] }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-card-plain">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">In Progress</p>
+                            <p class="mt-1 text-2xl font-black text-emerald-700">{{ $stats['diproses'] }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-card-plain col-span-2 lg:col-span-1">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Registered Users</p>
+                            <p class="mt-1 text-2xl font-black text-emerald-700">{{ $stats['total_user'] }}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Charts -->
-                <div class="section-card p-6 mb-6">
-                    <h2 class="text-lg font-black text-slate-800 mb-5">Reports Over Time</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="section-card p-5 mb-5">
+                    <div class="mb-4 flex items-end justify-between gap-4">
                         <div>
-                            <canvas id="lineChart" height="200"></canvas>
+                            <h2 class="text-base font-black text-slate-800">Reports Over Time</h2>
+                            <p class="text-xs text-slate-400">Filtered periodic report data</p>
                         </div>
-                        <div>
-                            <canvas id="barChart" height="200"></canvas>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4 xl:grid-cols-[1.4fr,0.6fr]">
+                        <div class="chart-panel chart-panel-md">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                        <div class="chart-panel chart-panel-sm">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card p-5 mb-5">
+                    <div class="mb-4">
+                        <h2 class="text-base font-black text-slate-800">Waste & User Analytics</h2>
+                        <p class="text-xs text-slate-400">Category volume and top contributors</p>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div class="chart-panel chart-panel-sm">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                        <div class="chart-panel chart-panel-sm">
+                            <canvas id="userBarChart"></canvas>
                         </div>
                     </div>
                 </div>
 
                 <!-- Quick Filters -->
                 <div class="section-card p-6 mb-6">
-                    <h2 class="text-lg font-black text-slate-800 mb-4">Quick Filters</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                         <div>
-                            <label class="block text-sm font-semibold text-slate-600 mb-2">Date Range</label>
-                            <input type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                            <h2 class="text-lg font-black text-slate-800">Quick Filter Reports</h2>
+                            <p class="text-sm text-slate-400">Filter Laporan Periodik by status and time range.</p>
+                        </div>
+                        <span class="text-sm font-semibold text-slate-500">{{ $periodicSummary['total'] }} reports matched</span>
+                    </div>
+                    <form method="GET" action="{{ route('dashboard.admin') }}" class="grid grid-cols-1 gap-3 lg:grid-cols-[1fr,1fr,1fr,auto] lg:items-end">
+                        <input type="hidden" name="section" value="laporan">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Periode Mulai</label>
+                            <input type="date" name="report_start" value="{{ $reportFilters['start'] }}" class="w-full border border-slate-300 rounded-lg px-3 py-2">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-600 mb-2">Category</label>
-                            <select class="w-full border border-slate-300 rounded-lg px-3 py-2">
-                                <option>All Categories</option>
-                                <option>Plastic</option>
-                                <option>Organic</option>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Periode Akhir</label>
+                            <input type="date" name="report_end" value="{{ $reportFilters['end'] }}" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Status</label>
+                            <select name="report_status" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                                <option value="all" @selected($reportFilters['status'] === 'all')>Semua Status</option>
+                                <option value="Menunggu" @selected($reportFilters['status'] === 'Menunggu')>Menunggu</option>
+                                <option value="Diproses" @selected($reportFilters['status'] === 'Diproses')>Diproses</option>
+                                <option value="Selesai" @selected($reportFilters['status'] === 'Selesai')>Selesai</option>
+                                <option value="Dibatalkan" @selected($reportFilters['status'] === 'Dibatalkan')>Dibatalkan</option>
                             </select>
                         </div>
-                    </div>
+                        <div class="flex gap-2">
+                            <button type="submit" class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Apply</button>
+                            <a href="{{ route('dashboard.admin', ['section' => 'laporan']) }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Reset</a>
+                        </div>
+                    </form>
                 </div>
 
-                <!-- Service Reports -->
-                <div class="section-card p-6 mb-6">
-                    <h2 class="text-lg font-black text-slate-800 mb-1">Service Reports (Periodic Reports)</h2>
-                    <p class="text-sm text-slate-400 mb-5">Detailed service reports over selected periods.</p>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div>
-                            <canvas id="pieChart" height="200"></canvas>
-                        </div>
-                        <div>
-                            <canvas id="userBarChart" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- User Contribution Analytics -->
-                <div class="section-card p-6 mb-6">
-                    <h2 class="text-lg font-black text-slate-800 mb-1">User Contribution Analytics</h2>
-                    <p class="text-sm text-slate-400 mb-5">Track user participation in waste management.</p>
-
-                    <h3 class="font-black text-slate-700 mb-4">Top Contributors</h3>
-                    <div class="grid grid-cols-2 gap-4 mb-6">
+                <!-- System Overview -->
+                <div class="section-card p-5 mb-6">
+                    <h2 class="text-base font-black text-slate-800 mb-4">System Overview</h2>
+                    <div class="grid grid-cols-3 gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
                         <div class="text-center">
-                            <p class="text-2xl font-black text-emerald-500">User A</p>
-                            <p class="text-sm text-slate-500">500 kg</p>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Masyarakat</p>
+                            <p class="mt-1 text-xl font-black text-emerald-700">{{ $stats['masyarakat'] }}</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-2xl font-black text-emerald-500">User B</p>
-                            <p class="text-sm text-slate-500">450 kg</p>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Petugas</p>
+                            <p class="mt-1 text-xl font-black text-emerald-700">{{ $stats['petugas'] }}</p>
                         </div>
-                    </div>
-
-                    <h3 class="font-black text-slate-700 mb-4">User Activity Visualization</h3>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div>
-                            <canvas id="activityChart" height="200"></canvas>
-                        </div>
-                        <div class="flex items-center justify-center">
-                            <p class="text-slate-500">Activity Map Placeholder</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4">
-                        <div>
-                            <p class="font-semibold text-slate-700">Total Points Earned</p>
-                            <p class="text-2xl font-black text-emerald-500">12,345</p>
-                        </div>
-                        <div>
-                            <p class="font-semibold text-slate-700">Active Users This Month</p>
-                            <p class="text-2xl font-black text-emerald-500">89</p>
+                        <div class="text-center">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Rewards</p>
+                            <p class="mt-1 text-xl font-black text-emerald-700">{{ $rewards->count() }}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- ======================== PAGE: JADWAL ======================== -->
-            <div id="page-jadwal" class="page active">
+            <div id="page-jadwal" class="page">
             <header class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                     <h1 class="text-5xl font-black tracking-tight text-slate-900">Kelola Jadwal Penjemputan</h1>
@@ -469,41 +479,116 @@
                 <div class="section-card">
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <h2 class="text-xl font-black text-slate-800">Daftar Laporan</h2>
-                        <span class="text-sm text-slate-500">Total: {{ $permintaan->count() }} laporan</span>
+                        <span class="text-sm text-slate-500">Total: {{ $permintaan->count() + $laporanSampahLiar->count() }} laporan</span>
                     </div>
                     <div class="grid gap-4 p-6 md:grid-cols-2">
-                        @forelse($permintaan as $laporan)
-                        <div class="rounded-2xl border border-slate-200 p-5">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <p class="text-lg font-black text-slate-800">Laporan #{{ $laporan->id }}</p>
-                                    <p class="text-sm text-slate-500">Oleh: {{ $laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                        @if($permintaan->isEmpty() && $laporanSampahLiar->isEmpty())
+                        <div class="col-span-full text-center py-8 text-slate-500">
+                            Tidak ada laporan untuk diverifikasi.
+                        </div>
+                        @else
+                        @foreach($permintaan as $laporan)
+                        @php
+                            $statusFilter = $laporan->status === 'Selesai' ? 'disetujui' : 'menunggu';
+                        @endphp
+                        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm verifikasi-card" data-status="{{ $statusFilter }}" data-type="permintaan">
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                                <div class="min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                                        <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">No. {{ $loop->iteration }}</span>
+                                        <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">Permintaan</span>
+                                        <span>ID: JOB-{{ str_pad($laporan->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                    </div>
+                                    <p class="mt-3 text-lg font-black text-slate-900">{{ $laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                                    <p class="text-sm text-slate-500">{{ $laporan->pengguna?->email ?? 'Email tidak tersedia' }}</p>
                                 </div>
                                 <span class="status-badge {{ $laporan->status === 'Menunggu' ? 'status-menunggu' : ($laporan->status === 'Selesai' ? 'status-selesai' : 'status-dibatalkan') }}">{{ $laporan->status }}</span>
                             </div>
-                            <p class="text-sm text-slate-600 mb-4">{{ $laporan->alamat ?? 'Tidak ada deskripsi' }}</p>
-                            <div class="flex gap-2">
+
+                            <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                                <div class="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                                    <p class="font-semibold text-slate-800">Alamat / Lokasi</p>
+                                    <p class="mt-2 text-sm text-slate-600">{{ $laporan->alamat ?? 'Tidak ada deskripsi' }}</p>
+                                </div>
+                                <div class="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                                    <p class="font-semibold text-slate-800">Jadwal</p>
+                                    <p class="mt-2 text-sm text-slate-600">{{ $laporan->tanggal ?? 'Belum tersedia' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 flex flex-wrap gap-3 items-center">
+                                <a href="{{ route('admin.permintaan.show', $laporan) }}" class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">Detail</a>
                                 @if($laporan->status === 'Menunggu')
                                 <form method="POST" action="{{ route('admin.verifikasi-laporan', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('disetujui'); return true;">
                                     @csrf
                                     <input type="hidden" name="status" value="disetujui">
-                                    <button type="submit" class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Setujui</button>
+                                    <button type="submit" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-600 transition">Setujui</button>
                                 </form>
                                 <form method="POST" action="{{ route('admin.verifikasi-laporan', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('ditolak'); return true;">
                                     @csrf
                                     <input type="hidden" name="status" value="ditolak">
-                                    <button type="submit" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Tolak</button>
+                                    <button type="submit" class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">Tolak</button>
                                 </form>
                                 @else
-                                <div class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: {{ $laporan->status }}</div>
+                                <div class="rounded-2xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: {{ $laporan->status }}</div>
                                 @endif
                             </div>
                         </div>
-                        @empty
-                        <div class="col-span-full text-center py-8 text-slate-500">
-                            Tidak ada laporan untuk diverifikasi.
+                        @endforeach
+                        @foreach($laporanSampahLiar as $laporan)
+                        @php $statusFilter = $laporan->status === 'diverifikasi' ? 'disetujui' : 'menunggu'; @endphp
+                        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm verifikasi-card" data-status="{{ $statusFilter }}" data-type="sampah_liar">
+                            @if ($laporan->foto)
+                                <div class="mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-slate-100">
+                                    <img src="{{ asset('storage/' . $laporan->foto) }}" alt="Foto laporan {{ $laporan->lokasi ?? 'sampah liar' }}" class="h-56 w-full object-cover">
+                                </div>
+                            @endif
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                                <div class="min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                                        <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">No. {{ $loop->iteration }}</span>
+                                        <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">Sampah Liar</span>
+                                        <span>ID: SL-{{ str_pad($laporan->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                    </div>
+                                    <p class="mt-3 text-lg font-black text-slate-900">{{ $laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                                    <p class="text-sm text-slate-500">{{ $laporan->pengguna?->email ?? 'Email tidak tersedia' }}</p>
+                                </div>
+                                <span class="status-badge {{ $laporan->status === 'pending' ? 'status-menunggu' : ($laporan->status === 'diverifikasi' ? 'status-selesai' : 'status-dibatalkan') }}">
+                                    {{ $laporan->status === 'pending' ? 'Menunggu' : ($laporan->status === 'diverifikasi' ? 'Disetujui' : 'Ditolak') }}
+                                </span>
+                            </div>
+
+                            <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                                <div class="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                                    <p class="font-semibold text-slate-800">Lokasi</p>
+                                    <p class="mt-2 text-sm text-slate-600">{{ $laporan->lokasi ?? 'Tidak ada deskripsi' }}</p>
+                                </div>
+                                <div class="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                                    <p class="font-semibold text-slate-800">Tanggal Laporan</p>
+                                    <p class="mt-2 text-sm text-slate-600">{{ $laporan->created_at?->format('d M Y') ?? '-' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 flex flex-wrap gap-3 items-center">
+                                <a href="{{ route('admin.sampah-liar.show', $laporan) }}" class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">Detail</a>
+                                @if($laporan->status === 'pending')
+                                <form method="POST" action="{{ route('admin.verifikasi-laporan-sampah-liar', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('disetujui'); return true;">
+                                    @csrf
+                                    <input type="hidden" name="status" value="disetujui">
+                                    <button type="submit" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-600 transition">Setujui</button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.verifikasi-laporan-sampah-liar', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('ditolak'); return true;">
+                                    @csrf
+                                    <input type="hidden" name="status" value="ditolak">
+                                    <button type="submit" class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">Tolak</button>
+                                </form>
+                                @else
+                                <div class="rounded-2xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: {{ $laporan->status === 'diverifikasi' ? 'Disetujui' : 'Ditolak' }}</div>
+                                @endif
+                            </div>
                         </div>
-                        @endforelse
+                        @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -534,18 +619,41 @@
                         </thead>
                         <tbody>
                             @foreach(\App\Models\KategoriSampah::all() as $kategori)
-                            <tr>
-                                <td>{{ $kategori->nama }}</td>
+                            <tr class="cursor-pointer hover:bg-slate-50" onclick="toggleKategoriRow({{ $kategori->id }})">
+                                <td class="py-4 px-3">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span>{{ $kategori->nama }}</span>
+                                        <span id="kategori-arrow-{{ $kategori->id }}" class="text-slate-400">▸</span>
+                                    </div>
+                                </td>
                                 <td>{{ $kategori->poin_per_kg }}</td>
                                 <td>Rp {{ number_format($kategori->harga_per_kg, 0, ',', '.') }}</td>
-                                <td>{{ $kategori->deskripsi }}</td>
+                                <td>{{ Str::limit($kategori->deskripsi, 35) }}</td>
                                 <td>
-                                    <button onclick="editKategori({{ $kategori->id }}, '{{ $kategori->nama }}', '{{ $kategori->deskripsi }}', {{ $kategori->poin_per_kg }}, {{ $kategori->harga_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
-                                    <form method="POST" action="{{ route('admin.kategori.destroy', $kategori) }}" style="display: inline;" onsubmit="return confirm('Yakin hapus kategori ini?')">
+                                    <button onclick="event.stopPropagation(); editKategori({{ $kategori->id }}, @json($kategori->nama), @json($kategori->deskripsi), {{ $kategori->poin_per_kg }}, {{ $kategori->harga_per_kg }})" class="text-emerald-500 hover:text-emerald-700">Edit</button>
+                                    <form method="POST" action="{{ route('admin.kategori.destroy', $kategori) }}" style="display: inline;" onsubmit="event.stopPropagation(); return confirm('Yakin hapus kategori ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-500 hover:text-red-700 ml-2">Hapus</button>
                                     </form>
+                                </td>
+                            </tr>
+                            <tr id="kategori-{{ $kategori->id }}" class="hidden bg-slate-50">
+                                <td colspan="5" class="px-4 py-4">
+                                    <div class="grid gap-4 md:grid-cols-[2fr,1fr] items-center">
+                                        <div>
+                                            <p class="text-sm font-semibold text-slate-700">Deskripsi</p>
+                                            <p class="mt-2 text-sm text-slate-600">{{ $kategori->deskripsi }}</p>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2 justify-end">
+                                            <button onclick="event.stopPropagation(); editKategori({{ $kategori->id }}, @json($kategori->nama), @json($kategori->deskripsi), {{ $kategori->poin_per_kg }}, {{ $kategori->harga_per_kg }})" class="rounded-xl border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 hover:bg-emerald-50">Edit</button>
+                                            <form method="POST" action="{{ route('admin.kategori.destroy', $kategori) }}" class="inline" onsubmit="event.stopPropagation(); return confirm('Yakin hapus kategori ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="rounded-xl border border-red-500 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">Hapus</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach
@@ -594,12 +702,12 @@
                         <p class="text-2xl font-black text-slate-800">{{ $rewards->count() }}</p>
                     </div>
                     <div class="section-card p-5">
-                        <p class="text-sm text-slate-500">Penukaran Bulan Ini</p>
-                        <p class="text-2xl font-black text-slate-800">23</p>
+                        <p class="text-sm text-slate-500">Penghargaan Aktif</p>
+                        <p class="text-2xl font-black text-slate-800">{{ $rewards->where('aktif', true)->count() }}</p>
                     </div>
                     <div class="section-card p-5">
-                        <p class="text-sm text-slate-500">Poin Dikeluarkan</p>
-                        <p class="text-2xl font-black text-slate-800">1,150</p>
+                        <p class="text-sm text-slate-500">Total Stok</p>
+                        <p class="text-2xl font-black text-slate-800">{{ $rewards->sum('stok') }}</p>
                     </div>
                 </div>
 
@@ -657,12 +765,8 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>User A</td>
-                                <td>Voucher Belanja</td>
-                                <td>100</td>
-                                <td>2024-04-20</td>
+                                <td colspan="4" class="text-center py-6 text-slate-500">Belum ada data penukaran reward.</td>
                             </tr>
-                            <!-- More rows... -->
                         </tbody>
                     </table>
                 </div>
@@ -860,8 +964,8 @@
                         <p class="mt-1 text-slate-500">View historical service records.</p>
                     </div>
                     <div class="flex gap-3">
-                        <button class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold">Export</button>
-                        <button class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Filter</button>
+                        <button type="button" onclick="exportServiceHistoryCsv()" class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold">Export CSV</button>
+                        <button type="button" onclick="filterServiceHistory()" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Filter</button>
                     </div>
                 </div>
 
@@ -870,25 +974,29 @@
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                         <div>
                             <label class="block text-sm font-semibold mb-2">Tanggal Mulai</label>
-                            <input type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                            <input type="date" id="history-start" class="w-full border border-slate-300 rounded-lg px-3 py-2">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold mb-2">Tanggal Akhir</label>
-                            <input type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                            <input type="date" id="history-end" class="w-full border border-slate-300 rounded-lg px-3 py-2">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold mb-2">Status</label>
-                            <select class="w-full border border-slate-300 rounded-lg px-3 py-2">
-                                <option>Semua</option>
-                                <option>Selesai</option>
-                                <option>Dalam Proses</option>
+                            <select id="history-status" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                                <option value="all">Semua</option>
+                                <option value="Menunggu">Menunggu</option>
+                                <option value="Diproses">Diproses</option>
+                                <option value="Selesai">Selesai</option>
+                                <option value="Dibatalkan">Dibatalkan</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-semibold mb-2">Petugas</label>
-                            <select class="w-full border border-slate-300 rounded-lg px-3 py-2">
-                                <option>Semua</option>
-                                <option>Ahmad</option>
+                            <select id="history-petugas" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                                <option value="all">Semua</option>
+                                @foreach($petugas as $petugasItem)
+                                <option value="{{ $petugasItem->id }}">{{ $petugasItem->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -897,7 +1005,7 @@
                 <div class="section-card">
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <h2 class="text-xl font-black text-slate-800">Riwayat Penjemputan</h2>
-                        <span class="text-sm text-slate-500">Total: 156 records</span>
+                        <span class="text-sm text-slate-500">Total: {{ $permintaan->count() }} records</span>
                     </div>
                     <table>
                         <thead>
@@ -910,23 +1018,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>REQ-101</td>
-                                <td>User A</td>
-                                <td>Ahmad</td>
-                                <td>2024-04-20</td>
-                                <td><span class="status-badge status-selesai">Selesai</span></td>
+                            @forelse($permintaan as $history)
+                            <tr class="history-row" data-date="{{ $history->created_at->format('Y-m-d') }}" data-status="{{ $history->status }}" data-petugas="{{ $history->petugas_id ?? 'none' }}">
+                                <td>REQ-{{ str_pad($history->id, 3, '0', STR_PAD_LEFT) }}</td>
+                                <td>{{ $history->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</td>
+                                <td>{{ $history->petugas?->name ?? '-' }}</td>
+                                <td>{{ $history->created_at->format('Y-m-d') }}</td>
+                                <td><span class="status-badge {{ $history->status === 'Menunggu' ? 'status-menunggu' : ($history->status === 'Selesai' ? 'status-selesai' : ($history->status === 'Diproses' ? 'status-dijadwalkan' : 'status-dibatalkan')) }}">{{ $history->status }}</span></td>
                             </tr>
-                            <!-- More rows... -->
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-6 text-slate-500">Belum ada riwayat layanan.</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
-                    <div class="px-6 py-4 flex items-center justify-between border-t border-slate-100">
-                        <p class="text-sm text-slate-500">Menampilkan 1-10 dari 156</p>
-                        <div class="flex gap-2">
-                            <button class="px-3 py-1 border border-slate-300 rounded text-sm">Previous</button>
-                            <button class="px-3 py-1 bg-emerald-500 text-white rounded text-sm">1</button>
-                            <button class="px-3 py-1 border border-slate-300 rounded text-sm">Next</button>
-                        </div>
+                    <div class="px-6 py-4 border-t border-slate-100">
+                        <p id="history-count" class="text-sm text-slate-500">Menampilkan {{ $permintaan->count() }} dari {{ $permintaan->count() }} records</p>
                     </div>
                 </div>
             </div>
@@ -936,64 +1044,85 @@
                 <div class="flex items-center justify-between mb-8">
                     <div>
                         <h1 class="text-4xl font-black text-slate-900">Laporan Periodik</h1>
-                        <p class="mt-1 text-slate-500">Generate and view periodic reports.</p>
+                        <p class="mt-1 text-slate-500">Generate and view periodic reports from pickup request data.</p>
                     </div>
                     <div class="flex gap-3">
-                        <button class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold">Export PDF</button>
-                        <button class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Generate Report</button>
+                        <button type="button" onclick="exportPeriodicReportCsv()" class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold">Export CSV</button>
+                        <button type="submit" form="periodic-report-filter" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Generate Report</button>
                     </div>
                 </div>
 
                 <!-- Date Filter -->
                 <div class="section-card mb-6 p-5">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+                    <form id="periodic-report-filter" method="GET" action="{{ route('dashboard.admin') }}" class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+                        <input type="hidden" name="section" value="laporan">
                         <div>
                             <label class="block text-sm font-semibold mb-2">Periode Mulai</label>
-                            <input type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                            <input type="date" name="report_start" value="{{ $reportFilters['start'] }}" class="w-full border border-slate-300 rounded-lg px-3 py-2">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold mb-2">Periode Akhir</label>
-                            <input type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                            <input type="date" name="report_end" value="{{ $reportFilters['end'] }}" class="w-full border border-slate-300 rounded-lg px-3 py-2">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold mb-2">Tipe Laporan</label>
-                            <select class="w-full border border-slate-300 rounded-lg px-3 py-2">
-                                <option>Bulanan</option>
-                                <option>Mingguan</option>
-                                <option>Harian</option>
+                            <select name="report_type" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                                <option value="monthly" @selected($reportFilters['type'] === 'monthly')>Bulanan</option>
+                                <option value="weekly" @selected($reportFilters['type'] === 'weekly')>Mingguan</option>
+                                <option value="daily" @selected($reportFilters['type'] === 'daily')>Harian</option>
                             </select>
                         </div>
-                        <button class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Terapkan Filter</button>
-                    </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Status</label>
+                            <select name="report_status" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                                <option value="all" @selected($reportFilters['status'] === 'all')>Semua Status</option>
+                                <option value="Menunggu" @selected($reportFilters['status'] === 'Menunggu')>Menunggu</option>
+                                <option value="Diproses" @selected($reportFilters['status'] === 'Diproses')>Diproses</option>
+                                <option value="Selesai" @selected($reportFilters['status'] === 'Selesai')>Selesai</option>
+                                <option value="Dibatalkan" @selected($reportFilters['status'] === 'Dibatalkan')>Dibatalkan</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Terapkan Filter</button>
+                    </form>
                 </div>
 
                 <!-- Summary -->
                 <div class="section-card p-6 mb-6">
                     <h2 class="text-xl font-black text-slate-800 mb-4">Ringkasan Periode</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4">
                         <div class="text-center">
-                            <p class="text-2xl font-black text-emerald-500">1,234</p>
+                            <p class="text-2xl font-black text-emerald-500">{{ $periodicSummary['total'] }}</p>
                             <p class="text-sm text-slate-500">Total Laporan</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-2xl font-black text-emerald-500">567</p>
+                            <p class="text-2xl font-black text-emerald-500">{{ $periodicSummary['selesai'] }}</p>
                             <p class="text-sm text-slate-500">Laporan Selesai</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-2xl font-black text-emerald-500">8,901 kg</p>
-                            <p class="text-sm text-slate-500">Sampah Dikumpulkan</p>
+                            <p class="text-2xl font-black text-emerald-500">{{ $periodicSummary['menunggu'] }}</p>
+                            <p class="text-sm text-slate-500">Menunggu Diproses</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-2xl font-black text-emerald-500">89</p>
-                            <p class="text-sm text-slate-500">User Aktif</p>
+                            <p class="text-2xl font-black text-emerald-500">{{ $periodicSummary['diproses'] }}</p>
+                            <p class="text-sm text-slate-500">Diproses</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-black text-emerald-500">{{ number_format($periodicSummary['total_berat'], 2) }}</p>
+                            <p class="text-sm text-slate-500">Total Sampah (kg)</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-black text-emerald-500">{{ $periodicSummary['pengguna_unik'] }}</p>
+                            <p class="text-sm text-slate-500">Pengguna Aktif</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Chart -->
-                <div class="section-card p-6 mb-6">
-                    <h2 class="text-xl font-black text-slate-800 mb-4">Tren Laporan Bulanan</h2>
-                    <canvas id="lapChart" height="120"></canvas>
+                <div class="section-card p-5 mb-6">
+                    <h2 class="text-base font-black text-slate-800 mb-4">Tren Laporan Bulanan</h2>
+                    <div class="chart-panel chart-panel-md">
+                        <canvas id="lapChart"></canvas>
+                    </div>
                 </div>
 
                 <!-- Table -->
@@ -1011,13 +1140,24 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($periodicReports as $report)
                             <tr>
-                                <td>2024-04-01</td>
-                                <td>45</td>
-                                <td>1,200</td>
-                                <td><span class="status-badge status-selesai">Selesai</span></td>
+                                <td>
+                                    <p class="font-semibold">{{ $report->created_at->format('Y-m-d') }}</p>
+                                    <p class="text-xs text-slate-400">Jadwal: {{ $report->tanggal }}</p>
+                                </td>
+                                <td>
+                                    <p class="font-semibold">Laporan #{{ $report->id }}</p>
+                                    <p class="text-xs text-slate-400">{{ $report->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                                </td>
+                                <td>{{ number_format($report->items->sum('berat_kg'), 2) }}</td>
+                                <td><span class="status-badge {{ $report->status === 'Menunggu' ? 'status-menunggu' : ($report->status === 'Selesai' ? 'status-selesai' : ($report->status === 'Diproses' ? 'status-dijadwalkan' : 'status-dibatalkan')) }}">{{ $report->status }}</span></td>
                             </tr>
-                            <!-- More rows... -->
+                            @empty
+                            <tr>
+                                <td colspan="4" class="text-center py-6 text-slate-500">Tidak ada laporan pada periode ini.</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -1315,6 +1455,69 @@
     </div>
 
     <script>
+        // Initialize event listeners when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Kategori button listeners
+            const kategoriAddBtn = document.querySelector('button[onclick*="modal-tambah-kategori"]');
+            if (kategoriAddBtn) {
+                kategoriAddBtn.addEventListener('click', function() {
+                    document.getElementById('modal-title').textContent = 'Tambah Kategori Sampah';
+                    document.getElementById('kategori-form').action = '{{ route("admin.kategori.store") }}';
+                    const methodInput = document.querySelector('#kategori-form input[name="_method"]');
+                    if (methodInput) methodInput.remove();
+                    document.getElementById('kategori-form').reset();
+                });
+            }
+
+            // Reward button listeners
+            const rewardAddBtn = document.querySelector('button[onclick*="modal-tambah-reward"]');
+            if (rewardAddBtn) {
+                rewardAddBtn.addEventListener('click', function() {
+                    document.getElementById('modal-reward-title').textContent = 'Tambah Reward';
+                    document.getElementById('reward-form').action = '{{ route("admin.reward.store") }}';
+                    const methodInput = document.querySelector('#reward-form input[name="_method"]');
+                    if (methodInput) methodInput.remove();
+                    document.getElementById('reward-form').reset();
+                    document.getElementById('reward-aktif').checked = true;
+                });
+            }
+
+            // Petugas button listeners
+            const petugasAddBtn = document.querySelector('button[onclick*="modal-tambah-petugas"]');
+            if (petugasAddBtn) {
+                petugasAddBtn.addEventListener('click', function() {
+                    document.getElementById('modal-petugas-title').textContent = 'Tambah Petugas';
+                    document.getElementById('petugas-form').action = '{{ route("admin.petugas.store") }}';
+                    const methodInput = document.querySelector('#petugas-form input[name="_method"]');
+                    if (methodInput) methodInput.remove();
+                    document.getElementById('petugas-form').reset();
+                    document.getElementById('petugas-password').required = true;
+                    document.getElementById('petugas-password-confirm').required = true;
+                    document.getElementById('petugas-password').placeholder = 'Minimal 8 karakter';
+                    document.getElementById('petugas-password-confirm').placeholder = 'Ulangi password';
+                });
+            }
+
+            // Titik Layanan button listeners
+            const titikAddBtn = document.querySelector('button[onclick*="modal-tambah-titik-layanan"]');
+            if (titikAddBtn) {
+                titikAddBtn.addEventListener('click', function() {
+                    document.getElementById('modal-titik-layanan-title').textContent = 'Tambah Titik Layanan';
+                    document.getElementById('titik-layanan-form').action = '{{ route("admin.titik-layanan.store") }}';
+                    const methodInput = document.querySelector('#titik-layanan-form input[name="_method"]');
+                    if (methodInput) methodInput.remove();
+                    document.getElementById('titik-layanan-form').reset();
+                });
+            }
+
+            const activeSection = new URLSearchParams(window.location.search).get('section');
+            if (activeSection) {
+                showPage(activeSection);
+            } else {
+                setTimeout(initCharts, 100);
+            }
+        });
+
         function showVerifikasiSuccess(status) {
             const icon = document.getElementById('verifikasi-icon');
             const title = document.getElementById('verifikasi-title');
@@ -1338,24 +1541,35 @@
             return true;
         }
 
+        function filterVerifikasi(btn, filter) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.verifikasi-card').forEach(card => {
+                const status = card.dataset.status;
+                if (filter === 'semua' || status === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
         // Navigation
         function showPage(name) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + name).classList.add('active');
-            document.querySelectorAll('nav a').forEach(n => {
+            const targetPage = document.getElementById('page-' + name);
+            if (!targetPage) return;
+            targetPage.classList.add('active');
+            document.querySelectorAll('nav .nav-item').forEach(n => {
                 n.classList.remove('bg-emerald-600', 'text-white', 'shadow-lg', 'shadow-emerald-900/20');
                 n.classList.add('text-emerald-50', 'hover:bg-white/5');
-                n.querySelector('span:first-child').textContent = '◦';
             });
-            
-            // Find the clicked element (or fall back to matching nav item)
-            const clickedElement = (typeof event !== 'undefined' && event && event.currentTarget)
-                ? event.currentTarget
-                : document.querySelector('nav a[data-page="' + name + '"]');
-            if (!clickedElement) return;
-            clickedElement.classList.remove('text-emerald-50', 'hover:bg-white/5');
-            clickedElement.classList.add('bg-emerald-600', 'text-white', 'shadow-lg', 'shadow-emerald-900/20');
-            clickedElement.querySelector('span:first-child').textContent = '▣';
+            const activeNav = document.querySelector(`nav .nav-item[data-page="${name}"]`);
+            if (activeNav) {
+                activeNav.classList.remove('text-emerald-50', 'hover:bg-white/5');
+                activeNav.classList.add('bg-emerald-600', 'text-white', 'shadow-lg', 'shadow-emerald-900/20');
+            }
 
             if (name === 'dashboard') {
                 setTimeout(initCharts, 100);
@@ -1375,7 +1589,9 @@
 
         // Modal
         function openModal(id) {
-            document.getElementById(id).classList.add('open');
+            const modal = document.getElementById(id);
+            if (!modal) return;
+            modal.classList.add('open');
             if (id === 'modal-tambah-titik-layanan') {
                 setTimeout(function () {
                     setupTitikLayananMap();
@@ -1387,7 +1603,10 @@
                 }, 120);
             }
         }
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('open');
+        }
         function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
 
         function openModalTambahArea() {
@@ -1462,15 +1681,6 @@
             openModal('modal-tambah-kategori');
         }
 
-        // Reset form when opening modal for new kategori
-        document.querySelector('[onclick*="modal-tambah-kategori"]').addEventListener('click', function() {
-            document.getElementById('modal-title').textContent = 'Tambah Kategori Sampah';
-            document.getElementById('kategori-form').action = '{{ route("admin.kategori.store") }}';
-            const methodInput = document.querySelector('input[name="_method"]');
-            if (methodInput) methodInput.remove();
-            document.getElementById('kategori-form').reset();
-        });
-
         // Reward
         function editReward(id, nama, deskripsi, poin, stok, aktif) {
             document.getElementById('modal-reward-title').textContent = 'Edit Reward';
@@ -1484,15 +1694,13 @@
             openModal('modal-tambah-reward');
         }
 
-        // Reset form when opening modal for new reward
-        document.querySelector('[onclick*="modal-tambah-reward"]').addEventListener('click', function() {
-            document.getElementById('modal-reward-title').textContent = 'Tambah Reward';
-            document.getElementById('reward-form').action = '{{ route("admin.reward.store") }}';
-            const methodInput = document.querySelector('#reward-form input[name="_method"]');
-            if (methodInput) methodInput.remove();
-            document.getElementById('reward-form').reset();
-            document.getElementById('reward-aktif').checked = true; // Default aktif
-        });
+        function toggleKategoriRow(id) {
+            const detailsRow = document.getElementById(`kategori-${id}`);
+            const arrow = document.getElementById(`kategori-arrow-${id}`);
+            if (!detailsRow) return;
+            const expanded = !detailsRow.classList.toggle('hidden');
+            if (arrow) arrow.textContent = expanded ? '▾' : '▸';
+        }
 
         // Petugas
         function editPetugas(id, nama, email) {
@@ -1507,19 +1715,6 @@
             document.getElementById('petugas-password-confirm').placeholder = 'Kosongkan jika tidak ingin mengubah';
             openModal('modal-tambah-petugas');
         }
-
-        // Reset form when opening modal for new petugas
-        document.querySelector('[onclick*="modal-tambah-petugas"]').addEventListener('click', function() {
-            document.getElementById('modal-petugas-title').textContent = 'Tambah Petugas';
-            document.getElementById('petugas-form').action = '{{ route("admin.petugas.store") }}';
-            const methodInput = document.querySelector('#petugas-form input[name="_method"]');
-            if (methodInput) methodInput.remove();
-            document.getElementById('petugas-form').reset();
-            document.getElementById('petugas-password').required = true;
-            document.getElementById('petugas-password-confirm').required = true;
-            document.getElementById('petugas-password').placeholder = 'Minimal 8 karakter';
-            document.getElementById('petugas-password-confirm').placeholder = 'Ulangi password';
-        });
 
         // Titik Layanan
         function editTitikLayanan(id, nama, jenis, alamat, jam, latitude, longitude, sampah) {
@@ -1550,6 +1745,81 @@
         function filterVerifikasi(btn, filter) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+
+            document.querySelectorAll('.verifikasi-card').forEach(card => {
+                const status = card.dataset.status;
+                if (filter === 'semua' || status === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        const periodicChartData = @json($chartData);
+        const periodicExportRows = @json($periodicExportRows);
+
+        const chartTheme = {
+            gradient: ['#064e3b', '#047857', '#059669', '#10b981', '#34d399', '#6ee7b7'],
+            line: '#059669',
+            lineSoft: 'rgba(5, 150, 105, 0.15)',
+            lineAlt: '#10b981',
+            lineAltSoft: 'rgba(16, 185, 129, 0.12)',
+            grid: '#ecfdf5',
+            tick: '#94a3b8',
+        };
+
+        function greenBarColors(count) {
+            return Array.from({ length: count }, (_, i) => {
+                const t = count <= 1 ? 0.5 : i / (count - 1);
+                const r = Math.round(6 + t * (16 - 6));
+                const g = Math.round(78 + t * (185 - 78));
+                const b = Math.round(59 + t * (129 - 59));
+                return `rgb(${r}, ${g}, ${b})`;
+            });
+        }
+
+        function makeLineFill(ctx) {
+            const gradient = ctx.createLinearGradient(0, 0, 0, 220);
+            gradient.addColorStop(0, 'rgba(5, 150, 105, 0.28)');
+            gradient.addColorStop(1, 'rgba(5, 150, 105, 0.02)');
+            return gradient;
+        }
+
+        const baseChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { font: { size: 11 }, color: '#64748b', boxWidth: 12, padding: 14 },
+                },
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 10 }, color: chartTheme.tick, maxRotation: 0 },
+                },
+                y: {
+                    grid: { color: chartTheme.grid },
+                    ticks: { font: { size: 10 }, color: chartTheme.tick },
+                    beginAtZero: true,
+                },
+            },
+        };
+
+        function emptyChartMessage(ctx, message) {
+            const chart = ctx.canvas;
+            const wrapper = chart.parentElement;
+            if (!wrapper || wrapper.querySelector('.empty-chart-message')) return;
+            const empty = document.createElement('div');
+            empty.className = 'empty-chart-message flex h-full min-h-[160px] items-center justify-center rounded-xl border border-dashed border-emerald-200 text-sm font-semibold text-slate-400';
+            empty.textContent = message;
+            chart.style.display = 'none';
+            wrapper.appendChild(empty);
+        }
+
+        function hasChartData(data) {
+            return Array.isArray(data) && data.some((value) => Number(value) > 0);
         }
 
         // Charts (Dashboard)
@@ -1558,85 +1828,248 @@
             if (chartsInit) return;
             chartsInit = true;
 
-            const lineCtx = document.getElementById('lineChart').getContext('2d');
-            new Chart(lineCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'],
-                    datasets: [{
-                        label: 'Reports',
-                        data: [120, 150, 180, 200, 250, 300, 350, 400, 450, 500, 550, 600],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                    }]
-                },
-                options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f5f9' } } } }
-            });
+            const lineCtx = document.getElementById('lineChart')?.getContext('2d');
+            if (lineCtx) {
+                if (!hasChartData(periodicChartData.trend.reports)) {
+                    emptyChartMessage(lineCtx, 'No report trend data for the selected period.');
+                } else {
+                new Chart(lineCtx, {
+                    type: 'line',
+                    data: {
+                        labels: periodicChartData.trend.labels,
+                        datasets: [{
+                            label: 'Reports',
+                            data: periodicChartData.trend.reports,
+                            borderColor: chartTheme.line,
+                            backgroundColor: makeLineFill(lineCtx),
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            pointBackgroundColor: chartTheme.line,
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 1,
+                        }]
+                    },
+                    options: {
+                        ...baseChartOptions,
+                        plugins: { legend: { display: false } },
+                    }
+                });
+                }
+            }
 
-            const barCtx = document.getElementById('barChart').getContext('2d');
-            new Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Plastik','Organik','Elektronik','Kertas','Logam'],
-                    datasets: [{
-                        data: [400, 300, 200, 150, 100],
-                        backgroundColor: '#10b981',
-                        borderRadius: 8,
-                    }]
-                },
-                options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f5f9' } } } }
-            });
+            const barCtx = document.getElementById('barChart')?.getContext('2d');
+            if (barCtx) {
+                if (!hasChartData(periodicChartData.category.data)) {
+                    emptyChartMessage(barCtx, 'No waste category data for the selected period.');
+                } else {
+                new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: periodicChartData.category.labels,
+                        datasets: [{
+                            label: 'Total kg',
+                            data: periodicChartData.category.data,
+                            backgroundColor: greenBarColors(periodicChartData.category.data.length),
+                            borderRadius: 6,
+                            maxBarThickness: 36,
+                        }]
+                    },
+                    options: {
+                        ...baseChartOptions,
+                        plugins: { legend: { display: false } },
+                    }
+                });
+                }
+            }
 
-            const userBarCtx = document.getElementById('userBarChart').getContext('2d');
-            new Chart(userBarCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['U1','U2','U3','U4','U5','U6','U7','U8'],
-                    datasets: [{
-                        data: [50, 45, 40, 35, 30, 25, 20, 15],
-                        backgroundColor: '#10b981',
-                        borderRadius: 6,
-                    }]
-                },
-                options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f5f9' } } } }
-            });
+            const userBarCtx = document.getElementById('userBarChart')?.getContext('2d');
+            if (userBarCtx) {
+                if (!hasChartData(periodicChartData.users.data)) {
+                    emptyChartMessage(userBarCtx, 'No user contribution data for the selected period.');
+                } else {
+                new Chart(userBarCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: periodicChartData.users.labels,
+                        datasets: [{
+                            label: 'Reports',
+                            data: periodicChartData.users.data,
+                            backgroundColor: greenBarColors(periodicChartData.users.data.length),
+                            borderRadius: 6,
+                            maxBarThickness: 36,
+                        }]
+                    },
+                    options: {
+                        ...baseChartOptions,
+                        plugins: { legend: { display: false } },
+                    }
+                });
+                }
+            }
 
-            const pieCtx = document.getElementById('pieChart').getContext('2d');
-            new Chart(pieCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Plastik','Organik','Elektronik','Lainnya'],
-                    datasets: [{
-                        data: [40, 30, 20, 10],
-                        backgroundColor: ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0'],
-                        borderWidth: 0,
-                    }]
-                },
-                options: { plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } }, cutout: '65%' }
-            });
+            const pieCtx = document.getElementById('pieChart')?.getContext('2d');
+            if (pieCtx) {
+                if (!hasChartData(periodicChartData.status.data)) {
+                    emptyChartMessage(pieCtx, 'No status data for the selected period.');
+                } else {
+                new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: periodicChartData.status.labels,
+                        datasets: [{
+                            data: periodicChartData.status.data,
+                            backgroundColor: chartTheme.gradient.slice(0, periodicChartData.status.data.length),
+                            borderWidth: 0,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '68%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { font: { size: 10 }, color: '#64748b', padding: 10, boxWidth: 10 },
+                            },
+                        },
+                    }
+                });
+                }
+            }
         }
 
         let lapChartInit = false;
         function initLapChart() {
             if (lapChartInit) return;
             lapChartInit = true;
-            const ctx = document.getElementById('lapChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan','Feb','Mar','Apr'],
-                    datasets: [
-                        {
-                            label: 'Reports',
-                            data: [120, 150, 180, 200],
-                            backgroundColor: '#10b981',
-                        }
-                    ]
-                },
-                options: { plugins: { legend: { position: 'bottom' } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f5f9' } } } }
+            const ctx = document.getElementById('lapChart')?.getContext('2d');
+            if (ctx) {
+                if (!hasChartData(periodicChartData.trend.reports) && !hasChartData(periodicChartData.trend.weight)) {
+                    emptyChartMessage(ctx, 'No periodic report data for the selected filter.');
+                } else {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: periodicChartData.trend.labels,
+                        datasets: [
+                            {
+                                label: 'Reports',
+                                data: periodicChartData.trend.reports,
+                                borderColor: chartTheme.line,
+                                backgroundColor: chartTheme.lineSoft,
+                                fill: true,
+                                tension: 0.35,
+                                borderWidth: 2,
+                                pointRadius: 3,
+                                yAxisID: 'y',
+                            },
+                            {
+                                label: 'Waste kg',
+                                data: periodicChartData.trend.weight,
+                                borderColor: chartTheme.lineAlt,
+                                backgroundColor: chartTheme.lineAltSoft,
+                                fill: true,
+                                tension: 0.35,
+                                borderWidth: 2,
+                                pointRadius: 3,
+                                yAxisID: 'y1',
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { font: { size: 11 }, color: '#64748b', boxWidth: 12, padding: 14 },
+                            },
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 10 }, color: chartTheme.tick },
+                            },
+                            y: {
+                                grid: { color: chartTheme.grid },
+                                ticks: { font: { size: 10 }, color: chartTheme.tick },
+                                beginAtZero: true,
+                            },
+                            y1: {
+                                position: 'right',
+                                grid: { drawOnChartArea: false },
+                                ticks: { font: { size: 10 }, color: chartTheme.tick },
+                                beginAtZero: true,
+                            },
+                        },
+                    }
+                });
+                }
+            }
+        }
+
+        function exportPeriodicReportCsv() {
+            const header = ['Tanggal Laporan', 'Tanggal Jadwal', 'ID Laporan', 'Pengguna', 'Petugas', 'Status', 'Berat Kg', 'Poin'];
+            const rows = periodicExportRows.map((row) => [
+                row.tanggal_laporan,
+                row.tanggal_jadwal,
+                row.id_laporan,
+                row.pengguna,
+                row.petugas,
+                row.status,
+                row.berat_kg,
+                row.poin,
+            ]);
+            const csv = [header, ...rows]
+                .map((items) => items.map((item) => `"${String(item).replaceAll('"', '""')}"`).join(','))
+                .join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'laporan-periodik.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function filterServiceHistory() {
+            const start = document.getElementById('history-start')?.value;
+            const end = document.getElementById('history-end')?.value;
+            const status = document.getElementById('history-status')?.value || 'all';
+            const petugas = document.getElementById('history-petugas')?.value || 'all';
+            let visible = 0;
+            const rows = document.querySelectorAll('.history-row');
+
+            rows.forEach((row) => {
+                const rowDate = row.dataset.date;
+                const matchesStart = !start || rowDate >= start;
+                const matchesEnd = !end || rowDate <= end;
+                const matchesStatus = status === 'all' || row.dataset.status === status;
+                const matchesPetugas = petugas === 'all' || row.dataset.petugas === petugas;
+                const show = matchesStart && matchesEnd && matchesStatus && matchesPetugas;
+                row.classList.toggle('hidden', !show);
+                if (show) visible += 1;
             });
+
+            const count = document.getElementById('history-count');
+            if (count) count.textContent = `Menampilkan ${visible} dari ${rows.length} records`;
+        }
+
+        function exportServiceHistoryCsv() {
+            const rows = Array.from(document.querySelectorAll('.history-row:not(.hidden)')).map((row) => {
+                const cells = Array.from(row.querySelectorAll('td')).map((cell) => cell.textContent.trim().replace(/\s+/g, ' '));
+                return cells;
+            });
+            const csv = [['ID', 'User', 'Petugas', 'Tanggal', 'Status'], ...rows]
+                .map((items) => items.map((item) => `"${String(item).replaceAll('"', '""')}"`).join(','))
+                .join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'riwayat-layanan.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
         }
     </script>
 

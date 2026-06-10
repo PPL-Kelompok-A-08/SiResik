@@ -10,65 +10,15 @@
     <div class="min-h-screen xl:grid xl:grid-cols-[300px,1fr]">
 
         {{-- SIDEBAR --}}
-        <aside class="bg-[#0c5b49] px-6 py-8 text-white">
-            <div class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/20 text-2xl">♻</div>
-                <div>
-                    <p class="text-4xl font-black tracking-tight">SiResik</p>
-                    <p class="mt-1 text-xs uppercase tracking-[0.2em] text-emerald-100">Sistem Informasi Resik</p>
-                </div>
-            </div>
-
-            @php
-                $menuItems = [
-                    ['label' => 'Dashboard',      'href' => route('dashboard.masyarakat'), 'active' => false],
-                    ['label' => 'Penjemputan',    'href' => route('permintaan-penjemputan.index'), 'active' => false],
-                    ['label' => 'Status Layanan', 'href' => route('dashboard.masyarakat'), 'active' => false],
-                    ['label' => 'Riwayat Layanan','href' => route('riwayat-layanan.index'), 'active' => true],
-                    ['label' => 'Poin & Reward',  'href' => route('poin.index'), 'active' => false],
-                    ['label' => 'Peta & Lokasi',  'href' => route('peta.lokasi'), 'active' => false],
-                    ['label' => 'Usulkan Titik',  'href' => route('peta.usulan-titik'), 'active' => false],
-                ];
-            @endphp
-
-            <nav class="mt-14 space-y-2">
-                @foreach ($menuItems as $item)
-                    <a href="{{ $item['href'] }}"
-                       class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition
-                              {{ $item['active'] ? 'bg-emerald-600 text-white shadow-lg' : 'text-emerald-50 hover:bg-white/5' }}">
-                        <span class="text-xl">{{ $item['active'] ? '◉' : '◦' }}</span>
-                        <span>{{ $item['label'] }}</span>
-                    </a>
-                @endforeach
-            </nav>
-
-            <form action="{{ route('logout') }}" method="POST" class="mt-8">
-                @csrf
-                <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
-                    <span class="text-xl">↪</span>
-                    <span>Keluar (Log Out)</span>
-                </button>
-            </form>
-
-            <div class="mt-10 rounded-3xl bg-white/5 px-4 py-5">
-                <div class="flex items-center gap-4">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-xl font-black">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                    </div>
-                    <div>
-                        <p class="text-xl font-bold">{{ $user->name }}</p>
-                        <p class="text-xs uppercase tracking-[0.15em] text-emerald-100">Warga Terverifikasi</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+    {{-- Sidebar Konsisten --}}
+    <x-sidebar />
 
         {{-- KONTEN UTAMA --}}
         <main class="px-6 py-8 lg:px-10">
 
             {{-- Back + Header --}}
             <div class="mb-6">
-                <a href="{{ route('riwayat-layanan.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition">
+                <a href="{{ auth()->user()->role === 'admin' ? route('dashboard.admin') : route('riwayat-layanan.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition">
                     ← Kembali ke Riwayat
                 </a>
             </div>
@@ -223,24 +173,18 @@
                                     </div>
                                 </div>
                                 <div class="text-right">
-<<<<<<< HEAD
                                     <p class="text-xs text-slate-400">Poin • Tagihan</p>
                                     <p class="text-sm font-semibold">
                                         <span class="text-emerald-600">{{ number_format($item->estimasi_poin) }} poin</span>
                                         <span class="text-slate-400">•</span>
                                         <span class="text-rose-600">Rp {{ number_format($item->total_tagihan, 0, ',', '.') }}</span>
                                     </p>
-=======
-                                    <p class="text-xs text-slate-400">Estimasi Poin</p>
-                                    <p class="text-lg font-black text-emerald-600">+{{ number_format($item->estimasi_poin) }}</p>
->>>>>>> ba54deaa9d9548a81c3d0647a596af854617fd1d
                                 </div>
                             </div>
                         @empty
                             <p class="text-center text-slate-400 py-4">Tidak ada item.</p>
                         @endforelse
                     </div>
-<<<<<<< HEAD
                     <div class="mt-4 grid grid-cols-2 gap-3">
                         <div class="flex justify-between items-center rounded-2xl bg-emerald-900 px-6 py-4 text-white">
                             <span class="font-bold">Total Poin</span>
@@ -250,11 +194,6 @@
                             <span class="font-bold">Total Tagihan</span>
                             <span class="text-xl font-black text-rose-300">Rp {{ number_format($permintaan->total_tagihan, 0, ',', '.') }}</span>
                         </div>
-=======
-                    <div class="mt-4 flex justify-between items-center rounded-2xl bg-emerald-900 px-6 py-4 text-white">
-                        <span class="font-bold">Total Estimasi Poin</span>
-                        <span class="text-2xl font-black text-emerald-300">{{ number_format($permintaan->total_estimasi_poin) }} poin</span>
->>>>>>> ba54deaa9d9548a81c3d0647a596af854617fd1d
                     </div>
                 </div>
             </section>
