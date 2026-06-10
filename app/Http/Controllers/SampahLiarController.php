@@ -19,11 +19,10 @@ class SampahLiarController extends Controller
             ->latest()
             ->paginate(10);
 
-        // Laporan di sekitar (semua laporan verified dari user lain, up to 10)
+        // Laporan di sekitar (semua laporan dari user lain, termasuk pending)
         $nearbyReports = SampahLiar::where('pengguna_id', '!=', $user->id)
-            ->where('status', '!=', 'pending')
             ->latest()
-            ->limit(10)
+            ->limit(6)
             ->get();
 
         return view('sampah-liar.index', compact('myReports', 'nearbyReports'));

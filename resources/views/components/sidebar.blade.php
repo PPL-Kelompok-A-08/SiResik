@@ -1,164 +1,110 @@
-<aside class="bg-[#0c5b49] px-6 py-8 text-white">
-    <div class="flex items-center gap-3">
-        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/20 text-2xl">♻</div>
+<aside class="bg-[#0c5b49] flex flex-col px-5 py-7 text-white min-h-screen">
+
+    {{-- Logo --}}
+    <div class="flex items-center gap-3 px-2 mb-2">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-xl">♻</div>
         <div>
-            <p class="text-4xl font-black tracking-tight">SiResik</p>
-            <p class="mt-1 text-xs uppercase tracking-[0.2em] text-emerald-100">Sistem Informasi Resik</p>
+            <p class="text-3xl font-black tracking-tight leading-none">SiResik</p>
+            <p class="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-emerald-200">Sistem Informasi Resik</p>
         </div>
     </div>
 
-    <div class="mt-12">
-        <p class="text-sm font-black uppercase tracking-[0.2em] text-emerald-300">Mode Akses</p>
-        <div class="mt-4 flex items-center justify-between rounded-2xl bg-emerald-600/70 px-4 py-3">
-            <span class="text-sm font-bold">
-                @if(auth()->user()->role === 'admin')
-                    Administrator
-                @elseif(auth()->user()->role === 'petugas')
-                    Petugas
-                @else
-                    Masyarakat
-                @endif
-            </span>
-            <span class="text-lg">⌄</span>
-        </div>
-    </div>
+    {{-- Nav Menu Masyarakat --}}
+    @if(auth()->user()->role === 'masyarakat')
+        @php
+            $navItems = [
+                ['label' => 'Dashboard',          'icon' => '⊞', 'route' => 'dashboard.masyarakat'],
+                ['label' => 'Penjemputan',         'icon' => '⊕', 'route' => 'permintaan-penjemputan.index'],
+                ['label' => 'Status Layanan',      'icon' => '◎', 'route' => 'status-layanan.index'],
+                ['label' => 'Riwayat Layanan',     'icon' => '◉', 'route' => 'riwayat-layanan.index'],
+                ['label' => 'Poin & Reward',       'icon' => '◈', 'route' => 'poin.index'],
+                ['label' => 'Sampah Liar',         'icon' => '⊗', 'route' => 'sampah-liar.index'],
+                ['label' => 'Peta & Lokasi',       'icon' => '⊙', 'route' => 'peta.lokasi'],
+                ['label' => 'Usulkan Titik',       'icon' => '⊕', 'route' => 'peta.usulan-titik'],
+                ['label' => 'Edukasi Lingkungan',  'icon' => '◧', 'route' => 'edukasi-lingkungan.index'],
+                ['label' => 'Kegiatan Lingkungan', 'icon' => '◨', 'route' => 'kegiatan-lingkungan.index'],
+                ['label' => 'Notifikasi',          'icon' => '◇', 'route' => 'notifications.index'],
+            ];
+        @endphp
+        <nav class="mt-8 flex-1 space-y-0.5">
+            @foreach ($navItems as $nav)
+                <a href="{{ route($nav['route']) }}"
+                   class="flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium transition-all
+                          {{ request()->routeIs($nav['route'])
+                              ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-900/30'
+                              : 'text-emerald-50/80 hover:bg-white/10 hover:text-white' }}">
+                    <span class="w-5 text-center text-base opacity-80">{{ $nav['icon'] }}</span>
+                    <span>{{ $nav['label'] }}</span>
+                </a>
+            @endforeach
+        </nav>
 
-    <!-- Nav -->
-    <nav class="mt-10 space-y-2">
-        @if(auth()->user()->role === 'admin')
-            <!-- Menu Admin -->
-            <a href="{{ route('dashboard.admin') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition {{ request()->routeIs('dashboard.admin') ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }} cursor-pointer">
-                <span class="text-xl">{{ request()->routeIs('dashboard.admin') ? '▣' : '◦' }}</span>
-                <span>Admin Dashboard</span>
-            </a>
-            <a onclick="showPage('jadwal')"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                <span class="text-xl">◦</span>
-                <span>Kelola Jadwal</span>
-            </a>
-            <a onclick="showPage('verifikasi')"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                <span class="text-xl">◦</span>
-                <span>Verifikasi Laporan</span>
-            </a>
-            <a onclick="showPage('kategori')"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                <span class="text-xl">◦</span>
-                <span>Kategori & Reward</span>
-            </a>
-            <a onclick="showPage('area')"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                <span class="text-xl">◦</span>
-                <span>Area Layanan</span>
-            </a>
-            <a onclick="showPage('petugas')"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                <span class="text-xl">◦</span>
-                <span>Pantau Petugas</span>
-            </a>
-            <a onclick="showPage('riwayat')"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5 cursor-pointer">
-                <span class="text-xl">◦</span>
-                <span>Riwayat Layanan</span>
-            </a>
-            <a href="{{ route('notifications.index') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5">
-                <span class="text-xl">◦</span>
-                <span>Notifikasi</span>
-                @php $unread = auth()->user()->unreadNotifications->count(); @endphp
-                @if($unread > 0)
-                    <span class="ml-auto inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-white bg-red-500 rounded-full">{{ $unread }}</span>
-                @endif
-            </a>
-        @elseif(auth()->user()->role === 'petugas')
-            <!-- Menu Petugas -->
-            <a href="{{ route('dashboard.petugas') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition {{ request()->routeIs('dashboard.petugas') ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }} cursor-pointer">
-                <span class="text-xl">{{ request()->routeIs('dashboard.petugas') ? '▣' : '◦' }}</span>
-                <span>Dashboard Petugas</span>
-            </a>
-            <a href="{{ route('permintaan-penjemputan.index') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5">
-                <span class="text-xl">◦</span>
-                <span>Daftar Penjemputan</span>
-            </a>
-            <a href="{{ route('petugas.riwayat') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5">
-                <span class="text-xl">◦</span>
-                <span>Riwayat Tugas</span>
-            </a>
-            <a href="{{ route('notifications.index') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5">
-                <span class="text-xl">◦</span>
-                <span>Notifikasi</span>
-                @php $unread = auth()->user()->unreadNotifications->count(); @endphp
-                @if($unread > 0)
-                    <span class="ml-auto inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-white bg-red-500 rounded-full">{{ $unread }}</span>
-                @endif
-            </a>
-        @else
-            <!-- Menu Masyarakat -->
-            <a href="{{ route('dashboard.masyarakat') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition {{ request()->routeIs('dashboard.masyarakat') ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }} cursor-pointer">
-                <span class="text-xl">{{ request()->routeIs('dashboard.masyarakat') ? '▣' : '◦' }}</span>
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('permintaan-penjemputan.index') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5">
-                <span class="text-xl">◦</span>
-                <span>Penjemputan</span>
-            </a>
-            <a href="{{ route('poin.index') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5">
-                <span class="text-xl">◦</span>
-                <span>Poin & Reward</span>
-            </a>
-            <a href="{{ route('peta.lokasi') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5">
-                <span class="text-xl">◦</span>
-                <span>Peta & Lokasi</span>
-            </a>
-            <a href="{{ route('peta.usulan-titik') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5">
-                <span class="text-xl">◦</span>
-                <span>Usulkan Titik</span>
-            </a>
-            <a href="{{ route('notifications.index') }}"
-                class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition text-emerald-50 hover:bg-white/5">
-                <span class="text-xl">◦</span>
-                <span>Notifikasi</span>
-                @php $unread = auth()->user()->unreadNotifications->count(); @endphp
-                @if($unread > 0)
-                    <span class="ml-auto inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-white bg-red-500 rounded-full">{{ $unread }}</span>
-                @endif
-            </a>
-        @endif
-    </nav>
+    {{-- Nav Menu Admin --}}
+    @elseif(auth()->user()->role === 'admin')
+        @php
+            $navItems = [
+                ['label' => 'Dashboard',         'icon' => '⊞', 'route' => 'dashboard.admin'],
+                ['label' => 'Notifikasi',         'icon' => '◇', 'route' => 'notifications.index'],
+            ];
+        @endphp
+        <nav class="mt-8 flex-1 space-y-0.5">
+            @foreach ($navItems as $nav)
+                <a href="{{ route($nav['route']) }}"
+                   class="flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium transition-all
+                          {{ request()->routeIs($nav['route'])
+                              ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-900/30'
+                              : 'text-emerald-50/80 hover:bg-white/10 hover:text-white' }}">
+                    <span class="w-5 text-center text-base opacity-80">{{ $nav['icon'] }}</span>
+                    <span>{{ $nav['label'] }}</span>
+                </a>
+            @endforeach
+        </nav>
 
-    <form action="{{ route('logout') }}" method="POST" class="mt-8">
+    {{-- Nav Menu Petugas --}}
+    @elseif(auth()->user()->role === 'petugas')
+        @php
+            $navItems = [
+                ['label' => 'Dashboard',        'icon' => '⊞', 'route' => 'dashboard.petugas'],
+                ['label' => 'Daftar Tugas',     'icon' => '⊕', 'route' => 'permintaan-penjemputan.index'],
+                ['label' => 'Riwayat Tugas',    'icon' => '◉', 'route' => 'petugas.riwayat'],
+                ['label' => 'Notifikasi',       'icon' => '◇', 'route' => 'notifications.index'],
+            ];
+        @endphp
+        <nav class="mt-8 flex-1 space-y-0.5">
+            @foreach ($navItems as $nav)
+                <a href="{{ route($nav['route']) }}"
+                   class="flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium transition-all
+                          {{ request()->routeIs($nav['route'])
+                              ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-900/30'
+                              : 'text-emerald-50/80 hover:bg-white/10 hover:text-white' }}">
+                    <span class="w-5 text-center text-base opacity-80">{{ $nav['icon'] }}</span>
+                    <span>{{ $nav['label'] }}</span>
+                </a>
+            @endforeach
+        </nav>
+    @endif
+
+    {{-- Logout --}}
+    <form action="{{ route('logout') }}" method="POST" class="mt-2">
         @csrf
-        <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
-            <span class="text-xl">↪</span>
+        <button type="submit"
+                class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium text-emerald-50/80 transition hover:bg-white/10 hover:text-white">
+            <span class="w-5 text-center">↪</span>
             <span>Keluar (Log Out)</span>
         </button>
     </form>
 
-    <div class="mt-10 rounded-3xl bg-white/5 px-4 py-5">
-        <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-xl font-black">{{ substr(auth()->user()->name, 0, 1) }}</div>
-            <div>
-                <p class="text-xl font-bold">{{ auth()->user()->name }}</p>
-                <p class="text-xs uppercase tracking-[0.15em] text-emerald-100">
-                    @if(auth()->user()->role === 'admin')
-                        Administrator
-                    @elseif(auth()->user()->role === 'petugas')
-                        Petugas
-                    @else
-                        Warga
-                    @endif
-                </p>
+    {{-- User Card --}}
+    <div class="mt-4 rounded-2xl bg-white/10 px-4 py-4">
+        <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-base font-black uppercase">
+                {{ substr(auth()->user()->name, 0, 1) }}
+            </div>
+            <div class="min-w-0">
+                <p class="truncate text-[15px] font-bold">{{ auth()->user()->name }}</p>
+                <p class="text-[10px] uppercase tracking-[0.15em] text-emerald-200">Warga Terverifikasi</p>
             </div>
         </div>
     </div>
+
 </aside>
