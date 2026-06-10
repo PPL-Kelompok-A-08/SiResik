@@ -127,6 +127,23 @@ class PermintaanPenjemputanController extends Controller
         ]);
     }
 
+    public function show(PermintaanPenjemputan $permintaanPenjemputan): View
+    {
+        $user = auth()->user();
+
+        abort_unless(
+            $user->role === 'admin' || $permintaanPenjemputan->pengguna_id === $user->id,
+            403
+        );
+
+        $permintaanPenjemputan->load(['pengguna', 'petugas', 'items.kategoriSampah']);
+
+        return view('riwayat-layanan.show', [
+            'permintaan' => $permintaanPenjemputan,
+            'user' => $user,
+        ]);
+    }
+
     /**
      * Update status permintaan penjemputan dan kirim notifikasi
      */

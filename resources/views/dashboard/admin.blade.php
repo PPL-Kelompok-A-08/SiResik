@@ -194,12 +194,26 @@
                             <input type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-600 mb-2">Category</label>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nama</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach(\App\Models\KategoriSampah::all() as $kategori)
+                                    <tr>
+                                        <td>{{ $kategori->nama }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <!-- <label class="block text-sm font-semibold text-slate-600 mb-2">Category</label>
                             <select class="w-full border border-slate-300 rounded-lg px-3 py-2">
                                 <option>All Categories</option>
                                 <option>Plastic</option>
                                 <option>Organic</option>
-                            </select>
+                            </select> -->
                         </div>
                     </div>
                 </div>
@@ -469,11 +483,19 @@
                 <div class="section-card">
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
                         <h2 class="text-xl font-black text-slate-800">Daftar Laporan</h2>
-                        <span class="text-sm text-slate-500">Total: {{ $permintaan->count() }} laporan</span>
+                        <span class="text-sm text-slate-500">Total: {{ $permintaan->count() + $laporanSampahLiar->count() }} laporan</span>
                     </div>
                     <div class="grid gap-4 p-6 md:grid-cols-2">
-                        @forelse($permintaan as $laporan)
-                        <div class="rounded-2xl border border-slate-200 p-5">
+                        @if($permintaan->isEmpty() && $laporanSampahLiar->isEmpty())
+                        <div class="col-span-full text-center py-8 text-slate-500">
+                            Tidak ada laporan untuk diverifikasi.
+                        </div>
+                        @else
+                        @foreach($permintaan as $laporan)
+                        @php
+                            $statusFilter = $laporan->status === 'Selesai' ? 'disetujui' : 'menunggu';
+                        @endphp
+                        <div class="rounded-2xl border border-slate-200 p-5 verifikasi-card" data-status="{{ $statusFilter }}" data-type="permintaan">
                             <div class="flex items-start justify-between mb-4">
                                 <div>
                                     <p class="text-lg font-black text-slate-800">Laporan #{{ $laporan->id }}</p>
@@ -482,7 +504,8 @@
                                 <span class="status-badge {{ $laporan->status === 'Menunggu' ? 'status-menunggu' : ($laporan->status === 'Selesai' ? 'status-selesai' : 'status-dibatalkan') }}">{{ $laporan->status }}</span>
                             </div>
                             <p class="text-sm text-slate-600 mb-4">{{ $laporan->alamat ?? 'Tidak ada deskripsi' }}</p>
-                            <div class="flex gap-2">
+                            <div class="flex flex-wrap gap-2">
+                                <a href="{{ route('admin.permintaan.show', $laporan) }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Detail</a>
                                 @if($laporan->status === 'Menunggu')
                                 <form method="POST" action="{{ route('admin.verifikasi-laporan', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('disetujui'); return true;">
                                     @csrf
@@ -499,11 +522,41 @@
                                 @endif
                             </div>
                         </div>
-                        @empty
-                        <div class="col-span-full text-center py-8 text-slate-500">
-                            Tidak ada laporan untuk diverifikasi.
+                        @endforeach
+                        @foreach($laporanSampahLiar as $laporan)
+                        @php $statusFilter = $laporan->status === 'diverifikasi' ? 'disetujui' : 'menunggu'; @endphp
+                        <div class="rounded-2xl border border-slate-200 p-5 verifikasi-card" data-status="{{ $statusFilter }}" data-type="sampah_liar">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <p class="text-lg font-black text-slate-800">Laporan SL#{{ $laporan->id }}</p>
+                                    <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Sampah Liar</p>
+                                    <p class="text-sm text-slate-500">Oleh: {{ $laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                                </div>
+                                <span class="status-badge {{ $laporan->status === 'pending' ? 'status-menunggu' : ($laporan->status === 'diverifikasi' ? 'status-selesai' : 'status-dibatalkan') }}">
+                                    {{ $laporan->status === 'pending' ? 'Menunggu' : ($laporan->status === 'diverifikasi' ? 'Disetujui' : 'Ditolak') }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-4">{{ $laporan->lokasi ?? 'Tidak ada deskripsi' }}</p>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="{{ route('admin.sampah-liar.show', $laporan) }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Detail</a>
+                                @if($laporan->status === 'pending')
+                                <form method="POST" action="{{ route('admin.verifikasi-laporan-sampah-liar', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('disetujui'); return true;">
+                                    @csrf
+                                    <input type="hidden" name="status" value="disetujui">
+                                    <button type="submit" class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Setujui</button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.verifikasi-laporan-sampah-liar', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('ditolak'); return true;">
+                                    @csrf
+                                    <input type="hidden" name="status" value="ditolak">
+                                    <button type="submit" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Tolak</button>
+                                </form>
+                                @else
+                                <div class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: {{ $laporan->status === 'diverifikasi' ? 'Disetujui' : 'Ditolak' }}</div>
+                                @endif
+                            </div>
                         </div>
-                        @endforelse
+                        @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -1338,6 +1391,20 @@
             return true;
         }
 
+        function filterVerifikasi(btn, filter) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.verifikasi-card').forEach(card => {
+                const status = card.dataset.status;
+                if (filter === 'semua' || status === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
         // Navigation
         function showPage(name) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1550,6 +1617,15 @@
         function filterVerifikasi(btn, filter) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+
+            document.querySelectorAll('.verifikasi-card').forEach(card => {
+                const status = card.dataset.status;
+                if (filter === 'semua' || status === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
         }
 
         // Charts (Dashboard)

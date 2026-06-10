@@ -11,12 +11,20 @@ class RiwayatpoinpenggunaController extends Controller
     {
         $user = Auth::user();
 
-        $poins = $user->poins()->orderByDesc('tanggal')->orderByDesc('created_at')->get();
+        // Ambil semua riwayat poin, urut descending
+        $poins = $user->poins()
+            ->orderByDesc('tanggal')
+            ->orderByDesc('created_at')
+            ->get();
 
-        $totalPoin = $poins->reduce(function ($carry, $poin) {
-            return $carry + ($poin->tipe === 'masuk' ? $poin->jumlah : -$poin->jumlah);
-        }, 0);
+        // Hitung saldo poin menggunakan aggregate query (lebih efisien dari PHP reduce)
+        $totalMasuk  = $user->poins()->where('tipe', 'masuk')->sum('jumlah');
+        $totalKeluar = $user->poins()->where('tipe', 'keluar')->sum('jumlah');
+        $totalPoin   = max(0, $totalMasuk - $totalKeluar);
 
-        return view('poin.index', compact('user', 'poins', 'totalPoin'));
+        // Hitung total reward yang sudah ditukar pengguna
+        $totalRewardDitukar = $user->penukaranPoins()->count();
+
+        return view('poin.index', compact('user', 'poins', 'totalPoin', 'totalRewardDitukar'));
     }
 }

@@ -68,7 +68,7 @@
 
             {{-- Back + Header --}}
             <div class="mb-6">
-                <a href="{{ route('riwayat-layanan.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition">
+                <a href="{{ auth()->user()->role === 'admin' ? route('dashboard.admin') : route('riwayat-layanan.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition">
                     ← Kembali ke Riwayat
                 </a>
             </div>
@@ -233,7 +233,7 @@
 =======
                                     <p class="text-xs text-slate-400">Estimasi Poin</p>
                                     <p class="text-lg font-black text-emerald-600">+{{ number_format($item->estimasi_poin) }}</p>
->>>>>>> 0c596cb (Squashed commit of the following:)
+>>>>>>> ba54deaa9d9548a81c3d0647a596af854617fd1d
                                 </div>
                             </div>
                         @empty
@@ -254,7 +254,7 @@
                     <div class="mt-4 flex justify-between items-center rounded-2xl bg-emerald-900 px-6 py-4 text-white">
                         <span class="font-bold">Total Estimasi Poin</span>
                         <span class="text-2xl font-black text-emerald-300">{{ number_format($permintaan->total_estimasi_poin) }} poin</span>
->>>>>>> 0c596cb (Squashed commit of the following:)
+>>>>>>> ba54deaa9d9548a81c3d0647a596af854617fd1d
                     </div>
                 </div>
             </section>
