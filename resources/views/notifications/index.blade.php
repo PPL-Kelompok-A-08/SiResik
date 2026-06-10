@@ -15,65 +15,8 @@
 <div class="min-h-screen xl:grid xl:grid-cols-[260px,1fr]">
 
     {{-- ═══════════════════════ SIDEBAR ═══════════════════════ --}}
-    <aside class="bg-[#0c5b49] flex flex-col px-5 py-7 text-white">
-        <div class="flex items-center gap-3 px-2">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-xl">♻</div>
-            <div>
-                <p class="text-3xl font-black tracking-tight leading-none">SiResik</p>
-                <p class="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-emerald-200">Sistem Informasi Resik</p>
-            </div>
-        </div>
-
-        @php
-            $nav = [
-                ['label' => 'Dashboard',           'icon' => '⊞', 'href' => route('dashboard.masyarakat'),         'active' => false],
-                ['label' => 'Penjemputan',          'icon' => '⊕', 'href' => route('permintaan-penjemputan.index'), 'active' => false],
-                ['label' => 'Status Layanan',       'icon' => '◎', 'href' => route('status-layanan.index'),         'active' => false],
-                ['label' => 'Riwayat Layanan',      'icon' => '◉', 'href' => route('riwayat-layanan.index'),        'active' => false],
-                ['label' => 'Poin & Reward',        'icon' => '◈', 'href' => route('poin.index'),                   'active' => false],
-                ['label' => 'Sampah Liar',          'icon' => '⊗', 'href' => route('dashboard.masyarakat'),         'active' => false],
-                ['label' => 'Peta & Lokasi',        'icon' => '⊙', 'href' => route('peta.lokasi'),                  'active' => false],
-                ['label' => 'Usulkan Titik',        'icon' => '⊕', 'href' => route('peta.usulan-titik'),            'active' => false],
-                ['label' => 'Edukasi Lingkungan',   'icon' => '◧', 'href' => route('dashboard.masyarakat'),         'active' => false],
-                ['label' => 'Kegiatan Lingkungan',  'icon' => '◨', 'href' => route('dashboard.masyarakat'),         'active' => false],
-                ['label' => 'Notifikasi',           'icon' => '◇', 'href' => route('notifications.index'),          'active' => true],
-            ];
-        @endphp
-
-        <nav class="mt-10 flex-1 space-y-0.5">
-            @foreach ($nav as $item)
-                <a href="{{ $item['href'] }}"
-                   class="flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium transition-all
-                          {{ $item['active']
-                              ? 'bg-emerald-500 text-white shadow-md shadow-emerald-900/30'
-                              : 'text-emerald-50/80 hover:bg-white/8 hover:text-white' }}">
-                    <span class="w-5 text-center text-base opacity-75">{{ $item['icon'] }}</span>
-                    <span>{{ $item['label'] }}</span>
-                </a>
-            @endforeach
-        </nav>
-
-        <form action="{{ route('logout') }}" method="POST" class="mt-4">
-            @csrf
-            <button type="submit"
-                    class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium text-emerald-50/80 transition hover:bg-white/8 hover:text-white">
-                <span class="w-5 text-center">↪</span>
-                <span>Keluar (Log Out)</span>
-            </button>
-        </form>
-
-        <div class="mt-5 rounded-2xl bg-white/8 px-4 py-4">
-            <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-base font-black">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                </div>
-                <div class="min-w-0">
-                    <p class="truncate text-[15px] font-bold">{{ $user->name }}</p>
-                    <p class="text-[10px] uppercase tracking-[0.15em] text-emerald-200">Warga Terverifikasi</p>
-                </div>
-            </div>
-        </div>
-    </aside>
+    {{-- Sidebar Konsisten --}}
+    <x-sidebar />
 
     {{-- ═══════════════════════ MAIN ═══════════════════════ --}}
     <main class="flex flex-col gap-5 px-7 py-6">

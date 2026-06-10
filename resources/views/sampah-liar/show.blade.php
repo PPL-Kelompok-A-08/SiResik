@@ -10,66 +10,8 @@
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-900">
     <div class="min-h-screen xl:grid xl:grid-cols-[300px,1fr]">
-        <aside class="bg-[#0c5b49] px-6 py-8 text-white">
-            <div class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/20 text-2xl">♻</div>
-                <div>
-                    <p class="text-4xl font-black tracking-tight">SiResik</p>
-                    <p class="mt-1 text-xs uppercase tracking-[0.2em] text-emerald-100">Sistem Informasi Resik</p>
-                </div>
-            </div>
-
-            @php
-                $menuItems = [
-                    ['label' => 'Dashboard', 'active' => false, 'href' => route('dashboard.masyarakat')],
-                    ['label' => 'Penjemputan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
-                    ['label' => 'Status Layanan', 'active' => false, 'href' => route('dashboard.masyarakat')],
-                    ['label' => 'Riwayat Layanan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
-                    ['label' => 'Poin & Reward', 'active' => false, 'href' => route('poin.index')],
-                    ['label' => 'Sampah Liar', 'active' => true, 'href' => route('sampah-liar.index')],
-                    ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
-                    ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
-                    ['label' => 'Edukasi Lingkungan', 'active' => false, 'disabled' => true],
-                    ['label' => 'Kegiatan Lingkungan', 'active' => false, 'disabled' => true],
-                    ['label' => 'Notifikasi', 'active' => false, 'disabled' => true],
-                ];
-            @endphp
-
-            <nav class="mt-14 space-y-2">
-                @foreach ($menuItems as $item)
-                    @if (!empty($item['href']))
-                        <a href="{{ $item['href'] }}"
-                            class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition {{ $item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }}">
-                            <span class="text-xl">{{ $item['active'] ? '◉' : '◦' }}</span>
-                            <span>{{ $item['label'] }}</span>
-                        </a>
-                    @else
-                        <div class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-200 opacity-70 cursor-not-allowed">
-                            <span class="text-xl">◦</span>
-                            <span>{{ $item['label'] }}</span>
-                        </div>
-                    @endif
-                @endforeach
-            </nav>
-
-            <form action="{{ route('logout') }}" method="POST" class="mt-8">
-                @csrf
-                <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
-                    <span class="text-xl">↪</span>
-                    <span>Keluar (Log Out)</span>
-                </button>
-            </form>
-
-            <div class="mt-10 rounded-3xl bg-white/5 px-4 py-5">
-                <div class="flex items-center gap-4">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-xl font-black">{{ substr(auth()->user()->name, 0, 1) }}</div>
-                    <div>
-                        <p class="text-xl font-bold">{{ auth()->user()->name }}</p>
-                        <p class="text-xs uppercase tracking-[0.15em] text-emerald-100">Warga Terverifikasi</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+    {{-- Sidebar Konsisten --}}
+    <x-sidebar />
 
         <main class="px-6 py-8 lg:px-10">
             @if (session('success'))

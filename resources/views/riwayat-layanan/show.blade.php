@@ -10,58 +10,8 @@
     <div class="min-h-screen xl:grid xl:grid-cols-[300px,1fr]">
 
         {{-- SIDEBAR --}}
-        <aside class="bg-[#0c5b49] px-6 py-8 text-white">
-            <div class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/20 text-2xl">♻</div>
-                <div>
-                    <p class="text-4xl font-black tracking-tight">SiResik</p>
-                    <p class="mt-1 text-xs uppercase tracking-[0.2em] text-emerald-100">Sistem Informasi Resik</p>
-                </div>
-            </div>
-
-            @php
-                $menuItems = [
-                    ['label' => 'Dashboard',      'href' => route('dashboard.masyarakat'), 'active' => false],
-                    ['label' => 'Penjemputan',    'href' => route('permintaan-penjemputan.index'), 'active' => false],
-                    ['label' => 'Status Layanan', 'href' => route('dashboard.masyarakat'), 'active' => false],
-                    ['label' => 'Riwayat Layanan','href' => route('riwayat-layanan.index'), 'active' => true],
-                    ['label' => 'Poin & Reward',  'href' => route('poin.index'), 'active' => false],
-                    ['label' => 'Peta & Lokasi',  'href' => route('peta.lokasi'), 'active' => false],
-                    ['label' => 'Usulkan Titik',  'href' => route('peta.usulan-titik'), 'active' => false],
-                ];
-            @endphp
-
-            <nav class="mt-14 space-y-2">
-                @foreach ($menuItems as $item)
-                    <a href="{{ $item['href'] }}"
-                       class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition
-                              {{ $item['active'] ? 'bg-emerald-600 text-white shadow-lg' : 'text-emerald-50 hover:bg-white/5' }}">
-                        <span class="text-xl">{{ $item['active'] ? '◉' : '◦' }}</span>
-                        <span>{{ $item['label'] }}</span>
-                    </a>
-                @endforeach
-            </nav>
-
-            <form action="{{ route('logout') }}" method="POST" class="mt-8">
-                @csrf
-                <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
-                    <span class="text-xl">↪</span>
-                    <span>Keluar (Log Out)</span>
-                </button>
-            </form>
-
-            <div class="mt-10 rounded-3xl bg-white/5 px-4 py-5">
-                <div class="flex items-center gap-4">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-xl font-black">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                    </div>
-                    <div>
-                        <p class="text-xl font-bold">{{ $user->name }}</p>
-                        <p class="text-xs uppercase tracking-[0.15em] text-emerald-100">Warga Terverifikasi</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+    {{-- Sidebar Konsisten --}}
+    <x-sidebar />
 
         {{-- KONTEN UTAMA --}}
         <main class="px-6 py-8 lg:px-10">
