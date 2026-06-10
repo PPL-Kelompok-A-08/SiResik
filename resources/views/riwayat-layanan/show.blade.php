@@ -68,7 +68,7 @@
 
             {{-- Back + Header --}}
             <div class="mb-6">
-                <a href="{{ route('riwayat-layanan.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition">
+                <a href="{{ auth()->user()->role === 'admin' ? route('dashboard.admin') : route('riwayat-layanan.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition">
                     ← Kembali ke Riwayat
                 </a>
             </div>

@@ -2,51 +2,64 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JadwalOperasional;
-use App\Models\TitikLayanan;
+use App\Models\PermintaanPenjemputan;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class JadwalOperasionalController extends Controller
 {
-
-    public function index(TitikLayanan $titikLayanan)
+    /**
+     * Menampilkan dashboard Status Layanan untuk Masyarakat.
+     */
+    public function index(): View
     {
-        $jadwal = $titikLayanan->jadwalOperasional()->orderBy('jam_buka')->get();
-        return view('admin.jadwal.index', compact('titikLayanan', 'jadwal'));
-    }
-    
-    public function store(Request $request, TitikLayanan $titikLayanan)
-    {
-        $validated = $request->validate([
-            'hari' => ['required', 'string', 'max:50'],
-            'jam_buka' => ['required', 'date_format:H:i'],
-            'jam_tutup' => ['required', 'date_format:H:i', 'after:jam_buka'],
-            'keterangan' => ['nullable', 'string', 'max:255'],
-        ]);
+        $user = auth()->user();
+        
+        // Ambil semua permintaan penjemputan milik user beserta kategori sampah dan petugas
+        $permintaan = PermintaanPenjemputan::with(['items.kategoriSampah', 'petugas'])
+            ->where('pengguna_id', $user->id)
+            ->latest()
+            ->get();
 
-        $titikLayanan->jadwalOperasional()->create($validated);
+        // Mengambil 3 permintaan terbaru untuk pelacakan real-time
+        $trackingRequests = $permintaan->take(3)->values();
+        
+        // Mengambil jadwal penjemputan terdekat yang sedang diproses
+        $upcomingRequest = $permintaan
+            ->where('status', 'Diproses')
+            ->sortBy('scheduled_at')
+            ->first();
 
-        return back()->with('success', 'Jadwal operasional berhasil ditambahkan.');
-    }
+        // Statistik dashboard
+        $stats = [
+            'total' => $permintaan->count(),
+            'menunggu' => $permintaan->where('status', 'Menunggu')->count(),
+            'diproses' => $permintaan->where('status', 'Diproses')->count(),
+            'selesai' => $permintaan->where('status', 'Selesai')->count(),
+        ];
 
-    public function update(Request $request, JadwalOperasional $jadwal)
-    {
-        $validated = $request->validate([
-            'hari' => ['required', 'string', 'max:50'],
-            'jam_buka' => ['required', 'date_format:H:i'],
-            'jam_tutup' => ['required', 'date_format:H:i', 'after:jam_buka'],
-            'keterangan' => ['nullable', 'string', 'max:255'],
-        ]);
+        // Kalender jadwal reguler mingguan
+        $weeklySchedules = [
+            [
+                'hari' => 'Senin',
+                'kategori' => 'Organik (Sisa Makanan)',
+                'jam' => '08:00 - 10:00',
+                'zona' => 'Zona A',
+            ],
+            [
+                'hari' => 'Rabu',
+                'kategori' => 'Anorganik (Plastik, Kertas)',
+                'jam' => '08:00 - 10:00',
+                'zona' => 'Zona A',
+            ],
+            [
+                'hari' => 'Jumat',
+                'kategori' => 'Residu (Popok, Tisu)',
+                'jam' => '09:00 - 11:00',
+                'zona' => 'Zona A',
+            ],
+        ];
 
-        $jadwal->update($validated);
-
-        return back()->with('success', 'Jadwal operasional berhasil diperbarui.');
-    }
-
-    public function destroy(JadwalOperasional $jadwal)
-    {
-        $jadwal->delete();
-
-        return back()->with('success', 'Jadwal operasional berhasil dihapus.');
+        return view('dashboard.masyarakat', compact('user', 'permintaan', 'stats', 'trackingRequests', 'upcomingRequest', 'weeklySchedules'));
     }
 }

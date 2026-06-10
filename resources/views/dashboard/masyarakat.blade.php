@@ -3,212 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Status Penjemputan - SiResik</title>
+    <title>Dashboard Masyarakat - SiResik</title>
+    <meta name="description" content="Dashboard masyarakat SiResik – pantau setoran, poin, peta layanan, dan riwayat transaksi Anda.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        #map { z-index: 0; }
+        .leaflet-container { border-radius: 1rem; }
+    </style>
 </head>
-<body class="min-h-screen bg-slate-100 text-slate-900">
-    <div class="min-h-screen xl:grid xl:grid-cols-[300px,1fr]">
-        <aside class="bg-[#0c5b49] px-6 py-8 text-white">
+<body class="min-h-screen bg-[#f1f5f1] text-slate-900">
+<div class="min-h-screen xl:grid xl:grid-cols-[260px,1fr]">
+
+    {{-- ═══════════════════════ SIDEBAR ═══════════════════════ --}}
+    <aside class="bg-[#0c5b49] flex flex-col px-5 py-7 text-white">
+        <div class="flex items-center gap-3 px-2">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-xl">♻</div>
+            <div>
+                <p class="text-3xl font-black tracking-tight leading-none">SiResik</p>
+                <p class="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-emerald-200">Sistem Informasi Resik</p>
+            </div>
+        </div>
+
+        @php
+            $nav = [
+                ['label' => 'Dashboard',           'icon' => '⊞', 'href' => route('dashboard.masyarakat'),         'active' => true],
+                ['label' => 'Penjemputan',          'icon' => '⊕', 'href' => route('permintaan-penjemputan.index'), 'active' => false],
+                ['label' => 'Status Layanan',       'icon' => '◎', 'href' => route('status-layanan.index'),         'active' => false],
+                ['label' => 'Riwayat Layanan',      'icon' => '◉', 'href' => route('riwayat-layanan.index'),        'active' => false],
+                ['label' => 'Poin & Reward',        'icon' => '◈', 'href' => route('poin.index'),                   'active' => false],
+                ['label' => 'Sampah Liar',          'icon' => '⊗', 'href' => route('dashboard.masyarakat'),         'active' => false],
+                ['label' => 'Peta & Lokasi',        'icon' => '⊙', 'href' => route('peta.lokasi'),                  'active' => false],
+                ['label' => 'Usulkan Titik',        'icon' => '⊕', 'href' => route('peta.usulan-titik'),            'active' => false],
+                ['label' => 'Edukasi Lingkungan',   'icon' => '◧', 'href' => route('dashboard.masyarakat'),         'active' => false],
+                ['label' => 'Kegiatan Lingkungan',  'icon' => '◨', 'href' => route('dashboard.masyarakat'),         'active' => false],
+                ['label' => 'Notifikasi',           'icon' => '◇', 'href' => route('notifications.index'),          'active' => false],
+            ];
+        @endphp
+
+        <nav class="mt-10 flex-1 space-y-0.5">
+            @foreach ($nav as $item)
+                <a href="{{ $item['href'] }}"
+                   class="flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium transition-all
+                          {{ $item['active']
+                              ? 'bg-emerald-500 text-white shadow-md shadow-emerald-900/30'
+                              : 'text-emerald-50/80 hover:bg-white/8 hover:text-white' }}">
+                    <span class="w-5 text-center text-base opacity-75">{{ $item['icon'] }}</span>
+                    <span>{{ $item['label'] }}</span>
+                </a>
+            @endforeach
+        </nav>
+
+        <form action="{{ route('logout') }}" method="POST" class="mt-4">
+            @csrf
+            <button type="submit"
+                    class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-medium text-emerald-50/80 transition hover:bg-white/8 hover:text-white">
+                <span class="w-5 text-center">↪</span>
+                <span>Keluar (Log Out)</span>
+            </button>
+        </form>
+
+        <div class="mt-5 rounded-2xl bg-white/8 px-4 py-4">
             <div class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/20 text-2xl">♻</div>
-                <div>
-                    <p class="text-4xl font-black tracking-tight">SiResik</p>
-                    <p class="mt-1 text-xs uppercase tracking-[0.2em] text-emerald-100">Sistem Informasi Resik</p>
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-base font-black">
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                </div>
+                <div class="min-w-0">
+                    <p class="truncate text-[15px] font-bold">{{ $user->name }}</p>
+                    <p class="text-[10px] uppercase tracking-[0.15em] text-emerald-200">Warga Terverifikasi</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    {{-- ═══════════════════════ MAIN ═══════════════════════ --}}
+    <main class="flex flex-col gap-5 px-7 py-6">
+
+        {{-- Top Bar --}}
+        <header class="flex items-center justify-between">
+            <h1 class="text-xl font-black tracking-tight text-slate-800">Dashboard Masyarakat</h1>
+            <button type="button"
+                    class="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
+                Unduh Laporan
+            </button>
+        </header>
+
+        {{-- ═══ 4 Stats Cards ═══ --}}
+        <section class="grid grid-cols-2 gap-4 xl:grid-cols-4">
+
+            {{-- Total Setoran --}}
+            <div class="rounded-2xl bg-white px-5 py-4 shadow-sm ring-1 ring-slate-200">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Setoran</p>
+                <p class="mt-2 text-3xl font-black text-slate-800">
+                    {{ number_format($stats['total_berat'], 1) }}
+                    <span class="text-xl font-bold text-slate-500">Kg</span>
+                </p>
+            </div>
+
+            {{-- Poin Terkumpul --}}
+            <div class="rounded-2xl bg-white px-5 py-4 shadow-sm ring-1 ring-slate-200">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Poin Terkumpul</p>
+                <p class="mt-2 text-3xl font-black text-emerald-600">
+                    {{ number_format($stats['total_poin']) }}
+                </p>
+            </div>
+
+            {{-- Jadwal Terdekat --}}
+            <div class="rounded-2xl bg-white px-5 py-4 shadow-sm ring-1 ring-slate-200">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Jadwal Terdekat</p>
+                @if($upcomingRequest && $upcomingRequest->scheduled_at)
+                    <p class="mt-2 text-lg font-black text-blue-600 leading-tight">
+                        {{ \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->isToday() ? 'Hari ini' : (\Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->isTomorrow() ? 'Besok' : \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->translatedFormat('d M')) }},
+                        {{ \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->format('H:i') }} WIB
+                    </p>
+                @else
+                    <p class="mt-2 text-base font-bold text-slate-400">Belum ada</p>
+                @endif
+            </div>
+
+            {{-- Kontribusi CO2 --}}
+            <div class="rounded-2xl bg-white px-5 py-4 shadow-sm ring-1 ring-slate-200">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Kontribusi CO2</p>
+                <p class="mt-2 text-3xl font-black text-slate-800">
+                    -{{ number_format($stats['kontribusi_co2'], 1) }}
+                    <span class="text-xl font-bold text-slate-500">Kg</span>
+                </p>
+            </div>
+        </section>
+
+        {{-- ═══ Map + Riwayat (2 kolom) ═══ --}}
+        <section class="grid gap-4 xl:grid-cols-[1fr,340px]">
+
+            {{-- Peta --}}
+            <div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 overflow-hidden">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+                    <h2 class="text-sm font-black text-slate-700">
+                        Titik Layanan &amp; Laporan <span class="text-red-500">Liar</span>
+                    </h2>
+                    <a href="{{ route('peta.lokasi') }}"
+                       class="text-xs font-semibold text-emerald-600 hover:underline">Lihat Semua →</a>
+                </div>
+                <div id="map" class="w-full" style="height: 320px;"></div>
+                <div class="flex items-center gap-5 px-5 py-3 border-t border-slate-100 text-xs text-slate-500">
+                    <span class="flex items-center gap-1.5">
+                        <span class="inline-block h-2.5 w-2.5 rounded-full bg-red-500"></span>
+                        Laporan Liar
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="inline-block h-2.5 w-2.5 rounded-full bg-blue-500"></span>
+                        Bank Sampah
+                    </span>
                 </div>
             </div>
 
-            @php
-                $menuItems = [
-                    ['label' => 'Dashboard', 'active' => false, 'href' => route('dashboard.masyarakat')],
-                    ['label' => 'Penjemputan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
-                    ['label' => 'Status Layanan', 'active' => true, 'href' => route('dashboard.masyarakat')],
-                    ['label' => 'Riwayat Layanan', 'active' => false, 'href' => route('permintaan-penjemputan.index')],
-                    ['label' => 'Poin & Reward', 'active' => false, 'href' => route('poin.index')],
-                    ['label' => 'Sampah Liar', 'active' => false, 'disabled' => true],
-                    ['label' => 'Peta & Lokasi', 'active' => false, 'href' => route('peta.lokasi')],
-                    ['label' => 'Usulkan Titik', 'active' => false, 'href' => route('peta.usulan-titik')],
-                    ['label' => 'Edukasi Lingkungan', 'active' => false, 'disabled' => true],
-                    ['label' => 'Kegiatan Lingkungan', 'active' => false, 'disabled' => true],
-                    ['label' => 'Notifikasi', 'active' => false, 'disabled' => true],
-                ];
-            @endphp
+            {{-- Riwayat Terbaru --}}
+            <div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 flex flex-col">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+                    <h2 class="text-sm font-black text-slate-700">Riwayat Layanan Terbaru</h2>
+                    <a href="{{ route('riwayat-layanan.index') }}"
+                       class="text-xs font-semibold text-emerald-600 hover:underline">Lihat Semua →</a>
+                </div>
 
-            <nav class="mt-14 space-y-2">
-                @foreach ($menuItems as $item)
-                    @if (!empty($item['href']))
-                        <a href="{{ $item['href'] }}"
-                            class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition {{ $item['active'] ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }}">
-                            <span class="text-xl">{{ $item['active'] ? '◉' : '◦' }}</span>
-                            <span>{{ $item['label'] }}</span>
-                        </a>
-                    @else
-                        <div class="flex items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-200 opacity-70 cursor-not-allowed">
-                            <span class="text-xl">◦</span>
-                            <span>{{ $item['label'] }}</span>
-                        </div>
-                    @endif
-                @endforeach
-            </nav>
-
-            <form action="{{ route('logout') }}" method="POST" class="mt-8">
-                @csrf
-                <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
-                    <span class="text-xl">↪</span>
-                    <span>Keluar (Log Out)</span>
-                </button>
-            </form>
-
-            <div class="mt-10 rounded-3xl bg-white/5 px-4 py-5">
-                <div class="flex items-center gap-4">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-xl font-black">R</div>
-                    <div>
-                        <p class="text-xl font-bold">{{ $user->name }}</p>
-                        <p class="text-xs uppercase tracking-[0.15em] text-emerald-100">Warga Terverifikasi</p>
+                <div class="flex-1 divide-y divide-slate-50">
+                    {{-- Table Header --}}
+                    <div class="grid grid-cols-[auto,1fr,auto] gap-2 px-5 py-2">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">ID</span>
+                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Kategori</span>
+                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Status</span>
                     </div>
+
+                    @forelse ($trackingRequests as $index => $item)
+                        @php
+                            $trkId    = '#TR-' . str_pad($item->id, 3, '0', STR_PAD_LEFT);
+                            $kategori = $item->items->pluck('kategoriSampah.nama')->filter()->take(1)->first() ?? 'Penjemputan';
+                            $statusMeta = match ($item->status) {
+                                'Selesai'  => ['label' => 'Selesai',      'class' => 'bg-emerald-100 text-emerald-700'],
+                                'Diproses' => ['label' => 'Dijadwalkan',  'class' => 'bg-blue-100 text-blue-700'],
+                                default    => ['label' => 'Menunggu',     'class' => 'bg-amber-100 text-amber-700'],
+                            };
+                        @endphp
+                        <div class="grid grid-cols-[auto,1fr,auto] items-center gap-2 px-5 py-3 hover:bg-slate-50/60 transition">
+                            <span class="text-xs font-bold text-slate-500 whitespace-nowrap">{{ $trkId }}</span>
+                            <span class="text-xs font-semibold text-slate-700 truncate">{{ $kategori }}</span>
+                            <span class="inline-flex rounded px-2 py-0.5 text-[10px] font-black whitespace-nowrap {{ $statusMeta['class'] }}">
+                                {{ $statusMeta['label'] }}
+                            </span>
+                        </div>
+                    @empty
+                        <div class="flex flex-col items-center justify-center py-12 text-slate-400">
+                            <p class="text-3xl">📭</p>
+                            <p class="mt-2 text-sm font-semibold">Belum ada riwayat</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
-        </aside>
+        </section>
 
-        <main class="px-6 py-8 lg:px-10">
-            <header class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                    <h1 class="text-5xl font-black tracking-tight text-slate-900">Status Penjemputan</h1>
-                    <p class="mt-2 text-lg text-slate-500">Dashboard Masyarakat</p>
-                </div>
-                <div class="flex flex-wrap gap-3">
-                    <button type="button" class="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-lg font-semibold text-slate-700">Unduh Laporan</button>
-                    <a href="{{ route('permintaan-penjemputan.index') }}" class="rounded-2xl bg-emerald-500 px-6 py-3 text-lg font-bold text-white">+ Ajukan Penjemputan</a>
-                </div>
-            </header>
+        {{-- ═══ Info Bar Bawah ═══ --}}
+        <footer class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 px-6 py-3">
+            <div class="flex flex-wrap items-center gap-x-8 gap-y-2 text-xs text-slate-500">
+                <span>
+                    <span class="font-black text-slate-700">Jam Operasional:</span>
+                    <span class="ml-1 text-emerald-600 font-semibold">08:00 - 16:00 WIB</span>
+                </span>
+                <span class="hidden sm:block h-4 w-px bg-slate-200"></span>
+                <span>
+                    <span class="font-black text-slate-700">Area Layanan:</span>
+                    <span class="ml-1 text-emerald-600 font-semibold">Kel. Sukamaju, Jakarta Timur</span>
+                </span>
+                <span class="hidden sm:block h-4 w-px bg-slate-200"></span>
+                <span>
+                    <span class="font-black text-slate-700">Total Warga Aktif:</span>
+                    <span class="ml-1 text-emerald-600 font-semibold">{{ number_format($totalWarga) }} Warga</span>
+                </span>
+                <span class="ml-auto flex items-center gap-1.5 text-emerald-600 font-bold">
+                    <span class="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    +14.8 Stabil
+                </span>
+            </div>
+        </footer>
 
-            <section class="mt-12 grid gap-8 xl:grid-cols-[1.55fr,0.75fr]">
-                <div>
-                    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                        <div>
-                            <h2 class="text-6xl font-black tracking-tight text-slate-800">Status Layanan</h2>
-                            <p class="mt-3 text-2xl text-slate-500">Pantau perkembangan penjemputan sampah Anda secara real-time.</p>
-                        </div>
+    </main>
+</div>
 
-                        @if ($upcomingRequest)
-                            <div class="rounded-[2rem] bg-[#0c5b49] px-7 py-5 text-white shadow-xl shadow-emerald-900/10">
-                                <p class="text-sm font-black uppercase tracking-[0.18em] text-emerald-200">Jadwal Reguler Area</p>
-                                <p class="mt-2 text-3xl font-black">{{ \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->translatedFormat('l, d M Y') }}</p>
-                                <p class="mt-1 text-lg text-emerald-100">{{ \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->format('H:i') }} WIB bersama {{ $upcomingRequest->petugas?->name ?? 'Petugas' }}</p>
-                            </div>
-                        @endif
-                    </div>
+{{-- ═══════════════════ Leaflet Map Script ═══════════════════ --}}
+<script>
+(function () {
+    // Titik layanan dari server
+    const titikLayanan = @json($titikLayanan);
 
-                    <div class="mt-12">
-                        <p class="text-base font-black uppercase tracking-[0.2em] text-slate-400">Riwayat Permintaan</p>
+    // Default center: Jakarta Timur jika tidak ada data
+    const defaultLat = titikLayanan.length > 0 ? titikLayanan[0].latitude  : -6.2146;
+    const defaultLng = titikLayanan.length > 0 ? titikLayanan[0].longitude : 106.8451;
 
-                        <div class="mt-6 space-y-5">
-                            @forelse ($trackingRequests as $index => $item)
-                                @php
-                                    $statusMeta = match ($item->status) {
-                                        'Selesai' => [
-                                            'badge' => 'text-emerald-600 bg-emerald-100',
-                                            'iconBg' => 'bg-emerald-100',
-                                            'iconText' => 'text-emerald-700',
-                                            'label' => 'SELESAI',
-                                            'icon' => '✓',
-                                        ],
-                                        'Diproses' => [
-                                            'badge' => 'text-blue-600 bg-blue-100',
-                                            'iconBg' => 'bg-blue-100',
-                                            'iconText' => 'text-blue-700',
-                                            'label' => 'DIJADWALKAN',
-                                            'icon' => '◔',
-                                        ],
-                                        default => [
-                                            'badge' => 'text-amber-600 bg-amber-100',
-                                            'iconBg' => 'bg-amber-100',
-                                            'iconText' => 'text-amber-700',
-                                            'label' => 'MENUNGGU',
-                                            'icon' => '◷',
-                                        ],
-                                    };
-                                    $kategoriText = $item->items->pluck('kategoriSampah.nama')->filter()->take(2)->implode(', ');
-                                    $beratText = $item->items->sum('berat_kg');
-                                @endphp
+    const map = L.map('map', { zoomControl: true, scrollWheelZoom: false })
+        .setView([defaultLat, defaultLng], 13);
 
-                                <article class="rounded-[2rem] bg-white px-6 py-6 shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
-                                    <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                                        <div class="flex items-start gap-5">
-                                            <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-[1.5rem] {{ $statusMeta['iconBg'] }} text-4xl font-black {{ $statusMeta['iconText'] }}">
-                                                {{ $statusMeta['icon'] }}
-                                            </div>
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 18,
+    }).addTo(map);
 
-                                            <div>
-                                                <div class="flex flex-wrap items-center gap-3">
-                                                    <span class="rounded-xl bg-slate-100 px-3 py-1 text-sm font-black text-slate-500">PK-{{ str_pad((string) ($index + 1), 3, '0', STR_PAD_LEFT) }}</span>
-                                                    <span class="rounded-xl px-3 py-1 text-sm font-black {{ $statusMeta['badge'] }}">{{ $statusMeta['label'] }}</span>
-                                                </div>
-                                                <h3 class="mt-4 text-5xl font-black tracking-tight text-slate-800">{{ $kategoriText ?: 'Permintaan Penjemputan' }}</h3>
-                                                <p class="mt-3 text-xl text-slate-400">
-                                                    Diajukan pada {{ optional($item->created_at)->translatedFormat('d M Y') }} • Estimasi berat {{ rtrim(rtrim(number_format($beratText, 2, '.', ''), '0'), '.') ?: '0' }} kg
-                                                </p>
-                                                @if ($item->status === 'Diproses' && $item->scheduled_at)
-                                                    <p class="mt-2 text-base font-semibold text-blue-600">
-                                                        Dijadwalkan {{ \Illuminate\Support\Carbon::parse($item->scheduled_at)->translatedFormat('d M Y, H:i') }} WIB{{ $item->petugas ? ' • Petugas: '.$item->petugas->name : '' }}
-                                                    </p>
-                                                @endif
-                                            </div>
-                                        </div>
+    // Ikon custom Bank Sampah (biru)
+    const blueIcon = L.divIcon({
+        className: '',
+        html: '<div style="width:14px;height:14px;background:#3b82f6;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.35)"></div>',
+        iconSize: [14, 14],
+        iconAnchor: [7, 7],
+    });
 
-                                        <div class="lg:pr-3">
-                                            <a href="{{ route('permintaan-penjemputan.index') }}" class="inline-flex rounded-2xl border border-slate-200 bg-white px-8 py-4 text-2xl font-bold text-slate-600 shadow-sm">Detail</a>
-                                        </div>
-                                    </div>
-                                </article>
-                            @empty
-                                <div class="rounded-[2rem] border border-dashed border-slate-300 bg-white px-6 py-16 text-center text-lg text-slate-500">
-                                    Belum ada permintaan penjemputan yang bisa dilacak.
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
+    // Ikon Laporan Liar (merah) – dummy titik contoh
+    const redIcon = L.divIcon({
+        className: '',
+        html: '<div style="width:12px;height:12px;background:#ef4444;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.35)"></div>',
+        iconSize: [12, 12],
+        iconAnchor: [6, 6],
+    });
 
-                <div>
-                    <p class="text-base font-black uppercase tracking-[0.2em] text-slate-400">Kalender Mingguan</p>
+    // Render titik layanan (Bank Sampah)
+    titikLayanan.forEach(function (t) {
+        if (t.latitude && t.longitude) {
+            L.marker([t.latitude, t.longitude], { icon: blueIcon })
+                .addTo(map)
+                .bindPopup(`<strong>${t.nama}</strong><br>${t.alamat ?? ''}`);
+        }
+    });
 
-                    <section class="mt-6 rounded-[2.5rem] bg-white p-6 shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
-                        <div class="space-y-5">
-                            @foreach ($weeklySchedules as $schedule)
-                                <article class="rounded-[2rem] border border-slate-200 bg-white px-5 py-5 shadow-sm">
-                                    <div class="flex items-start justify-between gap-4">
-                                        <p class="text-2xl font-black uppercase tracking-[0.12em] text-[#0c5b49]">{{ $schedule['hari'] }}</p>
-                                        <span class="rounded-xl bg-slate-100 px-3 py-1 text-sm font-black text-slate-400">{{ $schedule['jam'] }}</span>
-                                    </div>
-                                    <p class="mt-4 text-2xl font-black text-slate-800">{{ $schedule['kategori'] }}</p>
-                                    <p class="mt-4 text-base italic text-slate-400">Berlaku untuk {{ $schedule['zona'] }}</p>
-                                </article>
-                            @endforeach
-                        </div>
-
-                        <div class="mt-5 rounded-[2rem] border border-emerald-100 bg-emerald-50 px-5 py-5 text-base leading-8 text-emerald-800">
-                            Untuk sampah rutin mingguan (Organik/Anorganik), Anda tidak perlu mengajukan permintaan. Petugas akan datang sesuai jadwal di atas.
-                        </div>
-                    </section>
-                </div>
-            </section>
-
-            <section class="mt-10 rounded-[2.5rem] bg-white px-7 py-7 shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
-                <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                    <div class="flex items-center gap-6">
-                        <div class="flex h-20 w-20 items-center justify-center rounded-[1.5rem] border border-orange-200 bg-orange-50 text-4xl font-black text-orange-500">!</div>
-                        <div>
-                            <h3 class="text-4xl font-black tracking-tight text-slate-800">Butuh Bantuan Penjemputan?</h3>
-                            <p class="mt-3 text-xl text-slate-500">Jika status penjemputan Anda tidak berubah dalam 2x24 jam, silakan hubungi pusat bantuan kami melalui WhatsApp.</p>
-                        </div>
-                    </div>
-
-                    <button type="button" class="rounded-2xl bg-emerald-500 px-10 py-5 text-3xl font-black text-white shadow-xl shadow-emerald-500/20">
-                        Chat Bantuan
-                    </button>
-                </div>
-            </section>
-        </main>
-    </div>
+    // Beberapa titik laporan liar dummy (offset dari pusat)
+    if (titikLayanan.length > 0) {
+        const offsets = [[0.008, -0.012], [-0.005, 0.018], [0.013, 0.006], [-0.009, -0.007]];
+        offsets.forEach(function (o) {
+            L.marker([defaultLat + o[0], defaultLng + o[1]], { icon: redIcon })
+                .addTo(map)
+                .bindPopup('<strong>Laporan Liar</strong><br>Butuh penanganan');
+        });
+    }
+})();
+</script>
 </body>
 </html>
