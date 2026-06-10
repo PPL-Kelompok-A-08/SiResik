@@ -71,18 +71,26 @@ class DashboardController extends Controller
             'jadwal_terdekat'=> $jadwalTerdekat,
         ];
 
-        // Titik layanan untuk peta
-        $titikLayanan = TitikLayanan::all();
-
-        // Total warga aktif (role masyarakat)
-        $totalWarga = User::where('role', 'masyarakat')->count();
-
-        $operationalHours = '08:00 - 16:00 WIB';
-
-        // Aggregate contribution statistics for the user
-        $totalKg = $permintaan->reduce(function ($carry, $p) {
-            return $carry + (float) $p->items->sum('berat_kg');
-        }, 0);
+        $weeklySchedules = [
+            [
+                'hari' => 'Senin',
+                'kategori' => 'Organik (Sisa Makanan)',
+                'jam' => '08:00 - 10:00',
+                'zona' => 'Bojongsoang, Desa Buah batu',
+            ],
+            [
+                'hari' => 'Selasa',
+                'kategori' => 'Anorganik (Plastik, Kertas)',
+                'jam' => '08:00 - 10:00',
+                'zona' => 'Bojongsoang, Desa Bojongsoang ',
+            ],
+            [
+                'hari' => 'Rabu',
+                'kategori' => 'Residu (Popok, Tisu)',
+                'jam' => '09:00 - 11:00',
+                'zona' => 'Baleendah, Kelurahan Jelekong',
+            ],
+        ];
 
         $totalPickups = $permintaan->where('jenis', 'Pickup')->count();
 
