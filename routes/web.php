@@ -179,5 +179,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/terima/{permintaanPenjemputan}', [PetugasController::class, 'terimaTugas'])->name('petugas.terima');
         Route::get('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'showBukti'])->name('petugas.bukti.show');
         Route::post('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'uploadBukti'])->name('petugas.bukti.upload');
+
+        // Sampah Liar: terima tugas dan unggah bukti penanganan
+        Route::post('/terima-sampah-liar/{sampahLiar}', [PetugasController::class, 'terimaSampahLiar'])->name('petugas.terima.sampah_liar');
+        Route::get('/bukti-sampah-liar/{sampahLiar}', [PetugasController::class, 'showBuktiSampahLiar'])->name('petugas.bukti.sampah_liar.show');
+        Route::post('/bukti-sampah-liar/{sampahLiar}', [PetugasController::class, 'uploadBuktiSampahLiar'])->name('petugas.bukti.sampah_liar.upload');
     });
 });

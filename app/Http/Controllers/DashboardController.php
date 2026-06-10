@@ -68,7 +68,18 @@ class DashboardController extends Controller
             ],
         ];
 
-        return view('dashboard.masyarakat', compact('user', 'permintaan', 'stats', 'trackingRequests', 'upcomingRequest', 'weeklySchedules'));
+        $operationalHours = '08:00 - 16:00 WIB';
+
+        // Aggregate contribution statistics for the user
+        $totalKg = $permintaan->reduce(function ($carry, $p) {
+            return $carry + (float) $p->items->sum('berat_kg');
+        }, 0);
+
+        $totalPickups = $permintaan->where('jenis', 'Pickup')->count();
+
+        $totalPoints = (int) $permintaan->sum('total_estimasi_poin');
+
+        return view('dashboard.masyarakat', compact('user', 'permintaan', 'stats', 'trackingRequests', 'upcomingRequest', 'weeklySchedules', 'operationalHours', 'totalKg', 'totalPickups', 'totalPoints'));
     }
 
     public function petugas(): View
@@ -102,14 +113,24 @@ class DashboardController extends Controller
                 ->count(),
         ];
 
-        return view('dashboard.petugas', compact('user', 'permintaan', 'stats'));
+        // Sampah liar tasks for petugas: yang sudah diverifikasi dan belum ditangani, atau yang sudah ditugaskan ke petugas
+        $laporanSampahLiar = SampahLiar::with('pengguna', 'petugas')
+            ->where(function ($q) use ($user) {
+                $q->whereNull('petugas_id')->orWhere('petugas_id', $user->id);
+            })
+            ->where('status', 'diverifikasi')
+            ->latest()
+            ->take(12)
+            ->get();
+
+        return view('dashboard.petugas', compact('user', 'permintaan', 'stats', 'laporanSampahLiar'));
     }
 
     public function admin(): View
     {
         $user = auth()->user();
         $permintaan = PermintaanPenjemputan::with(['pengguna', 'items.kategoriSampah', 'petugas'])
-            ->latest()
+            ->orderBy('tanggal', 'asc')
             ->get();
         $petugas = User::where('role', 'petugas')->orderBy('name')->get();
         $rewards = Reward::orderBy('nama')->get();
@@ -120,7 +141,7 @@ class DashboardController extends Controller
             ->latest()
             ->get();
         $laporanSampahLiar = SampahLiar::with('pengguna')
-            ->latest()
+            ->orderBy('created_at', 'asc')
             ->get();
         $pendingRequests = $permintaan->where('status', 'Menunggu')->values();
         $scheduledRequests = $permintaan->where('status', 'Diproses')->take(4)->values();

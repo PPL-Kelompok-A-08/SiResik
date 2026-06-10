@@ -90,6 +90,12 @@
                         <p class="mt-1 text-lg text-emerald-100">{{ \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->format('H:i') }} WIB bersama {{ $upcomingRequest->petugas?->name ?? 'Petugas' }}</p>
                     </div>
                 @endif
+
+                <div class="rounded-[2rem] bg-white px-7 py-5 shadow-xl shadow-slate-200/60 shrink-0">
+                    <p class="text-sm font-black uppercase tracking-[0.18em] text-slate-500">Jam Operasional</p>
+                    <p class="mt-2 text-3xl font-black text-slate-800">{{ $operationalHours }}</p>
+                    <p class="mt-1 text-lg text-slate-500">Layanan penjemputan tersedia pada jam operasional resmi.</p>
+                </div>
             </div>
 
             <section class="mt-12 grid gap-8 xl:grid-cols-[1.55fr,0.75fr]">
@@ -208,6 +214,65 @@
                     <button type="button" class="rounded-2xl bg-emerald-500 px-10 py-5 text-3xl font-black text-white shadow-xl shadow-emerald-500/20">
                         Chat Bantuan
                     </button>
+                </div>
+            </section>
+
+            <!-- Riwayat Penjemputan & Statistik Kontribusi -->
+            <section class="mt-10">
+                <div class="rounded-[2.5rem] bg-white p-6 shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-2xl font-black">Riwayat Penjemputan</h3>
+                            <p class="text-sm text-slate-500">Daftar lengkap transaksi dan partisipasi kebersihan Anda.</p>
+                        </div>
+                        <button class="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700">Unduh Laporan</button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto text-sm">
+                            <thead>
+                                <tr class="text-slate-500 text-left">
+                                    <th class="px-4 py-3">ID Transaksi</th>
+                                    <th class="px-4 py-3">Jenis</th>
+                                    <th class="px-4 py-3">Tanggal</th>
+                                    <th class="px-4 py-3">Lokasi</th>
+                                    <th class="px-4 py-3">Detail Item</th>
+                                    <th class="px-4 py-3 text-right">Poin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($permintaan as $item)
+                                    @php
+                                        $kategoriText = $item->items->pluck('kategoriSampah.nama')->filter()->take(2)->implode(', ');
+                                        $points = $item->total_estimasi_poin ?: 0;
+                                    @endphp
+                                    <tr class="border-t">
+                                        <td class="px-4 py-4 font-bold">TRX-{{ $item->id }}</td>
+                                        <td class="px-4 py-4">{{ $item->jenis ?? '-' }}</td>
+                                        <td class="px-4 py-4">{{ optional($item->created_at)->translatedFormat('d M Y') }}</td>
+                                        <td class="px-4 py-4">{{ $item->alamat ?? '-' }}</td>
+                                        <td class="px-4 py-4 text-slate-400">{{ $kategoriText ?: '-' }}</td>
+                                        <td class="px-4 py-4 text-right text-emerald-600 font-black">+{{ number_format($points) }} Pts</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="rounded-[1.5rem] bg-[#091428] p-6 text-white">
+                        <p class="text-xs uppercase tracking-[0.18em] text-emerald-400">Statistik Kontribusi</p>
+                        <h4 class="mt-4 text-4xl font-black">Total {{ rtrim(rtrim(number_format($totalKg, 2, '.', ''), '0'), '.') ?: 0 }} kg<br><span class="text-xl font-semibold text-slate-300">Sampah Terolah</span></h4>
+                    </div>
+                    <div class="rounded-[1.5rem] bg-white border p-6">
+                        <p class="text-sm text-slate-500">Penjemputan</p>
+                        <p class="mt-3 text-3xl font-black text-slate-800">{{ $totalPickups }}<span class="text-sm font-semibold text-slate-400"> Kali</span></p>
+                    </div>
+                    <div class="rounded-[1.5rem] bg-white border p-6">
+                        <p class="text-sm text-slate-500">Poin Terkumpul</p>
+                        <p class="mt-3 text-3xl font-black text-emerald-600">{{ number_format($totalPoints) }}<span class="text-sm font-semibold text-slate-400"> Pts</span></p>
+                    </div>
                 </div>
             </section>
         </main>
