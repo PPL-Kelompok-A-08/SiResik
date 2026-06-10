@@ -169,51 +169,48 @@
                                         <span class="text-base">{{ $jenisIcon }}</span>
                                         <span class="font-medium">{{ $jenisLabel }}</span>
                                     </div>
-                                </td>
-                                <td class="px-4 py-4 text-slate-500">
-                                    {{ \Illuminate\Support\Carbon::parse($item->tanggal)->translatedFormat('d M Y') }}
-                                </td>
-                                <td class="px-4 py-4">
-                                    <span class="font-semibold text-slate-700">{{ Str::limit($item->alamat, 20) }}</span>
-                                </td>
-                                <td class="px-4 py-4 text-slate-500">
-                                    {{ $detailItems ?: '-' }}
-                                    @if($item->items->count() > 2)
-                                        <span class="text-slate-400">&amp; {{ $item->items->count() - 2 }} lainnya</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-4 text-right">
-                                    <span class="font-black text-emerald-600">{{ $poinFormatted }}</span>
-                                </td>
-                                <td class="px-5 py-4">
-                                    <span class="inline-flex rounded-md px-2.5 py-1 text-[11px] font-black {{ $statusMeta['class'] }}">
-                                        {{ $statusMeta['label'] }}
-                                    </span>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr id="empty-row">
-                                <td colspan="7" class="py-16 text-center">
-                                    <p class="text-4xl">📭</p>
-                                    <p class="mt-3 font-bold text-slate-500">Belum ada riwayat layanan.</p>
-                                    <p class="mt-1 text-sm text-slate-400">Riwayat penjemputan Anda akan muncul di sini.</p>
-                                    <a href="{{ route('permintaan-penjemputan.index') }}"
-                                       class="mt-5 inline-block rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-600 transition">
-                                        + Ajukan Penjemputan
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforelse
+                                @endif
+                            </div>
 
-                        {{-- Empty state per tab (disembunyikan oleh JS) --}}
-                        <tr id="no-filter-result" class="hidden">
-                            <td colspan="7" class="py-12 text-center text-slate-400 text-sm">
-                                Tidak ada data untuk filter ini.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                            {{-- Poin & Tombol --}}
+                            <div class="flex flex-col items-end gap-3 min-w-[150px]">
+                                <div class="rounded-2xl bg-emerald-50 px-4 py-3 text-right">
+                                    <p class="text-xs text-emerald-600 font-semibold">Estimasi Poin</p>
+                                    <p class="text-2xl font-black text-emerald-700">{{ number_format($item->total_estimasi_poin) }}</p>
+                                </div>
+                                <div class="rounded-2xl bg-rose-50 px-4 py-3 text-right">
+                                    <p class="text-xs text-rose-600 font-semibold">Tagihan</p>
+                                    <p class="text-lg font-black text-rose-700">Rp {{ number_format($item->total_tagihan, 0, ',', '.') }}</p>
+                                </div>
+                                <a href="{{ route('riwayat-layanan.show', $item) }}"
+                                   class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 transition w-full text-center">
+                                    Lihat Detail →
+                                </a>
+                            </div>
+                        </div>
+
+                        {{-- Progress bar status --}}
+                        <div class="h-1.5 bg-slate-100">
+                            <div class="h-full rounded-full transition-all duration-500
+                                @if($item->status === 'Menunggu') bg-sky-400 w-1/3
+                                @elseif($item->status === 'Diproses') bg-amber-400 w-2/3
+                                @else bg-emerald-500 w-full
+                                @endif">
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <div class="rounded-[2rem] border border-dashed border-slate-300 bg-white py-20 text-center">
+                        <div class="text-5xl mb-4">📭</div>
+                        <p class="text-lg font-bold text-slate-600">Belum ada riwayat layanan.</p>
+                        <p class="text-sm text-slate-400 mt-2">Riwayat penjemputan Anda akan muncul di sini.</p>
+                        <a href="{{ route('permintaan-penjemputan.index') }}"
+                           class="mt-6 inline-block rounded-2xl bg-emerald-500 px-6 py-3 font-bold text-white hover:bg-emerald-600 transition">
+                            + Ajukan Penjemputan Pertama
+                        </a>
+                    </div>
+                @endforelse
+            </section>
 
             {{-- Pagination --}}
             @if($riwayat->hasPages())
