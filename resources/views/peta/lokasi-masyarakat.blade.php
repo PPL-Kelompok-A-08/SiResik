@@ -69,7 +69,6 @@
                     <p class="mt-2 text-lg text-slate-500">Dashboard Masyarakat</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <button type="button" class="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-lg font-semibold text-slate-700">Unduh Laporan</button>
                     <a href="{{ route('permintaan-penjemputan.index') }}" class="rounded-2xl bg-emerald-500 px-6 py-3 text-lg font-bold text-white">+ Ajukan Penjemputan</a>
                 </div>
             </header>

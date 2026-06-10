@@ -405,9 +405,9 @@
                 <div class="grid gap-5 px-6 py-6 md:grid-cols-2 xl:grid-cols-3">
                     @php
                         $weeklySchedules = [
-                            ['hari' => 'Senin', 'zona' => 'Zona A', 'jam' => '08:00 WIB', 'petugas' => 'Ahmad'],
-                            ['hari' => 'Selasa', 'zona' => 'Zona B', 'jam' => '08:00 WIB', 'petugas' => 'Bambang'],
-                            ['hari' => 'Rabu', 'zona' => 'Zona A', 'jam' => '08:00 WIB', 'petugas' => 'Cecep'],
+                            ['hari' => 'Senin', 'zona' => 'Bojongsoang, Desa Buah Batu', 'jam' => '08:00 WIB', 'petugas' => 'Ahmad'],
+                            ['hari' => 'Selasa', 'zona' => 'Bojongsoang, Desa Bojongsoang', 'jam' => '08:00 WIB', 'petugas' => 'Bambang'],
+                            ['hari' => 'Rabu', 'zona' => 'Baleendah, Kelurahan Jelekong', 'jam' => '09:00 WIB', 'petugas' => 'Cecep'],
                         ];
                     @endphp
 

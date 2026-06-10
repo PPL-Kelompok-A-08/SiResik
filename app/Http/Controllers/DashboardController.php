@@ -51,19 +51,19 @@ class DashboardController extends Controller
                 'hari' => 'Senin',
                 'kategori' => 'Organik (Sisa Makanan)',
                 'jam' => '08:00 - 10:00',
-                'zona' => 'Zona A',
+                'zona' => 'Bojongsoang, Desa Buah batu',
+            ],
+            [
+                'hari' => 'Selasa',
+                'kategori' => 'Anorganik (Plastik, Kertas)',
+                'jam' => '08:00 - 10:00',
+                'zona' => 'Bojongsoang, Desa Bojongsoang ',
             ],
             [
                 'hari' => 'Rabu',
-                'kategori' => 'Anorganik (Plastik, Kertas)',
-                'jam' => '08:00 - 10:00',
-                'zona' => 'Zona A',
-            ],
-            [
-                'hari' => 'Jumat',
                 'kategori' => 'Residu (Popok, Tisu)',
                 'jam' => '09:00 - 11:00',
-                'zona' => 'Zona A',
+                'zona' => 'Baleendah, Kelurahan Jelekong',
             ],
         ];
 
