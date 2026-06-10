@@ -6,7 +6,7 @@
     <title>Dashboard Petugas - SiResik</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-slate-100 text-slate-900">
+    <body class="min-h-screen bg-slate-100 text-slate-900">
     <div class="flex min-h-screen">
         <aside class="hidden w-80 flex-col bg-slate-950 text-white lg:flex">
             <div class="flex items-center gap-4 border-b border-slate-800 px-7 py-8">
@@ -75,6 +75,44 @@
                     <div class="rounded-[2rem] bg-white p-6 shadow-sm ring-1 ring-slate-200">
                         <p class="text-sm text-slate-500">Completed</p>
                         <p class="mt-5 text-4xl font-black text-emerald-600">{{ $stats['completed'] }}</p>
+                    </div>
+                </section>
+
+                <section class="mt-8 rounded-[2rem] bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-600">Tugas Sampah Liar</p>
+                            <h2 class="mt-2 text-2xl font-black text-slate-950">Laporan Sampah Liar</h2>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid gap-4">
+                        @if(!empty($laporanSampahLiar) && $laporanSampahLiar->isNotEmpty())
+                            @foreach($laporanSampahLiar as $lap)
+                                <article class="rounded-[1.25rem] border border-slate-200 bg-slate-50 p-4 shadow-sm flex items-start justify-between">
+                                    <div>
+                                        <p class="text-sm text-slate-500">ID: SL-{{ str_pad($lap->id, 3, '0', STR_PAD_LEFT) }}</p>
+                                        <h3 class="text-lg font-bold text-slate-900">{{ $lap->lokasi ?? 'Lokasi tidak tersedia' }}</h3>
+                                        <p class="text-sm text-slate-500">{{ $lap->pengguna?->name ?? 'Pelapor anonim' }}</p>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-2">
+                                        <span class="text-sm inline-flex rounded-full bg-slate-100 px-3 py-1">{{ ucfirst($lap->status) }}</span>
+                                        @if(is_null($lap->petugas_id))
+                                            <form action="{{ route('petugas.terima.sampah_liar', $lap) }}" method="POST">
+                                                @csrf
+                                                <button class="rounded-full bg-emerald-600 px-4 py-2 text-white font-bold">Terima</button>
+                                            </form>
+                                        @elseif($lap->petugas_id === auth()->id() && $lap->status !== 'ditangani')
+                                            <a href="{{ route('petugas.bukti.sampah_liar.show', $lap) }}" class="rounded-full bg-amber-500 px-4 py-2 text-slate-900 font-bold">Unggah Bukti</a>
+                                        @else
+                                            <span class="rounded-full bg-emerald-100 px-4 py-2 text-emerald-700">Ditangani</span>
+                                        @endif
+                                    </div>
+                                </article>
+                            @endforeach
+                        @else
+                            <div class="rounded-[1.25rem] border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-slate-500">Tidak ada laporan sampah liar untuk ditugaskan.</div>
+                        @endif
                     </div>
                 </section>
 

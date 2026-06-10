@@ -491,63 +491,99 @@
                         @php
                             $statusFilter = $laporan->status === 'Selesai' ? 'disetujui' : 'menunggu';
                         @endphp
-                        <div class="rounded-2xl border border-slate-200 p-5 verifikasi-card" data-status="{{ $statusFilter }}" data-type="permintaan">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <p class="text-lg font-black text-slate-800">Laporan #{{ $laporan->id }}</p>
-                                    <p class="text-sm text-slate-500">Oleh: {{ $laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm verifikasi-card" data-status="{{ $statusFilter }}" data-type="permintaan">
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                                <div class="min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                                        <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">No. {{ $loop->iteration }}</span>
+                                        <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">Permintaan</span>
+                                        <span>ID: JOB-{{ str_pad($laporan->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                    </div>
+                                    <p class="mt-3 text-lg font-black text-slate-900">{{ $laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                                    <p class="text-sm text-slate-500">{{ $laporan->pengguna?->email ?? 'Email tidak tersedia' }}</p>
                                 </div>
                                 <span class="status-badge {{ $laporan->status === 'Menunggu' ? 'status-menunggu' : ($laporan->status === 'Selesai' ? 'status-selesai' : 'status-dibatalkan') }}">{{ $laporan->status }}</span>
                             </div>
-                            <p class="text-sm text-slate-600 mb-4">{{ $laporan->alamat ?? 'Tidak ada deskripsi' }}</p>
-                            <div class="flex flex-wrap gap-2">
-                                <a href="{{ route('admin.permintaan.show', $laporan) }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Detail</a>
+
+                            <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                                <div class="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                                    <p class="font-semibold text-slate-800">Alamat / Lokasi</p>
+                                    <p class="mt-2 text-sm text-slate-600">{{ $laporan->alamat ?? 'Tidak ada deskripsi' }}</p>
+                                </div>
+                                <div class="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                                    <p class="font-semibold text-slate-800">Jadwal</p>
+                                    <p class="mt-2 text-sm text-slate-600">{{ $laporan->tanggal ?? 'Belum tersedia' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 flex flex-wrap gap-3 items-center">
+                                <a href="{{ route('admin.permintaan.show', $laporan) }}" class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">Detail</a>
                                 @if($laporan->status === 'Menunggu')
                                 <form method="POST" action="{{ route('admin.verifikasi-laporan', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('disetujui'); return true;">
                                     @csrf
                                     <input type="hidden" name="status" value="disetujui">
-                                    <button type="submit" class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Setujui</button>
+                                    <button type="submit" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-600 transition">Setujui</button>
                                 </form>
                                 <form method="POST" action="{{ route('admin.verifikasi-laporan', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('ditolak'); return true;">
                                     @csrf
                                     <input type="hidden" name="status" value="ditolak">
-                                    <button type="submit" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Tolak</button>
+                                    <button type="submit" class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">Tolak</button>
                                 </form>
                                 @else
-                                <div class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: {{ $laporan->status }}</div>
+                                <div class="rounded-2xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: {{ $laporan->status }}</div>
                                 @endif
                             </div>
                         </div>
                         @endforeach
                         @foreach($laporanSampahLiar as $laporan)
                         @php $statusFilter = $laporan->status === 'diverifikasi' ? 'disetujui' : 'menunggu'; @endphp
-                        <div class="rounded-2xl border border-slate-200 p-5 verifikasi-card" data-status="{{ $statusFilter }}" data-type="sampah_liar">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <p class="text-lg font-black text-slate-800">Laporan SL#{{ $laporan->id }}</p>
-                                    <p class="text-xs uppercase tracking-[0.15em] text-slate-400">Sampah Liar</p>
-                                    <p class="text-sm text-slate-500">Oleh: {{ $laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm verifikasi-card" data-status="{{ $statusFilter }}" data-type="sampah_liar">
+                            @if ($laporan->foto)
+                                <div class="mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-slate-100">
+                                    <img src="{{ asset('storage/' . $laporan->foto) }}" alt="Foto laporan {{ $laporan->lokasi ?? 'sampah liar' }}" class="h-56 w-full object-cover">
+                                </div>
+                            @endif
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                                <div class="min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                                        <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">No. {{ $loop->iteration }}</span>
+                                        <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">Sampah Liar</span>
+                                        <span>ID: SL-{{ str_pad($laporan->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                    </div>
+                                    <p class="mt-3 text-lg font-black text-slate-900">{{ $laporan->pengguna?->name ?? 'Pengguna Tidak Diketahui' }}</p>
+                                    <p class="text-sm text-slate-500">{{ $laporan->pengguna?->email ?? 'Email tidak tersedia' }}</p>
                                 </div>
                                 <span class="status-badge {{ $laporan->status === 'pending' ? 'status-menunggu' : ($laporan->status === 'diverifikasi' ? 'status-selesai' : 'status-dibatalkan') }}">
                                     {{ $laporan->status === 'pending' ? 'Menunggu' : ($laporan->status === 'diverifikasi' ? 'Disetujui' : 'Ditolak') }}
                                 </span>
                             </div>
-                            <p class="text-sm text-slate-600 mb-4">{{ $laporan->lokasi ?? 'Tidak ada deskripsi' }}</p>
-                            <div class="flex flex-wrap gap-2">
-                                <a href="{{ route('admin.sampah-liar.show', $laporan) }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Detail</a>
+
+                            <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                                <div class="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                                    <p class="font-semibold text-slate-800">Lokasi</p>
+                                    <p class="mt-2 text-sm text-slate-600">{{ $laporan->lokasi ?? 'Tidak ada deskripsi' }}</p>
+                                </div>
+                                <div class="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
+                                    <p class="font-semibold text-slate-800">Tanggal Laporan</p>
+                                    <p class="mt-2 text-sm text-slate-600">{{ $laporan->created_at?->format('d M Y') ?? '-' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 flex flex-wrap gap-3 items-center">
+                                <a href="{{ route('admin.sampah-liar.show', $laporan) }}" class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">Detail</a>
                                 @if($laporan->status === 'pending')
                                 <form method="POST" action="{{ route('admin.verifikasi-laporan-sampah-liar', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('disetujui'); return true;">
                                     @csrf
                                     <input type="hidden" name="status" value="disetujui">
-                                    <button type="submit" class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white">Setujui</button>
+                                    <button type="submit" class="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-600 transition">Setujui</button>
                                 </form>
                                 <form method="POST" action="{{ route('admin.verifikasi-laporan-sampah-liar', $laporan) }}" style="display: inline;" onsubmit="showVerifikasiSuccess('ditolak'); return true;">
                                     @csrf
                                     <input type="hidden" name="status" value="ditolak">
-                                    <button type="submit" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600">Tolak</button>
+                                    <button type="submit" class="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">Tolak</button>
                                 </form>
                                 @else
-                                <div class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: {{ $laporan->status === 'diverifikasi' ? 'Disetujui' : 'Ditolak' }}</div>
+                                <div class="rounded-2xl bg-slate-100 px-4 py-2 text-sm text-slate-600">Status: {{ $laporan->status === 'diverifikasi' ? 'Disetujui' : 'Ditolak' }}</div>
                                 @endif
                             </div>
                         </div>

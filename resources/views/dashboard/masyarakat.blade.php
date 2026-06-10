@@ -75,6 +75,20 @@
                     <p class="truncate text-[15px] font-bold">{{ $user->name }}</p>
                     <p class="text-[10px] uppercase tracking-[0.15em] text-emerald-200">Warga Terverifikasi</p>
                 </div>
+
+                @if ($upcomingRequest)
+                    <div class="rounded-[2rem] bg-[#0c5b49] px-7 py-5 text-white shadow-xl shadow-emerald-900/10 shrink-0">
+                        <p class="text-sm font-black uppercase tracking-[0.18em] text-emerald-200">Jadwal Reguler Area</p>
+                        <p class="mt-2 text-3xl font-black">{{ \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->translatedFormat('l, d M Y') }}</p>
+                        <p class="mt-1 text-lg text-emerald-100">{{ \Illuminate\Support\Carbon::parse($upcomingRequest->scheduled_at)->format('H:i') }} WIB bersama {{ $upcomingRequest->petugas?->name ?? 'Petugas' }}</p>
+                    </div>
+                @endif
+
+                <div class="rounded-[2rem] bg-white px-7 py-5 shadow-xl shadow-slate-200/60 shrink-0">
+                    <p class="text-sm font-black uppercase tracking-[0.18em] text-slate-500">Jam Operasional</p>
+                    <p class="mt-2 text-3xl font-black text-slate-800">{{ $operationalHours }}</p>
+                    <p class="mt-1 text-lg text-slate-500">Layanan penjemputan tersedia pada jam operasional resmi.</p>
+                </div>
             </div>
         </div>
     </aside>
@@ -146,16 +160,85 @@
                     <a href="{{ route('peta.lokasi') }}"
                        class="text-xs font-semibold text-emerald-600 hover:underline">Lihat Semua →</a>
                 </div>
-                <div id="map" class="w-full" style="height: 320px;"></div>
-                <div class="flex items-center gap-5 px-5 py-3 border-t border-slate-100 text-xs text-slate-500">
-                    <span class="flex items-center gap-1.5">
-                        <span class="inline-block h-2.5 w-2.5 rounded-full bg-red-500"></span>
-                        Laporan Liar
-                    </span>
-                    <span class="flex items-center gap-1.5">
-                        <span class="inline-block h-2.5 w-2.5 rounded-full bg-blue-500"></span>
-                        Bank Sampah
-                    </span>
+            </section>
+
+            <!-- Riwayat Penjemputan & Statistik Kontribusi -->
+            <section class="mt-10">
+                <div class="rounded-[2.5rem] bg-white p-6 shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-2xl font-black">Riwayat Penjemputan</h3>
+                            <p class="text-sm text-slate-500">Daftar lengkap transaksi dan partisipasi kebersihan Anda.</p>
+                        </div>
+                        <button class="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700">Unduh Laporan</button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto text-sm">
+                            <thead>
+                                <tr class="text-slate-500 text-left">
+                                    <th class="px-4 py-3">ID Transaksi</th>
+                                    <th class="px-4 py-3">Jenis</th>
+                                    <th class="px-4 py-3">Tanggal</th>
+                                    <th class="px-4 py-3">Lokasi</th>
+                                    <th class="px-4 py-3">Detail Item</th>
+                                    <th class="px-4 py-3 text-right">Poin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($permintaan as $item)
+                                    @php
+                                        $kategoriText = $item->items->pluck('kategoriSampah.nama')->filter()->take(2)->implode(', ');
+                                        $points = $item->total_estimasi_poin ?: 0;
+                                    @endphp
+                                    <tr class="border-t">
+                                        <td class="px-4 py-4 font-bold">TRX-{{ $item->id }}</td>
+                                        <td class="px-4 py-4">{{ $item->jenis ?? '-' }}</td>
+                                        <td class="px-4 py-4">{{ optional($item->created_at)->translatedFormat('d M Y') }}</td>
+                                        <td class="px-4 py-4">{{ $item->alamat ?? '-' }}</td>
+                                        <td class="px-4 py-4 text-slate-400">{{ $kategoriText ?: '-' }}</td>
+                                        <td class="px-4 py-4 text-right text-emerald-600 font-black">+{{ number_format($points) }} Pts</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="rounded-[1.5rem] bg-[#091428] p-6 text-white">
+                        <p class="text-xs uppercase tracking-[0.18em] text-emerald-400">Statistik Kontribusi</p>
+                        <h4 class="mt-4 text-4xl font-black">Total {{ rtrim(rtrim(number_format($totalKg, 2, '.', ''), '0'), '.') ?: 0 }} kg<br><span class="text-xl font-semibold text-slate-300">Sampah Terolah</span></h4>
+                    </div>
+                    <div class="rounded-[1.5rem] bg-white border p-6">
+                        <p class="text-sm text-slate-500">Penjemputan</p>
+                        <p class="mt-3 text-3xl font-black text-slate-800">{{ $totalPickups }}<span class="text-sm font-semibold text-slate-400"> Kali</span></p>
+                    </div>
+                    <div class="rounded-[1.5rem] bg-white border p-6">
+                        <p class="text-sm text-slate-500">Poin Terkumpul</p>
+                        <p class="mt-3 text-3xl font-black text-emerald-600">{{ number_format($totalPoints) }}<span class="text-sm font-semibold text-slate-400"> Pts</span></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Detail Permintaan Penjemputan -->
+    <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+        <!-- Modal Card Container -->
+        <div class="relative w-full max-w-[640px] transform scale-95 bg-white rounded-[2.5rem] shadow-2xl transition-all duration-300 overflow-hidden flex flex-col">
+            <!-- Modal Header -->
+            <div class="bg-[#00c48c] px-10 py-8 text-white relative">
+                <!-- Close Button -->
+                <button onclick="closeDetailModal()" class="absolute top-6 right-6 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white font-black text-xl transition-all cursor-pointer">
+                    &times;
+                </button>
+                <p class="text-sm font-bold uppercase tracking-[0.2em] text-white/80">Detail Permintaan Penjemputan</p>
+                <h2 id="modalCode" class="text-6xl font-black italic tracking-tight mt-2">PK-001</h2>
+                
+                <div class="flex flex-wrap gap-3 mt-4">
+                    <span id="modalStatusBadge" class="rounded-2xl bg-white/20 px-4 py-1.5 text-sm font-black text-white">SELESAI</span>
+                    <span id="modalDateBadge" class="rounded-2xl bg-white/20 px-4 py-1.5 text-sm font-black text-white">15 MAR 2024</span>
                 </div>
             </div>
 

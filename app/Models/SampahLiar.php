@@ -17,6 +17,9 @@ class SampahLiar extends Model
         'status',
         'jumlah_estimasi',
         'catatan_admin',
+        'petugas_id',
+        'bukti_penanganan',
+        'ditangani_at',
     ];
 
     protected $casts = [
@@ -24,10 +27,16 @@ class SampahLiar extends Model
         'longitude' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'ditangani_at' => 'datetime',
     ];
 
     public function pengguna(): BelongsTo
     {
         return $this->belongsTo(User::class, 'pengguna_id');
+    }
+
+    public function petugas(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'petugas_id');
     }
 }
