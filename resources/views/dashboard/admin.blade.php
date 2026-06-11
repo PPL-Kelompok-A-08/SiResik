@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Jadwal Penjemputan - SiResik</title>
+    <title>Admin Dashboard - SiResik</title>
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @else
         <script src="https://cdn.tailwindcss.com"></script>
     @endif
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        * { box-sizing: border-box; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
+        body { background: #f8fafc; }
         .stat-card { border-radius: 16px; padding: 16px 18px; min-height: 80px; display: flex; align-items: center; justify-content: space-between; }
         .section-card { background: white; border-radius: 18px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; }
         .chart-panel { position: relative; height: 200px; min-height: 0; }
         .chart-panel-sm { height: 170px; }
         .chart-panel-md { height: 220px; }
         .chart-panel canvas { display: block; width: 100% !important; height: 100% !important; }
-        .stat-gradient { background: linear-gradient(135deg, #064e3b 0%, #059669 55%, #10b981 100%); color: #fff; }
+        .stat-gradient { background: #fff; border: 1px solid #e2e8f0; color: #0f172a; }
         .stat-card-plain { background: #fff; border: 1px solid #e2e8f0; color: #064e3b; }
         .filter-chip { border-radius: 999px; border: 1px solid #cbd5e1; padding: 9px 14px; font-size: 13px; font-weight: 700; color: #475569; background: #fff; }
         .filter-chip.active { border-color: #10b981; background: #ecfdf5; color: #047857; }
@@ -41,84 +44,206 @@
         .status-dibatalkan { background: #fee2e2; color: #dc2626; }
         input, select, textarea { outline: none; transition: border-color 0.15s; }
         input:focus, select:focus, textarea:focus { border-color: #10b981 !important; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 50; display: none; align-items: center; justify-content: center; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; display: none; align-items: center; justify-content: center; }
         .modal-overlay.open { display: flex; }
         .modal { background: white; border-radius: 24px; padding: 32px; width: 480px; max-width: 90vw; max-height: 85vh; overflow-y: auto; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+        /* ════ FIXED SIDEBAR ════ */
+        #admin-sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            width: 240px;
+            z-index: 60;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(170deg, #053d2e 0%, #065f46 55%, #047857 100%);
+            overflow: hidden;
+        }
+        #admin-sidebar::before {
+            content: '';
+            position: absolute;
+            top: -50px; right: -50px;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.04);
+            pointer-events: none;
+        }
+        #admin-sidebar::after {
+            content: '';
+            position: absolute;
+            bottom: 100px; left: -40px;
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.03);
+            pointer-events: none;
+        }
+        #admin-content-wrap {
+            margin-left: 240px;
+            min-height: 100vh;
+        }
+        .admin-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(209,250,229,.75);
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            transition: background .15s, color .15s, transform .12s;
+            position: relative;
+        }
+        .admin-nav-link:hover {
+            background: rgba(255,255,255,.1);
+            color: #fff;
+            transform: translateX(2px);
+        }
+        .admin-nav-link.active {
+            background: rgba(255,255,255,.16);
+            color: #fff;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+        }
+        .admin-nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            width: 3px; height: 22px;
+            border-radius: 0 3px 3px 0;
+            background: #6ee7b7;
+        }
+        .admin-nav-link .nav-icon {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            background: rgba(255,255,255,.08);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+            transition: background .15s;
+        }
+        .admin-nav-link.active .nav-icon,
+        .admin-nav-link:hover .nav-icon {
+            background: rgba(255,255,255,.18);
+        }
+        .logout-nav { color: rgba(252,165,165,.85) !important; }
+        .logout-nav:hover { background: rgba(239,68,68,.15) !important; color: #fca5a5 !important; }
+        .logout-nav .nav-icon { background: rgba(239,68,68,.12) !important; }
+        #admin-nav-scroll { overflow-y: auto; flex: 1; padding: 0 16px; }
+        #admin-nav-scroll::-webkit-scrollbar { width: 4px; }
+        #admin-nav-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 999px; }
+        @media (max-width: 1023px) {
+            #admin-sidebar { transform: translateX(-100%); transition: transform .25s; }
+            #admin-sidebar.open { transform: translateX(0); }
+            #admin-content-wrap { margin-left: 0; }
+        }
     </style>
 </head>
-<body class="min-h-screen bg-slate-100 text-slate-900">
-    <div class="min-h-screen xl:grid xl:grid-cols-[300px,1fr]">
-        <aside class="bg-[#0c5b49] px-6 py-8 text-white">
-            <div class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/20">
-                    <i class="fas fa-recycle text-xl text-emerald-200"></i>
-                </div>
-                <div>
-                    <p class="text-4xl font-black tracking-tight">SiResik</p>
-                    <p class="mt-1 text-xs uppercase tracking-[0.2em] text-emerald-100">Sistem Informasi Resik</p>
-                </div>
+<body>
+
+{{-- ════ FIXED SIDEBAR ════ --}}
+<aside id="admin-sidebar">
+    {{-- Logo --}}
+    <div style="padding:20px 20px 14px;flex-shrink:0;position:relative;z-index:1;">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">♻</div>
+            <div>
+                <p style="font-size:18px;font-weight:900;letter-spacing:-0.5px;color:#fff;line-height:1.1;margin:0;">SiResik</p>
+                <p style="font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(167,243,208,.65);margin:2px 0 0;">Sistem Informasi Resik</p>
             </div>
-
-            <div class="mt-12">
-                <p class="text-sm font-black uppercase tracking-[0.2em] text-emerald-300">Mode Supervisi</p>
-                <div class="mt-4 flex items-center justify-between rounded-2xl bg-emerald-600/70 px-4 py-3">
-                    <span class="text-sm font-bold">Akses: Administrator</span>
-                    <span class="text-lg">⌄</span>
-                </div>
+        </div>
+        {{-- Mode Supervisi --}}
+        <div style="margin-top:14px;">
+            <p style="font-size:8px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:rgba(167,243,208,.55);margin:0 0 6px;">Mode Supervisi</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 12px;">
+                <span style="font-size:12px;font-weight:700;color:#fff;">Akses: Administrator</span>
+                <i class="fas fa-chevron-down" style="font-size:10px;color:rgba(167,243,208,.7);"></i>
             </div>
-
-            @php
-                $adminMenuItems = [
-                    ['label' => 'Admin Dashboard', 'page' => 'dashboard', 'icon' => 'fa-chart-pie'],
-                    ['label' => 'Kelola Jadwal', 'page' => 'jadwal', 'icon' => 'fa-calendar-check'],
-                    ['label' => 'Verifikasi Laporan', 'page' => 'verifikasi', 'icon' => 'fa-clipboard-check'],
-                    ['label' => 'Kategori & Reward', 'page' => 'kategori', 'icon' => 'fa-tags'],
-                    ['label' => 'Kelola Reward', 'page' => 'reward', 'icon' => 'fa-gift'],
-                    ['label' => 'Area Layanan', 'page' => 'area', 'icon' => 'fa-map-location-dot'],
-                    ['label' => 'Pantau Petugas', 'page' => 'petugas', 'icon' => 'fa-user-shield'],
-                    ['label' => 'Riwayat Layanan', 'page' => 'riwayat', 'icon' => 'fa-clock-rotate-left'],
-                    ['label' => 'Laporan Periodik', 'page' => 'laporan', 'icon' => 'fa-file-lines'],
-                ];
-            @endphp
-
-            <nav class="mt-14 space-y-2">
-                @foreach ($adminMenuItems as $item)
-                    <a onclick="showPage('{{ $item['page'] }}')"
-                        data-page="{{ $item['page'] }}"
-                        class="nav-item flex items-center gap-4 rounded-2xl px-5 py-4 text-lg transition cursor-pointer {{ $item['page'] === 'dashboard' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20' : 'text-emerald-50 hover:bg-white/5' }}">
-                        <span class="flex w-6 shrink-0 items-center justify-center">
-                            <i class="fas {{ $item['icon'] }} text-base"></i>
-                        </span>
-                        <span>{{ $item['label'] }}</span>
-                    </a>
-                @endforeach
-            </nav>
-
-            <form action="{{ route('logout') }}" method="POST" class="mt-8">
-                @csrf
-                <button type="submit" class="flex w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg text-emerald-50 transition hover:bg-white/5">
-                    <span class="flex w-6 shrink-0 items-center justify-center">
-                        <i class="fas fa-right-from-bracket text-base"></i>
-                    </span>
-                    <span>Keluar (Log Out)</span>
-                </button>
-            </form>
-
-            <div class="mt-10 rounded-3xl bg-white/5 px-4 py-5">
-                <div class="flex items-center gap-4">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-xl font-black">R</div>
-                    <div>
-                        <p class="text-xl font-bold">{{ $user->name }}</p>
-                        <p class="text-xs uppercase tracking-[0.15em] text-emerald-100">Warga Terverifikasi</p>
-                    </div>
-                </div>
+        </div>
+    </div>
+    <div style="height:1px;background:rgba(255,255,255,.07);margin:0 16px 10px;flex-shrink:0;"></div>
+    {{-- Nav --}}
+    <div id="admin-nav-scroll" style="position:relative;z-index:1;">
+        <nav style="display:flex;flex-direction:column;gap:2px;">
+            <a onclick="showPage('dashboard')" data-page="dashboard" class="admin-nav-link active">
+                <span class="nav-icon"><i class="fas fa-chart-pie"></i></span>Admin Dashboard
+            </a>
+            <a onclick="showPage('jadwal')" data-page="jadwal" class="admin-nav-link">
+                <span class="nav-icon"><i class="fas fa-calendar-check"></i></span>Kelola Jadwal
+            </a>
+            <a onclick="showPage('verifikasi')" data-page="verifikasi" class="admin-nav-link">
+                <span class="nav-icon"><i class="fas fa-clipboard-check"></i></span>Verifikasi Laporan
+            </a>
+            <a onclick="showPage('kategori')" data-page="kategori" class="admin-nav-link">
+                <span class="nav-icon"><i class="fas fa-tags"></i></span>Kategori &amp; Reward
+            </a>
+            <a onclick="showPage('reward')" data-page="reward" class="admin-nav-link">
+                <span class="nav-icon"><i class="fas fa-gift"></i></span>Kelola Reward
+            </a>
+            <a onclick="showPage('area')" data-page="area" class="admin-nav-link">
+                <span class="nav-icon"><i class="fas fa-map-location-dot"></i></span>Area Layanan
+            </a>
+            <a onclick="showPage('petugas')" data-page="petugas" class="admin-nav-link">
+                <span class="nav-icon"><i class="fas fa-user-shield"></i></span>Pantau Petugas
+            </a>
+            <a onclick="showPage('riwayat')" data-page="riwayat" class="admin-nav-link">
+                <span class="nav-icon"><i class="fas fa-clock-rotate-left"></i></span>Riwayat Layanan
+            </a>
+            <a onclick="showPage('laporan')" data-page="laporan" class="admin-nav-link">
+                <span class="nav-icon"><i class="fas fa-file-lines"></i></span>Laporan Periodik
+            </a>
+            <a onclick="showPage('edukasi')" data-page="edukasi" class="admin-nav-link">
+                <span class="nav-icon"><i class="fas fa-book-open"></i></span>Konten Edukasi
+            </a>
+            <a onclick="showPage('broadcast')" data-page="broadcast" class="admin-nav-link">
+                <span class="nav-icon"><i class="fas fa-bullhorn"></i></span>Broadcast
+            </a>
+        </nav>
+    </div>
+    {{-- Bottom --}}
+    <div style="padding:12px 16px 16px;flex-shrink:0;position:relative;z-index:1;">
+        <div style="height:1px;background:rgba(255,255,255,.07);margin-bottom:10px;"></div>
+        <form action="{{ route('logout') }}" method="POST" style="margin-bottom:10px;">
+            @csrf
+            <button type="submit" class="admin-nav-link logout-nav">
+                <span class="nav-icon"><i class="fas fa-right-from-bracket"></i></span>
+                Keluar (Log Out)
+            </button>
+        </form>
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#34d399,#059669);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0;">
+                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
             </div>
-        </aside>
+            <div style="min-width:0;">
+                <p style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;">{{ $user->name }}</p>
+                <p style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:rgba(167,243,208,.65);margin:2px 0 0;">Super Admin</p>
+            </div>
+        </div>
+    </div>
+</aside>
 
-        <main class="px-6 py-8 lg:px-10">
+{{-- Mobile top bar (hidden on desktop via JS) --}}
+<div id="admin-mobile-bar" style="position:fixed;top:0;left:0;right:0;z-index:50;display:none;align-items:center;gap:12px;padding:10px 16px;background:#065f46;box-shadow:0 2px 12px rgba(0,0,0,.2);">
+    <button onclick="toggleAdminSidebar()" style="color:#fff;background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:7px;cursor:pointer;">
+        <i class="fas fa-bars" style="font-size:16px;"></i>
+    </button>
+    <span style="font-size:16px;font-weight:900;color:#fff;">SiResik Admin</span>
+</div>
+<div id="admin-overlay" onclick="toggleAdminSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:49;"></div>
+
+{{-- ════ CONTENT ════ --}}
+<div id="admin-content-wrap">
+<div id="admin-content-inner">
+<main style="padding:24px 28px;">
+
 
             <!-- ======================== PAGE: DASHBOARD ======================== -->
             <div id="page-dashboard" class="page active">
@@ -132,29 +257,33 @@
 
                 <!-- Key Metrics -->
                 <div class="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
-                    <div class="stat-card stat-gradient">
+                    <div class="stat-card" style="background:#fff;border:1px solid #e2e8f0;border-left:3px solid #10b981;">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wide opacity-80">Total Reports</p>
-                            <p class="mt-1 text-2xl font-black">{{ $stats['total_permintaan'] }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Total Reports</p>
+                            <p class="mt-1 text-2xl font-black text-slate-900">{{ $stats['total_permintaan'] }}</p>
                         </div>
+                        <span style="font-size:22px;opacity:.2;">📋</span>
                     </div>
-                    <div class="stat-card stat-gradient">
+                    <div class="stat-card" style="background:#fff;border:1px solid #e2e8f0;border-left:3px solid #3b82f6;">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wide opacity-80">Active Users</p>
-                            <p class="mt-1 text-2xl font-black">{{ $stats['masyarakat'] }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Active Users</p>
+                            <p class="mt-1 text-2xl font-black text-slate-900">{{ $stats['masyarakat'] }}</p>
                         </div>
+                        <span style="font-size:22px;opacity:.2;">👥</span>
                     </div>
-                    <div class="stat-card stat-gradient">
+                    <div class="stat-card" style="background:#fff;border:1px solid #e2e8f0;border-left:3px solid #8b5cf6;">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wide opacity-80">Total Officers</p>
-                            <p class="mt-1 text-2xl font-black">{{ $stats['petugas'] }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Total Officers</p>
+                            <p class="mt-1 text-2xl font-black text-slate-900">{{ $stats['petugas'] }}</p>
                         </div>
+                        <span style="font-size:22px;opacity:.2;">🛡</span>
                     </div>
-                    <div class="stat-card stat-gradient">
+                    <div class="stat-card" style="background:#fff;border:1px solid #e2e8f0;border-left:3px solid #f59e0b;">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wide opacity-80">Pending</p>
-                            <p class="mt-1 text-2xl font-black">{{ $stats['menunggu'] }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Pending</p>
+                            <p class="mt-1 text-2xl font-black text-amber-600">{{ $stats['menunggu'] }}</p>
                         </div>
+                        <span style="font-size:22px;opacity:.2;">⏳</span>
                     </div>
                 </div>
 
@@ -1561,15 +1690,11 @@
             const targetPage = document.getElementById('page-' + name);
             if (!targetPage) return;
             targetPage.classList.add('active');
-            document.querySelectorAll('nav .nav-item').forEach(n => {
-                n.classList.remove('bg-emerald-600', 'text-white', 'shadow-lg', 'shadow-emerald-900/20');
-                n.classList.add('text-emerald-50', 'hover:bg-white/5');
-            });
-            const activeNav = document.querySelector(`nav .nav-item[data-page="${name}"]`);
-            if (activeNav) {
-                activeNav.classList.remove('text-emerald-50', 'hover:bg-white/5');
-                activeNav.classList.add('bg-emerald-600', 'text-white', 'shadow-lg', 'shadow-emerald-900/20');
-            }
+
+            // Update fixed sidebar highlight
+            document.querySelectorAll('.admin-nav-link[data-page]').forEach(n => n.classList.remove('active'));
+            const activeSidebarLink = document.querySelector(`.admin-nav-link[data-page="${name}"]`);
+            if (activeSidebarLink) activeSidebarLink.classList.add('active');
 
             if (name === 'dashboard') {
                 setTimeout(initCharts, 100);
@@ -2166,6 +2291,43 @@
             
             setTimeout(() => alertDiv.remove(), 3000);
         }
+    // showPage – update active nav + sync sidebar highlight
+    const _origShowPage = typeof showPage === 'function' ? showPage : null;
+
+    function toggleAdminSidebar() {
+        const sb = document.getElementById('admin-sidebar');
+        const ov = document.getElementById('admin-overlay');
+        const isOpen = sb.classList.toggle('open');
+        ov.style.display = isOpen ? 'block' : 'none';
+    }
+
+    // Responsive: show/hide mobile bar and adjust content margin
+    function handleAdminResponsive() {
+        const isMobile = window.innerWidth < 1024;
+        const mobileBar = document.getElementById('admin-mobile-bar');
+        const sidebar   = document.getElementById('admin-sidebar');
+        const content   = document.getElementById('admin-content-wrap');
+        const inner     = document.getElementById('admin-content-inner');
+
+        if (isMobile) {
+            mobileBar.style.display = 'flex';
+            content.style.marginLeft = '0';
+            inner.style.paddingTop = '50px';
+            // Close sidebar if open
+            sidebar.classList.remove('open');
+            document.getElementById('admin-overlay').style.display = 'none';
+        } else {
+            mobileBar.style.display = 'none';
+            content.style.marginLeft = '240px';
+            inner.style.paddingTop = '0';
+        }
+    }
+
+    window.addEventListener('resize', handleAdminResponsive);
+    document.addEventListener('DOMContentLoaded', handleAdminResponsive);
+    handleAdminResponsive(); // run immediately
     </script>
+</div>{{-- end admin-content-inner --}}
+</div>{{-- end admin-content-wrap --}}
 </body>
 </html>
