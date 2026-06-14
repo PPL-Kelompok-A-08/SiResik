@@ -157,6 +157,11 @@ Route::middleware('auth')->group(function () {
             Route::post('/titik-layanan/{titikLayanan}/jadwal', [App\Http\Controllers\JadwalOperasionalController::class, 'store'])->name('admin.jadwal.store');
             Route::put('/jadwal/{jadwal}', [App\Http\Controllers\JadwalOperasionalController::class, 'update'])->name('admin.jadwal.update');
             Route::delete('/jadwal/{jadwal}', [App\Http\Controllers\JadwalOperasionalController::class, 'destroy'])->name('admin.jadwal.destroy');
+
+            // Jadwal Area Reguler
+            Route::post('/jadwal-area', [App\Http\Controllers\JadwalOperasionalController::class, 'storeJadwalArea'])->name('admin.jadwal-area.store');
+            Route::put('/jadwal-area/{jadwalArea}', [App\Http\Controllers\JadwalOperasionalController::class, 'updateJadwalArea'])->name('admin.jadwal-area.update');
+            Route::delete('/jadwal-area/{jadwalArea}', [App\Http\Controllers\JadwalOperasionalController::class, 'destroyJadwalArea'])->name('admin.jadwal-area.destroy');
         });
     });
 });

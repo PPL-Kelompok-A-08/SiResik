@@ -71,26 +71,7 @@ class DashboardController extends Controller
             'jadwal_terdekat'=> $jadwalTerdekat,
         ];
 
-        $weeklySchedules = [
-            [
-                'hari' => 'Senin',
-                'kategori' => 'Organik (Sisa Makanan)',
-                'jam' => '08:00 - 10:00',
-                'zona' => 'Bojongsoang, Desa Buah batu',
-            ],
-            [
-                'hari' => 'Selasa',
-                'kategori' => 'Anorganik (Plastik, Kertas)',
-                'jam' => '08:00 - 10:00',
-                'zona' => 'Bojongsoang, Desa Bojongsoang ',
-            ],
-            [
-                'hari' => 'Rabu',
-                'kategori' => 'Residu (Popok, Tisu)',
-                'jam' => '09:00 - 11:00',
-                'zona' => 'Baleendah, Kelurahan Jelekong',
-            ],
-        ];
+        $weeklySchedules = \App\Http\Controllers\JadwalOperasionalController::getWeeklySchedules();
 
         $totalPickups = $permintaan->where('jenis', 'Pickup')->count();
 

@@ -25,6 +25,9 @@ class RiwayatpoinpenggunaController extends Controller
         // Hitung total reward yang sudah ditukar pengguna
         $totalRewardDitukar = $user->penukaranPoins()->count();
 
-        return view('poin.index', compact('user', 'poins', 'totalPoin', 'totalRewardDitukar'));
+        // Ambil daftar reward internal yang aktif
+        $rewards = \App\Models\Reward::where('aktif', true)->orderBy('poin_diperlukan', 'asc')->get();
+
+        return view('poin.index', compact('user', 'poins', 'totalPoin', 'totalRewardDitukar', 'rewards'));
     }
 }

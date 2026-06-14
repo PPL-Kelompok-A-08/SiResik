@@ -829,29 +829,44 @@
                         <div
                             class="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
                             <h2 class="text-2xl font-black text-slate-800">Master Jadwal Reguler Mingguan</h2>
-                            <button type="button" onclick="openModal('modal-tambah-jadwal-area')"
+                            <button type="button" id="btn-open-jadwal-area-modal" onclick="openModal('modal-tambah-jadwal-area')"
                                 class="rounded-2xl bg-emerald-500 px-5 py-3 text-base font-bold text-white shadow-lg shadow-emerald-500/20">+
                                 Tambah Jadwal Area</button>
                         </div>
 
                         <div class="grid gap-5 px-6 py-6 md:grid-cols-2 xl:grid-cols-3">
                             @php
-                                $weeklySchedules = [
-                                    ['hari' => 'Senin', 'zona' => 'Bojongsoang, Desa Buah Batu', 'jam' => '08:00 WIB', 'petugas' => 'Ahmad'],
-                                    ['hari' => 'Selasa', 'zona' => 'Bojongsoang, Desa Bojongsoang', 'jam' => '08:00 WIB', 'petugas' => 'Bambang'],
-                                    ['hari' => 'Rabu', 'zona' => 'Baleendah, Kelurahan Jelekong', 'jam' => '09:00 WIB', 'petugas' => 'Cecep'],
-                                ];
+                                $weeklySchedules = \App\Http\Controllers\JadwalOperasionalController::getWeeklySchedules();
                             @endphp
 
                             @foreach ($weeklySchedules as $schedule)
-                                <article class="rounded-[2rem] border border-slate-200 bg-slate-50 p-5">
-                                    <div class="flex items-center justify-between gap-4">
-                                        <p class="text-base font-black uppercase tracking-[0.1em] text-emerald-500">
-                                            {{ $schedule['hari'] }}</p>
-                                        <p class="text-sm font-bold text-slate-400">{{ $schedule['jam'] }}</p>
+                                <article class="rounded-[2rem] border border-slate-200 bg-slate-50 p-5 flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex items-center justify-between gap-4">
+                                            <p class="text-base font-black uppercase tracking-[0.1em] text-emerald-500">
+                                                {{ $schedule['hari'] }}</p>
+                                            <p class="text-sm font-bold text-slate-400">{{ $schedule['jam_singkat'] }}</p>
+                                        </div>
+                                        <h3 class="mt-3 text-3xl font-black text-slate-800">{{ $schedule['zona'] }}</h3>
+                                        <p class="mt-5 text-base text-slate-500">• Petugas: {{ $schedule['petugas'] }}</p>
                                     </div>
-                                    <h3 class="mt-3 text-3xl font-black text-slate-800">{{ $schedule['zona'] }}</h3>
-                                    <p class="mt-5 text-base text-slate-500">• Petugas: {{ $schedule['petugas'] }}</p>
+                                    <div class="mt-5 flex gap-2 border-t border-slate-200/60 pt-4">
+                                        <button type="button"
+                                            onclick="editJadwalArea({{ $schedule['id'] }}, '{{ $schedule['hari'] }}', '{{ addslashes($schedule['zona']) }}', '{{ $schedule['jam_raw'] }}', {{ $schedule['petugas_id'] }})"
+                                            class="rounded-xl border border-blue-200 bg-blue-50/50 px-4 py-2 text-xs font-bold text-blue-600 hover:bg-blue-100 transition">
+                                            Edit
+                                        </button>
+                                        <form action="{{ route('admin.jadwal-area.destroy', $schedule['id']) }}" method="POST"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus jadwal area ini?')"
+                                            style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="rounded-xl border border-red-200 bg-red-50/50 px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-100 transition">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
                                 </article>
                             @endforeach
                         </div>
@@ -2077,7 +2092,7 @@
             onclick="closeModalOutside(event,'modal-tambah-jadwal-area')">
             <div class="modal">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-black text-slate-800">Tambah Jadwal Area</h3>
+                    <h3 class="text-xl font-black text-slate-800" id="modal-jadwal-title">Tambah Jadwal Area</h3>
                     <button onclick="closeModal('modal-tambah-jadwal-area')"
                         class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
                 </div>
@@ -2200,6 +2215,18 @@
                         const methodInput = document.querySelector('#titik-layanan-form input[name="_method"]');
                         if (methodInput) methodInput.remove();
                         document.getElementById('titik-layanan-form').reset();
+                    });
+                }
+
+                // Jadwal Area button listeners
+                const jadwalAreaAddBtn = document.getElementById('btn-open-jadwal-area-modal');
+                if (jadwalAreaAddBtn) {
+                    jadwalAreaAddBtn.addEventListener('click', function () {
+                        document.getElementById('modal-jadwal-title').textContent = 'Tambah Jadwal Area';
+                        document.getElementById('jadwal-area-form').action = '{{ route("admin.jadwal-area.store") }}';
+                        const methodInput = document.querySelector('#jadwal-area-form input[name="_method"]');
+                        if (methodInput) methodInput.remove();
+                        document.getElementById('jadwal-area-form').reset();
                     });
                 }
 
@@ -2430,6 +2457,22 @@
                 document.getElementById('titik-layanan-form').reset();
                 setupTitikLayananMap();
             });
+
+            // Jadwal Area Edit Helper
+            function editJadwalArea(id, hari, zona, jam, petugasId) {
+                document.getElementById('modal-jadwal-title').textContent = 'Edit Jadwal Area';
+                document.getElementById('jadwal-area-form').action = `/admin/jadwal-area/${id}`;
+                
+                const methodInput = document.querySelector('#jadwal-area-form input[name="_method"]');
+                if (methodInput) methodInput.remove();
+                
+                document.getElementById('jadwal-area-form').insertAdjacentHTML('afterbegin', '<input type="hidden" name="_method" value="PUT">');
+                document.getElementById('jadwal-hari').value = hari;
+                document.getElementById('jadwal-zona').value = zona;
+                document.getElementById('jadwal-jam').value = jam;
+                document.getElementById('jadwal-petugas').value = petugasId;
+                openModal('modal-tambah-jadwal-area');
+            }
 
             function filterVerifikasi(btn, filter) {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
