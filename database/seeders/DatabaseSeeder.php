@@ -21,5 +21,9 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        $this->call(TitikLayananSeeder::class);
+        $this->call(ZonaLayananSeeder::class);
+        $this->call(RewardSeeder::class);
     }
 }
