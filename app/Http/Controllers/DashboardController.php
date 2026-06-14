@@ -104,7 +104,19 @@ class DashboardController extends Controller
             ['hari' => 'Minggu',        'jam' => 'Libur'],
         ];
 
-        return view('dashboard.masyarakat', compact('user', 'permintaan', 'stats', 'trackingRequests', 'upcomingRequest', 'weeklySchedules', 'operationalHours', 'totalKg', 'totalPickups', 'totalPoints'));
+        // Data peta: titik layanan & laporan sampah liar milik user ini
+        $titikLayanan = TitikLayanan::orderBy('nama')->get();
+        $laporanSampahLiar = SampahLiar::where('pengguna_id', $user->id)
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->latest()
+            ->get();
+
+        return view('dashboard.masyarakat', compact(
+            'user', 'permintaan', 'stats', 'trackingRequests', 'upcomingRequest',
+            'weeklySchedules', 'operationalHours', 'totalKg', 'totalPickups', 'totalPoints',
+            'titikLayanan', 'laporanSampahLiar'
+        ));
     }
 
 
