@@ -105,4 +105,50 @@ class PermintaanPenjemputanTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    public function test_poin_ditambahkan_dan_dihapus_sesuai_status_layanan(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'masyarakat',
+        ]);
+        $permintaan = PermintaanPenjemputan::create([
+            'pengguna_id' => $user->id,
+            'tanggal' => '2026-04-20',
+            'jadwal' => '08.00 - 10.00 WIB',
+            'status' => 'Menunggu',
+            'alamat' => 'Gedung A',
+            'nomor_telepon' => '081234567890',
+            'catatan' => '-',
+            'total_estimasi_poin' => 2400,
+        ]);
+
+        $trkId = 'TRK-' . str_pad($permintaan->id, 4, '0', STR_PAD_LEFT);
+        $keterangan = 'Poin Layanan Penjemputan Sampah ' . $trkId;
+
+        // Poin should not exist initially
+        $this->assertDatabaseMissing('poins', [
+            'user_id' => $user->id,
+            'keterangan' => $keterangan,
+        ]);
+
+        // Change status to Selesai
+        $permintaan->update(['status' => 'Selesai']);
+
+        // Poin should exist now
+        $this->assertDatabaseHas('poins', [
+            'user_id' => $user->id,
+            'jumlah' => 2400,
+            'tipe' => 'masuk',
+            'keterangan' => $keterangan,
+        ]);
+
+        // Change status back to Diproses
+        $permintaan->update(['status' => 'Diproses']);
+
+        // Poin should be deleted
+        $this->assertDatabaseMissing('poins', [
+            'user_id' => $user->id,
+            'keterangan' => $keterangan,
+        ]);
+    }
 }

@@ -31,12 +31,20 @@ class RiwayatLayananController extends Controller
 
         $riwayat = $query->paginate(8)->withQueryString();
 
+        // Hitung total berat dari semua item penjemputan user
+        $allRiwayat = PermintaanPenjemputan::with('items')
+            ->where('pengguna_id', $user->id)
+            ->get();
+
+        $totalBerat = $allRiwayat->flatMap(fn($r) => $r->items)->sum('berat_kg');
+
         $stats = [
-            'total' => PermintaanPenjemputan::where('pengguna_id', $user->id)->count(),
-            'menunggu' => PermintaanPenjemputan::where('pengguna_id', $user->id)->where('status', 'Menunggu')->count(),
-            'diproses' => PermintaanPenjemputan::where('pengguna_id', $user->id)->where('status', 'Diproses')->count(),
-            'selesai' => PermintaanPenjemputan::where('pengguna_id', $user->id)->where('status', 'Selesai')->count(),
-            'total_poin' => PermintaanPenjemputan::where('pengguna_id', $user->id)->where('status', 'Selesai')->sum('total_estimasi_poin'),
+            'total'       => $allRiwayat->count(),
+            'menunggu'    => $allRiwayat->where('status', 'Menunggu')->count(),
+            'diproses'    => $allRiwayat->where('status', 'Diproses')->count(),
+            'selesai'     => $allRiwayat->where('status', 'Selesai')->count(),
+            'total_poin'  => $allRiwayat->where('status', 'Selesai')->sum('total_estimasi_poin'),
+            'total_berat' => $totalBerat,
         ];
 
         return view('riwayat-layanan.index', compact('user', 'riwayat', 'stats'));
