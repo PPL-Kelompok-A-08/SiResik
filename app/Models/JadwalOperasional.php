@@ -10,12 +10,22 @@ class JadwalOperasional extends Model
     protected $fillable = [
         'titik_layanan_id',
         'hari',
+        'zona',
+        'petugas_id',
         'jam_buka',
         'jam_tutup',
         'keterangan',
     ];
 
     protected $appends = ['status_buka'];
+
+    /**
+     * Get the petugas that is assigned to this operational schedule.
+     */
+    public function petugas(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'petugas_id');
+    }
 
     /**
      * Get the titik layanan that owns the schedule.

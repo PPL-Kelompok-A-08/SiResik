@@ -68,5 +68,11 @@ class PermintaanPenjemputan extends Model
         static::saving(function ($model) {
             $model->hitungTotalTagihan();
         });
+
+        static::updated(function ($model) {
+            if ($model->wasChanged('status')) {
+                \App\Models\Poin::syncFromPermintaan($model);
+            }
+        });
     }
 }
