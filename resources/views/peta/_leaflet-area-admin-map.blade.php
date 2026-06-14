@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-[280px,1fr]">
+    <div class="grid grid-cols-1 lg:grid-cols-[380px,minmax(0,1fr)]">
         <aside class="border-b border-slate-200 bg-white px-5 py-5 lg:border-b-0 lg:border-r">
             <div class="flex items-start justify-between gap-3">
                 <div>
@@ -37,22 +37,22 @@
 
             <div id="zona-list" class="mt-4 space-y-2">
                 @forelse (($zonaLayanan ?? []) as $z)
-                    <div class="flex items-stretch gap-2">
+                    <div class="grid grid-cols-[minmax(0,1fr),44px,44px] items-stretch gap-2">
                         <button type="button"
-                            class="zona-select flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left transition hover:bg-slate-50"
+                            class="zona-select flex w-full min-w-0 items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left transition hover:bg-slate-50"
                             data-zona-id="{{ $z->id }}"
                             data-zona-nama="{{ $z->nama }}"
                             data-zona-warna="{{ $z->warna }}"
                             data-zona-update="{{ route('admin.zona-layanan.update', $z) }}">
-                            <span class="flex items-center gap-3">
+                            <span class="flex min-w-0 items-center gap-3">
                                 <span class="h-4 w-4 rounded-full" style="background: {{ $z->warna }}"></span>
-                                <span class="font-bold text-slate-800">{{ $z->nama }}</span>
+                                <span class="min-w-0 font-bold text-slate-800">{{ $z->nama }}</span>
                             </span>
                             <span class="zona-count rounded-xl bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600" data-count-for="{{ $z->id }}">0</span>
                         </button>
 
                         <button type="button"
-                            class="zona-edit shrink-0 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-100"
+                            class="zona-edit flex h-full w-full items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-sm font-bold text-slate-600 transition hover:bg-slate-100"
                             title="Edit zona"
                             data-zona-id="{{ $z->id }}"
                             data-zona-nama="{{ $z->nama }}"
@@ -63,11 +63,11 @@
 
                         <form method="POST" action="{{ route('admin.zona-layanan.destroy', $z) }}"
                             onsubmit="return confirm('Hapus zona ini?')"
-                            class="shrink-0">
+                            class="h-full w-full">
                             @csrf
                             @method('DELETE')
                             <button type="submit"
-                                class="rounded-2xl border border-red-200 bg-red-50 px-3 py-3 text-sm font-bold text-red-700 transition hover:bg-red-100"
+                                class="flex h-full w-full items-center justify-center rounded-2xl border border-red-200 bg-red-50 text-sm font-bold text-red-700 transition hover:bg-red-100"
                                 title="Hapus zona">
                                 ✕
                             </button>
@@ -253,7 +253,8 @@
             interactive: false,
             icon: L.divIcon({
                 className: '',
-                html: '<div style="padding:2px 10px;border-radius:9999px;background:rgba(255,255,255,.85);border:1px solid rgba(15,23,42,.15);font-weight:800;font-size:12px;color:#0f172a;box-shadow:0 1px 6px rgba(0,0,0,.12)">' + escapeHtml(zona.nama) + '</div>',
+                iconSize: null,
+                html: '<div style="width:max-content;max-width:220px;white-space:nowrap;padding:2px 10px;border-radius:9999px;background:rgba(255,255,255,.85);border:1px solid rgba(15,23,42,.15);font-weight:800;font-size:12px;color:#0f172a;box-shadow:0 1px 6px rgba(0,0,0,.12)">' + escapeHtml(zona.nama) + '</div>',
             }),
         });
     }
