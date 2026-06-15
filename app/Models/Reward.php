@@ -10,6 +10,7 @@ class Reward extends Model
     protected $fillable = [
         'nama',
         'deskripsi',
+        'gambar',
         'poin_diperlukan',
         'stok',
         'aktif'

@@ -173,25 +173,35 @@ class PermintaanPenjemputanController extends Controller
         }
 
         DB::transaction(function () use ($permintaanPenjemputan, $newStatus, $oldStatus) {
-            $permintaanPenjemputan->update([
-                'status' => $newStatus,
-            ]);
+            // Jika status berubah menjadi Selesai, catat waktu penyelesaian
+            $updateData = ['status' => $newStatus];
+            if ($newStatus === 'Selesai' && $oldStatus !== 'Selesai') {
+                $updateData['diselesaikan_at'] = now();
+            }
 
-            // Kirim notifikasi ke pengguna yang membuat permintaan
-            $permintaanPenjemputan->pengguna->notify(
-                new ServiceStatusChanged($permintaanPenjemputan, $oldStatus, $newStatus)
-            );
+            $permintaanPenjemputan->update($updateData);
 
-            // Kirim notifikasi ke admin jika ada
-            $admins = User::where('role', 'admin')->get();
-            foreach ($admins as $admin) {
-                if ($admin->id !== auth()->id()) { // Jangan kirim ke admin yang melakukan update
-                    $admin->notify(
-                        new ServiceStatusChanged($permintaanPenjemputan, $oldStatus, $newStatus)
-                    );
+            // Kirim notifikasi (wrapped try-catch agar tidak rollback jika gagal)
+            try {
+                $permintaanPenjemputan->pengguna->notify(
+                    new ServiceStatusChanged($permintaanPenjemputan, $oldStatus, $newStatus)
+                );
+
+                $admins = User::where('role', 'admin')->get();
+                foreach ($admins as $admin) {
+                    if ($admin->id !== auth()->id()) {
+                        $admin->notify(
+                            new ServiceStatusChanged($permintaanPenjemputan, $oldStatus, $newStatus)
+                        );
+                    }
                 }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Notifikasi gagal dikirim: ' . $e->getMessage());
             }
         });
+
+        // Sinkronisasi poin di LUAR transaksi agar tidak ikut rollback
+        \App\Models\Poin::syncFromPermintaan($permintaanPenjemputan);
 
         $message = 'Status permintaan berhasil diperbarui menjadi ' . $newStatus;
         

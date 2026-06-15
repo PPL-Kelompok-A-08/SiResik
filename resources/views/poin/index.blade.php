@@ -65,7 +65,7 @@
                        class="rounded-xl border-2 border-white/40 px-6 py-2.5 text-base font-bold text-white hover:bg-white/10 transition">
                         Tukarkan Poin
                     </a>
-                    <a href="{{ route('riwayat-layanan.index') }}"
+                    <a href="{{ route('poin.riwayat-reward') }}"
                        class="rounded-xl bg-white/20 px-6 py-2.5 text-base font-bold text-white hover:bg-white/30 transition">
                         Riwayat Transaksi
                     </a>
@@ -88,25 +88,6 @@
                 <p class="mt-2 text-sm text-slate-400 italic">
                     *Nilai tukar fluktuatif sesuai kebijakan bank sampah
                 </p>
-            </div>
-        </section>
-
-        {{-- ── Baris 2: Kartu Reward Ditukar ──────────────────────── --}}
-        <section class="mt-6">
-            <div class="relative overflow-hidden rounded-[2rem] bg-white p-7 shadow-xl shadow-slate-200/60 ring-1 ring-slate-200">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400 mb-3">Reward Ditukar</p>
-                        <p class="text-5xl font-black tracking-tight text-slate-800">
-                            {{ number_format($totalRewardDitukar, 0, ',', '.') }}
-                        </p>
-                        <p class="mt-2 text-sm text-slate-400">total penukaran reward</p>
-                    </div>
-                    <div class="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-orange-100 text-3xl">
-                        🎁
-                    </div>
-                </div>
-                <div class="pointer-events-none absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-orange-50"></div>
             </div>
         </section>
 

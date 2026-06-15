@@ -120,10 +120,16 @@
                             </span>
                         @endif
 
-                        {{-- Ikon --}}
-                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl {{ $iconBg }} text-4xl mb-4">
-                            {{ $icon }}
-                        </div>
+                        {{-- Gambar / Ikon --}}
+                        @if($reward->gambar)
+                            <div class="mb-4 w-full h-32 rounded-xl overflow-hidden bg-slate-100 ring-1 ring-slate-200">
+                                <img src="{{ asset('storage/' . $reward->gambar) }}" alt="{{ $reward->nama }}" class="w-full h-full object-cover">
+                            </div>
+                        @else
+                            <div class="flex h-16 w-16 items-center justify-center rounded-2xl {{ $iconBg }} text-4xl mb-4">
+                                {{ $icon }}
+                            </div>
+                        @endif
 
                         {{-- Nama --}}
                         <h3 class="text-base font-black text-slate-800 leading-tight">{{ $reward->nama }}</h3>
