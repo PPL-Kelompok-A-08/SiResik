@@ -18,10 +18,16 @@
 /public/storage
 # /storage/*.key
 # /storage/pail
-/storage
+/storage/framework/views
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/testing
+/storage/app
+/storage/logs
 /vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
 storage/logs/*.log
 Thumbs.db
+/storage/logs/*.log

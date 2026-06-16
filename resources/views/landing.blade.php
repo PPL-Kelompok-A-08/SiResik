@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIRESIK - Bojongsoang Bersih</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -35,83 +37,6 @@
                 </svg>
             </div>
             <span class="text-2xl font-black text-emerald-900" style="letter-spacing:-0.5px">SiResik</span>
-<<<<<<< HEAD
-        </div>
-
-        <div class="hidden md:flex gap-8 text-sm font-semibold text-gray-700 items-center">
-            <a href="#tentang" class="text-emerald-600 hover:text-emerald-700 transition-colors">TENTANG</a>
-            <a href="#layanan" class="hover:text-emerald-600 transition-colors">LAYANAN</a>
-            <a href="#jenis-sampah" class="hover:text-emerald-600 transition-colors">JENIS SAMPAH</a>
-            <a href="#solusi" class="hover:text-emerald-600 transition-colors">SOLUSI</a>
-        </div>
-
-        @auth
-            <a href="{{ route('dashboard') }}" class="bg-emerald-500 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-emerald-600 transition-colors">
-                Dashboard
-            </a>
-        @else
-            <a href="{{ route('login') }}" class="bg-emerald-500 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-emerald-600 transition-colors">
-                Masuk Sekarang
-            </a>
-        @endauth
-    </div>
-</nav>
-
-{{-- ===== HERO SECTION ===== --}}
-<section id="tentang" class="pt-16 min-h-screen bg-gray-50 flex items-center">
-    <div class="max-w-7xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-16 items-center w-full">
-
-        {{-- Left: Image Card --}}
-        <div class="relative">
-            <div class="hero-image-card rounded-3xl overflow-hidden aspect-[4/5] flex flex-col items-center justify-center relative">
-                {{-- Background recycling image --}}
-                <div class="absolute inset-0 opacity-30">
-                    <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&q=80"
-                         class="w-full h-full object-cover" alt="Recycling">
-                </div>
-                <div class="relative z-10 text-center text-white px-8">
-                    <p class="text-lg font-light tracking-wide mb-2">We are The</p>
-                    <p class="text-3xl font-black italic tracking-tight">Recycling Network</p>
-                    <p class="mt-4 text-emerald-300 text-sm tracking-widest">#ubahjadikebaikan</p>
-                </div>
-            </div>
-        </div>
-
-        {{-- Right: Content --}}
-        <div>
-            <h1 class="text-5xl lg:text-6xl font-black text-gray-900 leading-tight">
-                Wujudkan
-                <span class="text-emerald-500"> Kabupaten </span>
-                Bebas Sampah. 
-            </h1>
-
-            <p class="text-gray-500 mt-6 text-base leading-relaxed">
-                Teknologi SiResik didesain untuk menangkap limbah langsung dari sumber timbulnya,
-                dengan menggunakan jejaring pengepul dan petugas lokal sebagai kunci dari rantai daur
-                ulang di Indonesia.
-            </p>
-
-            {{-- Stats Bar --}}
-            <div class="stat-bar rounded-2xl mt-8 p-6 grid grid-cols-4 gap-4 text-white text-center">
-                <div>
-                    <p class="text-2xl font-black">{{ $stats['total_sampah'] ?? '1jt' }} Kg+</p>
-                    <p class="text-xs text-emerald-200 mt-1 uppercase tracking-wide leading-tight">SAMPAH DI DAUR ULANG</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-black">100+</p>
-                    <p class="text-xs text-emerald-200 mt-1 uppercase tracking-wide">GUDANG SORTIR</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-black">500+</p>
-                    <p class="text-xs text-emerald-200 mt-1 uppercase tracking-wide">KOLEKTOR LOKAL</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-black">{{ $stats['total_user'] ?? '30rb' }}+</p>
-                    <p class="text-xs text-emerald-200 mt-1 uppercase tracking-wide">PENGGUNA</p>
-                </div>
-            </div>
-=======
->>>>>>> temp_merge_main
         </div>
 
         <div class="hidden md:flex gap-8 text-sm font-semibold text-gray-700 items-center">
@@ -189,7 +114,6 @@
         </div>
     </div>
 </section>
-
 
 {{-- ===== LAYANAN SECTION ===== --}}
 <section id="layanan" class="py-20 bg-white">

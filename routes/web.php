@@ -30,7 +30,6 @@ use App\Http\Controllers\Admin\AdminEdukasiController;
 // JALUR UTAMA REACT (SIRESIK) & LANDING PAGE
 // =========================================================================
 Route::get('/', [LandingPageController::class, 'index'])->name('landing');
-
 Route::get('/landing-lama', [LandingPageController::class, 'index'])->name('landing.lama');
 
 // =========================================================================
@@ -47,6 +46,10 @@ Route::get('/pengumuman/{id}', [PengumumanController::class, 'show'])->name('pen
 Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
 Route::get('/edukasi/{slug}', [EdukasiController::class, 'show'])->name('edukasi.show');
 
+// Halaman Template Laravel Default
+Route::get('/welcome', function () {
+    return view('welcome');
+});
 
 // =========================================================================
 // GUEST MIDDLEWARE (HANYA UNTUK YANG BELUM LOGIN)
@@ -55,7 +58,6 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
 });
-
 
 // =========================================================================
 // AUTH MIDDLEWARE (WAJIB LOGIN TERLEBIH DAHULU)
@@ -70,7 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
 
-    // Kategori Sampah & API Peta Lokasi
+    // Kategori Sampah & API Peta Lokasi Global
     Route::get('/kategori', [KategoriSampahController::class, 'index']);
     Route::post('/kategori/hitung', [KategoriSampahController::class, 'hitung']);
     Route::get('/api/titik-layanan', [PetaLokasiController::class, 'titikLayananJson'])->name('api.titik-layanan');
@@ -98,11 +100,38 @@ Route::middleware('auth')->group(function () {
         Route::get('/peta-lokasi/usulan-titik', [PetaLokasiController::class, 'usulanForm'])->name('peta.usulan-titik');
         Route::post('/peta-lokasi/usulan-titik', [PetaLokasiController::class, 'storeUsulan'])->name('peta.usulan-titik.store');
 
-        // Pemantauan Status & Riwayat Layanan Warga
+        // Pemantauan Status Layanan Warga
         Route::get('/status-layanan', [StatusLayananController::class, 'index'])->name('status-layanan.index');
+        
+        // Sampah Liar (Masyarakat)
+        Route::get('/sampah-liar', [SampahLiarController::class, 'index'])->name('sampah-liar.index');
+        Route::get('/sampah-liar/create', [SampahLiarController::class, 'create'])->name('sampah-liar.create');
+        Route::post('/sampah-liar', [SampahLiarController::class, 'store'])->name('sampah-liar.store');
+        Route::get('/sampah-liar/{sampahLiar}', [SampahLiarController::class, 'show'])->name('sampah-liar.show');
+        Route::get('/sampah-liar/{sampahLiar}/edit', [SampahLiarController::class, 'edit'])->name('sampah-liar.edit');
+        Route::put('/sampah-liar/{sampahLiar}', [SampahLiarController::class, 'update'])->name('sampah-liar.update');
+        Route::delete('/sampah-liar/{sampahLiar}', [SampahLiarController::class, 'destroy'])->name('sampah-liar.destroy');
+
+        // Riwayat Layanan
         Route::prefix('riwayat-layanan')->group(function () {
             Route::get('/', [RiwayatLayananController::class, 'index'])->name('riwayat-layanan.index');
             Route::get('/{permintaanPenjemputan}', [RiwayatLayananController::class, 'show'])->name('riwayat-layanan.show');
+        });
+
+        // Edukasi & Kegiatan Lingkungan (Masyarakat - blade views)
+        Route::get('/edukasi-lingkungan', fn() => view('edukasi-lingkungan.index', ['user' => auth()->user()]))->name('edukasi-lingkungan.index');
+        Route::get('/kegiatan-lingkungan', fn() => view('kegiatan-lingkungan.index', ['user' => auth()->user()]))->name('kegiatan-lingkungan.index');
+        // Rute untuk 3 Artikel Edukasi Lingkungan
+        Route::get('/edukasi-lingkungan/pengolahan-organik', function () {
+            return view('edukasi-lingkungan.artikel.pengolahan-organik');
+        });
+
+        Route::get('/edukasi-lingkungan/daur-ulang-plastik', function () {
+            return view('edukasi-lingkungan.artikel.daur-ulang-plastik');
+        });
+
+        Route::get('/edukasi-lingkungan/mengenal-pemilahan', function () {
+            return view('edukasi-lingkungan.artikel.mengenal-pemilahan');
         });
     });
 
@@ -128,56 +157,67 @@ Route::middleware('auth')->group(function () {
         Route::post('/terima/{permintaanPenjemputan}', [PetugasController::class, 'terimaTugas'])->name('petugas.terima');
         Route::get('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'showBukti'])->name('petugas.bukti.show');
         Route::post('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'uploadBukti'])->name('petugas.bukti.upload');
+
+        // Sampah Liar: terima tugas dan unggah bukti penanganan
+        Route::post('/terima-sampah-liar/{sampahLiar}', [PetugasController::class, 'terimaSampahLiar'])->name('petugas.terima.sampah_liar');
+        Route::get('/bukti-sampah-liar/{sampahLiar}', [PetugasController::class, 'showBuktiSampahLiar'])->name('petugas.bukti.sampah_liar.show');
+        Route::post('/bukti-sampah-liar/{sampahLiar}', [PetugasController::class, 'uploadBuktiSampahLiar'])->name('petugas.bukti.sampah_liar.upload');
     });
 
     // ---------------------------------------------------------------------
     // === GRUP OTORISASI ROLE: ADMIN ===
     // ---------------------------------------------------------------------
     Route::middleware('role:admin')->group(function () {
+
         Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->name('dashboard.admin');
         Route::post('/dashboard/admin/permintaan/{permintaanPenjemputan}/schedule', [DashboardController::class, 'schedule'])->name('dashboard.admin.schedule');
         Route::put('/permintaan-penjemputan/{permintaanPenjemputan}/status', [PermintaanPenjemputanController::class, 'updateStatus'])->name('permintaan-penjemputan.update-status');
 
-        // Konfigurasi Persetujuan/Penolakan Usulan Peta Warga
+        // Peta & Usulan
+        Route::get('/dashboard/admin/peta-titik-layanan', [PetaLokasiController::class, 'admin'])->name('dashboard.admin.peta');
         Route::post('/dashboard/admin/usulan-titik/{usulan}/approve', [PetaLokasiController::class, 'approveUsulan'])->name('dashboard.admin.usulan.approve');
         Route::post('/dashboard/admin/usulan-titik/{usulan}/reject', [PetaLokasiController::class, 'rejectUsulan'])->name('dashboard.admin.usulan.reject');
 
-        // Master Control CRUD Router Data Core SiResik
         Route::prefix('admin')->name('admin.')->group(function () {
-            
-            // Logika CRUD Tambahan Modul Baru Anda (PBI 23 & PBI 24)
+            // CRUD
             Route::resource('kegiatan', AdminKegiatanController::class);
             Route::resource('pengumuman', AdminPengumumanController::class)->except(['show']);
             Route::resource('edukasi', AdminEdukasiController::class);
+            Route::resource('kategori', AdminController::class)
+                ->parameters(['kategori' => 'kategori'])
+                ->except(['index', 'create', 'edit', 'show']);
 
-            // FIX PERBAIKAN: Menggunakan map binding resource agar menghasilkan alias admin.kategori.destroy secara otomatis
-            Route::resource('kategori', AdminController::class)->parameters(['kategori' => 'kategori'])->except(['index', 'create', 'edit', 'show']);
-
-            // Manajemen Fasilitas Titik Layanan TPS / Bank Sampah
+            // Titik Layanan
             Route::post('/titik-layanan', [AdminController::class, 'storeTitikLayanan'])->name('titik-layanan.store');
             Route::put('/titik-layanan/{titikLayanan}', [AdminController::class, 'updateTitikLayanan'])->name('titik-layanan.update');
             Route::delete('/titik-layanan/{titikLayanan}', [AdminController::class, 'destroyTitikLayanan'])->name('titik-layanan.destroy');
 
-            // Data Akun Petugas Kebersihan
+            // Petugas
             Route::post('/petugas', [AdminController::class, 'storePetugas'])->name('petugas.store');
             Route::put('/petugas/{petugas}', [AdminController::class, 'updatePetugas'])->name('petugas.update');
             Route::delete('/petugas/{petugas}', [AdminController::class, 'destroyPetugas'])->name('petugas.destroy');
 
-            // Verifikasi Hasil Timbangan & Sistem Poin Reward
+            // Verifikasi
             Route::post('/verifikasi-laporan/{permintaan}', [AdminController::class, 'verifikasiLaporan'])->name('verifikasi-laporan');
+            Route::post('/verifikasi-laporan-sampah-liar/{sampahLiar}', [AdminController::class, 'verifikasiLaporanSampahLiar'])->name('verifikasi-laporan-sampah-liar');
+
+            Route::get('/permintaan-penjemputan/{permintaanPenjemputan}', [PermintaanPenjemputanController::class, 'show'])->name('permintaan.show');
+            Route::get('/sampah-liar/{sampahLiar}', [AdminController::class, 'showSampahLiar'])->name('sampah-liar.show');
+
+            // Poin
             Route::post('/konfigurasi-poin', [AdminController::class, 'updateKonfigurasiPoin'])->name('konfigurasi-poin.update');
 
-            // Manajemen Stok Katalog Hadiah (Reward)
+            // Reward
             Route::post('/reward', [AdminController::class, 'storeReward'])->name('reward.store');
             Route::put('/reward/{reward}', [AdminController::class, 'updateReward'])->name('reward.update');
             Route::delete('/reward/{reward}', [AdminController::class, 'destroyReward'])->name('reward.destroy');
 
-            // Manajemen Gambar Spasial Geometris (Zona Radius Wilayah)
+            // Zona Layanan
             Route::post('/zona-layanan', [AdminController::class, 'storeZonaLayanan'])->name('zona-layanan.store');
             Route::put('/zona-layanan/{zonaLayanan}', [AdminController::class, 'updateZonaLayanan'])->name('zona-layanan.update');
             Route::delete('/zona-layanan/{zonaLayanan}', [AdminController::class, 'destroyZonaLayanan'])->name('zona-layanan.destroy');
-            
-            // Jadwal Operasional Titik Layanan
+
+            // Jadwal Operasional
             Route::get('/titik-layanan/{titikLayanan}/jadwal', [App\Http\Controllers\JadwalOperasionalController::class, 'index'])->name('jadwal.index');
             Route::post('/titik-layanan/{titikLayanan}/jadwal', [App\Http\Controllers\JadwalOperasionalController::class, 'store'])->name('jadwal.store');
             Route::put('/jadwal/{jadwal}', [App\Http\Controllers\JadwalOperasionalController::class, 'update'])->name('jadwal.update');
