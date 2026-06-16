@@ -35,8 +35,8 @@ class Poin extends Model
         $trkId = 'TRK-' . str_pad($permintaan->id, 4, '0', STR_PAD_LEFT);
         $keterangan = 'Poin Layanan Penjemputan Sampah ' . $trkId;
 
-        // Jika status berubah menjadi Selesai
-        if ($permintaan->status === 'Selesai') {
+        // Jika status berubah menjadi Selesai dan bukti penyelesaian sudah ada (artinya dari Petugas)
+        if ($permintaan->status === 'Selesai' && $permintaan->bukti_penyelesaian) {
             $exists = self::where('user_id', $permintaan->pengguna_id)
                 ->where('tipe', 'masuk')
                 ->where('keterangan', $keterangan)

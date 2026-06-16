@@ -30,4 +30,18 @@ class RiwayatpoinpenggunaController extends Controller
 
         return view('poin.index', compact('user', 'poins', 'totalPoin', 'totalRewardDitukar', 'rewards'));
     }
+
+    public function riwayatReward()
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        // Get all redeemed rewards history with their reward details, ordered by date
+        $riwayat = $user->penukaranPoins()
+            ->with('reward')
+            ->orderByDesc('tanggal_penukaran')
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('poin.riwayat-reward', compact('user', 'riwayat'));
+    }
 }

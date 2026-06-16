@@ -59,7 +59,7 @@ class PenukaranRewardController extends Controller
                 PenukaranPoin::create([
                     'user_id' => $user->id,
                     'reward_id' => $reward->id,
-                    'status_penukaran' => 'menunggu_verifikasi',
+                    'status_penukaran' => 'selesai',
                     'tanggal_penukaran' => now(),
                 ]);
 

@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
         
         // Poin & Reward
         Route::get('/poin', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'index'])->name('poin.index');
+        Route::get('/poin/riwayat-reward', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'riwayatReward'])->name('poin.riwayat-reward');
         Route::get('/reward', [App\Http\Controllers\PenukaranRewardController::class, 'index'])->name('reward.index');
         Route::post('/reward/{id}/redeem', [App\Http\Controllers\PenukaranRewardController::class, 'redeem'])->name('reward.redeem');
 
