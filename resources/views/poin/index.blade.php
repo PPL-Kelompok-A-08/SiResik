@@ -122,10 +122,16 @@
                         $styleData = getRewardIcon($reward->nama);
                     @endphp
                     <div class="bg-white rounded-3xl border border-slate-200/60 p-6 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow relative">
-                        {{-- Icon Box --}}
-                        <div class="w-16 h-16 {{ $styleData['bg'] }} rounded-[1.25rem] flex items-center justify-center mb-4">
-                            <i class="fa-solid {{ $styleData['icon'] }} text-2xl"></i>
-                        </div>
+                        {{-- Gambar / Icon Box --}}
+                        @if($reward->gambar)
+                            <div class="mb-4 w-full h-32 rounded-xl overflow-hidden bg-slate-100 ring-1 ring-slate-200">
+                                <img src="{{ asset('storage/' . $reward->gambar) }}" alt="{{ $reward->nama }}" class="w-full h-full object-cover">
+                            </div>
+                        @else
+                            <div class="w-16 h-16 {{ $styleData['bg'] }} rounded-[1.25rem] flex items-center justify-center mb-4">
+                                <i class="fa-solid {{ $styleData['icon'] }} text-2xl"></i>
+                            </div>
+                        @endif
 
                         {{-- Name --}}
                         <h3 class="text-base font-bold text-slate-800 tracking-tight leading-snug">{{ $reward->nama }}</h3>
