@@ -217,9 +217,14 @@ class AdminController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'poin_diperlukan' => 'required|integer|min:0',
             'stok' => 'required|integer|min:0',
         ]);
+
+        if ($request->hasFile('gambar')) {
+            $validated['gambar'] = $request->file('gambar')->store('rewards', 'public');
+        }
 
         Reward::create($validated);
 
@@ -231,10 +236,24 @@ class AdminController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'poin_diperlukan' => 'required|integer|min:0',
             'stok' => 'required|integer|min:0',
             'aktif' => 'boolean',
         ]);
+
+        if ($request->hasFile('gambar')) {
+            // Hapus gambar lama jika ada
+            if ($reward->gambar && \Illuminate\Support\Facades\Storage::disk('public')->exists($reward->gambar)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($reward->gambar);
+            }
+            $validated['gambar'] = $request->file('gambar')->store('rewards', 'public');
+        } elseif ($request->input('remove_gambar') == '1') {
+            if ($reward->gambar && \Illuminate\Support\Facades\Storage::disk('public')->exists($reward->gambar)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($reward->gambar);
+            }
+            $validated['gambar'] = null;
+        }
 
         $reward->update($validated);
 

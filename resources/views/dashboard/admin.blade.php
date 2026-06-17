@@ -848,11 +848,10 @@
                                             <p class="text-sm font-bold text-slate-400">{{ $schedule['jam_singkat'] }}</p>
                                         </div>
                                         <h3 class="mt-3 text-3xl font-black text-slate-800">{{ $schedule['zona'] }}</h3>
-                                        <p class="mt-5 text-base text-slate-500">• Petugas: {{ $schedule['petugas'] }}</p>
                                     </div>
                                     <div class="mt-5 flex gap-2 border-t border-slate-200/60 pt-4">
                                         <button type="button"
-                                            onclick="editJadwalArea({{ $schedule['id'] }}, '{{ $schedule['hari'] }}', '{{ addslashes($schedule['zona']) }}', '{{ $schedule['jam_raw'] }}', {{ $schedule['petugas_id'] }})"
+                                            onclick="editJadwalArea({{ $schedule['id'] }}, '{{ $schedule['hari'] }}', '{{ addslashes($schedule['zona']) }}', '{{ $schedule['jam_raw'] }}', {{ $schedule['petugas_id'] }}, '{{ addslashes($schedule['keterangan'] ?? '') }}', {{ htmlspecialchars(json_encode($schedule['jenis_sampah'] ?? []), ENT_QUOTES, 'UTF-8') }})"
                                             class="rounded-xl border border-blue-200 bg-blue-50/50 px-4 py-2 text-xs font-bold text-blue-600 hover:bg-blue-100 transition">
                                             Edit
                                         </button>
@@ -1229,11 +1228,16 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
                             @forelse($rewards as $reward)
                                 <div class="rounded-2xl border border-slate-200 p-4 relative">
+                                    @if($reward->gambar)
+                                        <div class="mb-3 h-32 w-full overflow-hidden rounded-xl bg-slate-100">
+                                            <img src="{{ Storage::url($reward->gambar) }}" alt="{{ $reward->nama }}" class="h-full w-full object-cover">
+                                        </div>
+                                    @endif
                                     <div class="flex items-start justify-between mb-2">
                                         <p class="text-lg font-black text-slate-800">{{ $reward->nama }}</p>
                                         <div class="flex gap-1">
                                             <button
-                                                onclick="editReward({{ $reward->id }}, '{{ $reward->nama }}', '{{ $reward->deskripsi }}', {{ $reward->poin_diperlukan }}, {{ $reward->stok }}, {{ $reward->aktif ? 'true' : 'false' }})"
+                                                onclick="editReward({{ $reward->id }}, '{{ addslashes($reward->nama) }}', '{{ addslashes($reward->deskripsi) }}', {{ $reward->poin_diperlukan }}, {{ $reward->stok }}, {{ $reward->aktif ? 'true' : 'false' }}, '{{ $reward->gambar ? Storage::url($reward->gambar) : '' }}')"
                                                 class="text-slate-400 hover:text-slate-600 text-sm">✎</button>
                                             <form method="POST" action="{{ route('admin.reward.destroy', $reward) }}"
                                                 class="inline"
@@ -1265,28 +1269,7 @@
                         </div>
                     </div>
 
-                    <!-- Riwayat Penukaran -->
-                    <div class="section-card">
-                        <div class="px-6 py-5 border-b border-slate-100">
-                            <h2 class="text-xl font-black text-slate-800">Riwayat Penukaran</h2>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Reward</th>
-                                    <th>Poin</th>
-                                    <th>Tanggal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="4" class="text-center py-6 text-slate-500">Belum ada data penukaran
-                                        reward.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+
                 </div>
 
                 <!-- ======================== PAGE: AREA ======================== -->
@@ -1772,7 +1755,7 @@
                     <button onclick="closeModal('modal-tambah-reward')"
                         class="text-slate-400 hover:text-slate-600 text-xl">✕</button>
                 </div>
-                <form id="reward-form" method="POST">
+                <form id="reward-form" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="space-y-4">
                         <div>
@@ -1798,6 +1781,27 @@
                                 class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Deskripsi</label>
                             <textarea name="deskripsi" id="reward-deskripsi" rows="3" placeholder="Deskripsi reward..."
                                 class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">
+                                Gambar Reward <span class="text-rose-500">*</span>
+                            </label>
+                            
+                            <input type="file"
+                                   id="reward-gambar"
+                                   name="gambar"
+                                   accept="image/jpeg,image/jpg,image/png,image/webp"
+                                   class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
+                                   
+                            <p class="text-[11px] text-slate-400 mt-2 font-medium">Format: JPEG, PNG, WEBP. Maks 5MB.</p>
+
+                            <div class="mt-3 relative inline-block">
+                                <img id="preview-reward-img" src="" alt="Preview" class="hidden w-full rounded-xl object-cover max-h-40 border border-slate-200 shadow-sm mx-auto">
+                                <button type="button" id="btn-remove-reward-img" class="hidden absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md transition" title="Hapus Gambar">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                                <input type="hidden" name="remove_gambar" id="remove-gambar-flag" value="0">
+                            </div>
                         </div>
                         <div class="flex items-center">
                             <input type="checkbox" name="aktif" id="reward-aktif" value="1" class="mr-2">
@@ -2125,16 +2129,26 @@
                             <input type="time" name="jam" id="jadwal-jam"
                                 class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
                         </div>
+
                         <div>
-                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Pilih
-                                Petugas</label>
-                            <select name="petugas_id" id="jadwal-petugas"
-                                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm" required>
-                                <option value="">Pilih Petugas</option>
-                                @foreach($petugas as $petugasItem)
-                                    <option value="{{ $petugasItem->id }}">{{ $petugasItem->name }}</option>
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Deskripsi (Opsional)</label>
+                            <textarea name="keterangan" id="jadwal-keterangan" rows="2" placeholder="Contoh: Pengangkutan khusus pagi hari..."
+                                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Jenis Sampah Yang Diangkut</label>
+                            <div class="grid grid-cols-2 gap-3" id="jadwal-jenis-sampah">
+                                @if(isset($kategori_sampah))
+                                    @foreach($kategori_sampah as $kategori)
+                                        <label class="flex items-center gap-2 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
+                                            <input type="checkbox" name="jenis_sampah[]" value="{{ $kategori->nama }}" class="rounded border-slate-300 text-emerald-500 focus:ring-emerald-500">
+                                            <div class="flex-1">
+                                                <div class="text-sm font-bold text-slate-700">{{ $kategori->nama }}</div>
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                @endif
+                            </div>
                         </div>
                     </div>
                     <div class="mt-6 flex gap-3">
@@ -2171,8 +2185,7 @@
                     kategoriAddBtn.addEventListener('click', function () {
                         document.getElementById('modal-title').textContent = 'Tambah Kategori Sampah';
                         document.getElementById('kategori-form').action = '{{ route("admin.kategori.store") }}';
-                        const methodInput = document.querySelector('#kategori-form input[name="_method"]');
-                        if (methodInput) methodInput.remove();
+                        document.querySelectorAll('#kategori-form input[name="_method"]').forEach(el => el.remove());
                         document.getElementById('kategori-form').reset();
                     });
                 }
@@ -2182,9 +2195,13 @@
                 if (rewardAddBtn) {
                     rewardAddBtn.addEventListener('click', function () {
                         document.getElementById('modal-reward-title').textContent = 'Tambah Reward';
+                        document.getElementById('preview-reward-img').classList.add('hidden');
+                        document.getElementById('btn-remove-reward-img')?.classList.add('hidden');
+                        const removeFlag = document.getElementById('remove-gambar-flag');
+                        if (removeFlag) removeFlag.value = '0';
+                        document.getElementById('reward-gambar').value = '';
                         document.getElementById('reward-form').action = '{{ route("admin.reward.store") }}';
-                        const methodInput = document.querySelector('#reward-form input[name="_method"]');
-                        if (methodInput) methodInput.remove();
+                        document.querySelectorAll('#reward-form input[name="_method"]').forEach(el => el.remove());
                         document.getElementById('reward-form').reset();
                         document.getElementById('reward-aktif').checked = true;
                     });
@@ -2196,8 +2213,7 @@
                     petugasAddBtn.addEventListener('click', function () {
                         document.getElementById('modal-petugas-title').textContent = 'Tambah Petugas';
                         document.getElementById('petugas-form').action = '{{ route("admin.petugas.store") }}';
-                        const methodInput = document.querySelector('#petugas-form input[name="_method"]');
-                        if (methodInput) methodInput.remove();
+                        document.querySelectorAll('#petugas-form input[name="_method"]').forEach(el => el.remove());
                         document.getElementById('petugas-form').reset();
                         document.getElementById('petugas-password').required = true;
                         document.getElementById('petugas-password-confirm').required = true;
@@ -2212,8 +2228,7 @@
                     titikAddBtn.addEventListener('click', function () {
                         document.getElementById('modal-titik-layanan-title').textContent = 'Tambah Titik Layanan';
                         document.getElementById('titik-layanan-form').action = '{{ route("admin.titik-layanan.store") }}';
-                        const methodInput = document.querySelector('#titik-layanan-form input[name="_method"]');
-                        if (methodInput) methodInput.remove();
+                        document.querySelectorAll('#titik-layanan-form input[name="_method"]').forEach(el => el.remove());
                         document.getElementById('titik-layanan-form').reset();
                     });
                 }
@@ -2224,8 +2239,7 @@
                     jadwalAreaAddBtn.addEventListener('click', function () {
                         document.getElementById('modal-jadwal-title').textContent = 'Tambah Jadwal Area';
                         document.getElementById('jadwal-area-form').action = '{{ route("admin.jadwal-area.store") }}';
-                        const methodInput = document.querySelector('#jadwal-area-form input[name="_method"]');
-                        if (methodInput) methodInput.remove();
+                        document.querySelectorAll('#jadwal-area-form input[name="_method"]').forEach(el => el.remove());
                         document.getElementById('jadwal-area-form').reset();
                     });
                 }
@@ -2389,6 +2403,7 @@
             function editKategori(id, nama, deskripsi, poin, harga) {
                 document.getElementById('modal-title').textContent = 'Edit Kategori Sampah';
                 document.getElementById('kategori-form').action = `/admin/kategori/${id}`;
+                document.querySelectorAll('#kategori-form input[name="_method"]').forEach(el => el.remove());
                 document.getElementById('kategori-form').insertAdjacentHTML('afterbegin', '<input type="hidden" name="_method" value="PUT">');
                 document.getElementById('kategori-nama').value = nama;
                 document.getElementById('kategori-deskripsi').value = deskripsi;
@@ -2398,15 +2413,32 @@
             }
 
             // Reward
-            function editReward(id, nama, deskripsi, poin, stok, aktif) {
+            function editReward(id, nama, deskripsi, poin, stok, aktif, gambar_url = '') {
                 document.getElementById('modal-reward-title').textContent = 'Edit Reward';
                 document.getElementById('reward-form').action = `/admin/reward/${id}`;
+                document.querySelectorAll('#reward-form input[name="_method"]').forEach(el => el.remove());
                 document.getElementById('reward-form').insertAdjacentHTML('afterbegin', '<input type="hidden" name="_method" value="PUT">');
                 document.getElementById('reward-nama').value = nama;
                 document.getElementById('reward-deskripsi').value = deskripsi;
                 document.getElementById('reward-poin').value = poin;
                 document.getElementById('reward-stok').value = stok;
                 document.getElementById('reward-aktif').checked = aktif;
+                
+                const previewImg = document.getElementById('preview-reward-img');
+                const btnRemove = document.getElementById('btn-remove-reward-img');
+                const removeFlag = document.getElementById('remove-gambar-flag');
+                
+                if (removeFlag) removeFlag.value = '0';
+                document.getElementById('reward-gambar').value = '';
+
+                if (gambar_url) {
+                    previewImg.src = gambar_url;
+                    previewImg.classList.remove('hidden');
+                    if (btnRemove) btnRemove.classList.remove('hidden');
+                } else {
+                    previewImg.classList.add('hidden');
+                    if (btnRemove) btnRemove.classList.add('hidden');
+                }
                 openModal('modal-tambah-reward');
             }
 
@@ -2422,6 +2454,7 @@
             function editPetugas(id, nama, email) {
                 document.getElementById('modal-petugas-title').textContent = 'Edit Petugas';
                 document.getElementById('petugas-form').action = `/admin/petugas/${id}`;
+                document.querySelectorAll('#petugas-form input[name="_method"]').forEach(el => el.remove());
                 document.getElementById('petugas-form').insertAdjacentHTML('afterbegin', '<input type="hidden" name="_method" value="PUT">');
                 document.getElementById('petugas-nama').value = nama;
                 document.getElementById('petugas-email').value = email;
@@ -2436,6 +2469,7 @@
             function editTitikLayanan(id, nama, jenis, alamat, jam, latitude, longitude, sampah) {
                 document.getElementById('modal-titik-layanan-title').textContent = 'Edit Titik Layanan';
                 document.getElementById('titik-layanan-form').action = `/admin/titik-layanan/${id}`;
+                document.querySelectorAll('#titik-layanan-form input[name="_method"]').forEach(el => el.remove());
                 document.getElementById('titik-layanan-form').insertAdjacentHTML('afterbegin', '<input type="hidden" name="_method" value="PUT">');
                 document.getElementById('titik-layanan-nama').value = nama;
                 document.getElementById('titik-layanan-jenis').value = jenis;
@@ -2452,25 +2486,30 @@
             document.getElementById('btn-open-titik-layanan-modal').addEventListener('click', function () {
                 document.getElementById('modal-titik-layanan-title').textContent = 'Tambah Titik Layanan';
                 document.getElementById('titik-layanan-form').action = '{{ route("admin.titik-layanan.store") }}';
-                const methodInput = document.querySelector('#titik-layanan-form input[name="_method"]');
-                if (methodInput) methodInput.remove();
+                document.querySelectorAll('#titik-layanan-form input[name="_method"]').forEach(el => el.remove());
                 document.getElementById('titik-layanan-form').reset();
                 setupTitikLayananMap();
             });
 
             // Jadwal Area Edit Helper
-            function editJadwalArea(id, hari, zona, jam, petugasId) {
+            function editJadwalArea(id, hari, zona, jam, petugasId, keterangan = '', jenisSampah = []) {
                 document.getElementById('modal-jadwal-title').textContent = 'Edit Jadwal Area';
                 document.getElementById('jadwal-area-form').action = `/admin/jadwal-area/${id}`;
                 
-                const methodInput = document.querySelector('#jadwal-area-form input[name="_method"]');
-                if (methodInput) methodInput.remove();
+                document.querySelectorAll('#jadwal-area-form input[name="_method"]').forEach(el => el.remove());
                 
                 document.getElementById('jadwal-area-form').insertAdjacentHTML('afterbegin', '<input type="hidden" name="_method" value="PUT">');
                 document.getElementById('jadwal-hari').value = hari;
                 document.getElementById('jadwal-zona').value = zona;
                 document.getElementById('jadwal-jam').value = jam;
-                document.getElementById('jadwal-petugas').value = petugasId;
+                
+                document.getElementById('jadwal-keterangan').value = keterangan;
+                
+                const checkboxes = document.querySelectorAll('#jadwal-jenis-sampah input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    cb.checked = (jenisSampah || []).includes(cb.value);
+                });
+
                 openModal('modal-tambah-jadwal-area');
             }
 
@@ -2862,6 +2901,7 @@
 
                 const form = document.getElementById('update-status-form');
                 form.action = `/permintaan-penjemputan/${permintaanId}/status`;
+                form.dataset.permintaanId = permintaanId;
 
                 openModal('modal-update-status');
             }
@@ -2884,15 +2924,50 @@
                         status: statusValue
                     })
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        return response.text().then(text => {
+                            let data;
+                            try {
+                                data = JSON.parse(text);
+                            } catch (e) {
+                                throw new Error('Terjadi kesalahan pada server.');
+                            }
+                            if (!response.ok) {
+                                throw new Error(data.message || 'Gagal mengupdate status.');
+                            }
+                            return data;
+                        });
+                    })
                     .then(data => {
                         closeModal('modal-update-status');
                         showSuccessMessage(data.message || 'Status berhasil diperbarui');
-                        setTimeout(() => location.reload(), 1500);
+                        
+                        const pId = document.getElementById('update-status-form').dataset.permintaanId;
+                        if (pId) {
+                            document.querySelectorAll('button[onclick^="openUpdateStatusModal("]').forEach(btn => {
+                                const onclickStr = btn.getAttribute('onclick');
+                                if (onclickStr.startsWith(`openUpdateStatusModal(${pId},`)) {
+                                    const row = btn.closest('tr');
+                                    if (row) {
+                                        const badge = row.querySelector('.status-badge');
+                                        if (badge) {
+                                            badge.textContent = statusValue;
+                                            badge.className = 'status-badge ' + (
+                                                statusValue === 'Menunggu' ? 'status-menunggu' :
+                                                (statusValue === 'Diproses' ? 'status-dijadwalkan' : 'status-selesai')
+                                            );
+                                        }
+                                    }
+                                    const parts = onclickStr.split(',');
+                                    parts[1] = ` '${statusValue}'`;
+                                    btn.setAttribute('onclick', parts.join(','));
+                                }
+                            });
+                        }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Terjadi kesalahan saat update status');
+                        alert(error.message || 'Terjadi kesalahan saat update status');
                     });
             });
 
@@ -2939,6 +3014,36 @@
             window.addEventListener('resize', handleAdminResponsive);
             document.addEventListener('DOMContentLoaded', handleAdminResponsive);
             handleAdminResponsive(); // run immediately
+
+            // --- Image Preview Logic ---
+            const inputRewardFoto = document.getElementById('reward-gambar');
+            const previewRewardImg = document.getElementById('preview-reward-img');
+            const btnRemoveRewardImg = document.getElementById('btn-remove-reward-img');
+            const removeGambarFlag = document.getElementById('remove-gambar-flag');
+
+            inputRewardFoto?.addEventListener('change', function () {
+                const file = this.files[0];
+                if (!file) {
+                    previewRewardImg.classList.add('hidden');
+                    btnRemoveRewardImg?.classList.add('hidden');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = e => {
+                    previewRewardImg.src = e.target.result;
+                    previewRewardImg.classList.remove('hidden');
+                    btnRemoveRewardImg?.classList.remove('hidden');
+                    if(removeGambarFlag) removeGambarFlag.value = '0';
+                };
+                reader.readAsDataURL(file);
+            });
+
+            btnRemoveRewardImg?.addEventListener('click', function() {
+                if (inputRewardFoto) inputRewardFoto.value = '';
+                previewRewardImg.classList.add('hidden');
+                btnRemoveRewardImg.classList.add('hidden');
+                if(removeGambarFlag) removeGambarFlag.value = '1';
+            });
         </script>
     </div>{{-- end admin-content-inner --}}
     </div>{{-- end admin-content-wrap --}}

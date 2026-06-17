@@ -43,6 +43,8 @@ class JadwalOperasionalController extends Controller
                     'zona' => $item->zona,
                     'petugas' => $item->petugas?->name ?? 'Petugas SiResik',
                     'petugas_id' => $item->petugas_id,
+                    'keterangan' => $item->keterangan,
+                    'jenis_sampah' => $item->jenis_sampah ?? [],
                 ];
             })
             ->toArray();
@@ -116,7 +118,10 @@ class JadwalOperasionalController extends Controller
             'hari' => ['required', 'string', 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu'],
             'zona' => ['required', 'string', 'max:255'],
             'jam' => ['required', 'string'],
-            'petugas_id' => ['required', 'integer', 'exists:users,id'],
+            'petugas_id' => ['nullable', 'integer', 'exists:users,id'],
+            'keterangan' => ['nullable', 'string', 'max:255'],
+            'jenis_sampah' => ['nullable', 'array'],
+            'jenis_sampah.*' => ['string'],
         ]);
 
         $time = \Carbon\Carbon::parse($validated['jam']);
@@ -126,7 +131,9 @@ class JadwalOperasionalController extends Controller
             'zona' => $validated['zona'],
             'jam_buka' => $time->format('H:i:s'),
             'jam_tutup' => $time->copy()->addHours(2)->format('H:i:s'),
-            'petugas_id' => $validated['petugas_id'],
+            'petugas_id' => $validated['petugas_id'] ?? null,
+            'keterangan' => $validated['keterangan'] ?? null,
+            'jenis_sampah' => $validated['jenis_sampah'] ?? null,
         ]);
 
         return redirect()
@@ -143,7 +150,10 @@ class JadwalOperasionalController extends Controller
             'hari' => ['required', 'string', 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu'],
             'zona' => ['required', 'string', 'max:255'],
             'jam' => ['required', 'string'],
-            'petugas_id' => ['required', 'integer', 'exists:users,id'],
+            'petugas_id' => ['nullable', 'integer', 'exists:users,id'],
+            'keterangan' => ['nullable', 'string', 'max:255'],
+            'jenis_sampah' => ['nullable', 'array'],
+            'jenis_sampah.*' => ['string'],
         ]);
 
         $jadwal = JadwalOperasional::findOrFail($id);
@@ -154,7 +164,9 @@ class JadwalOperasionalController extends Controller
             'zona' => $validated['zona'],
             'jam_buka' => $time->format('H:i:s'),
             'jam_tutup' => $time->copy()->addHours(2)->format('H:i:s'),
-            'petugas_id' => $validated['petugas_id'],
+            'petugas_id' => $validated['petugas_id'] ?? null,
+            'keterangan' => $validated['keterangan'] ?? null,
+            'jenis_sampah' => $validated['jenis_sampah'] ?? null,
         ]);
 
         return redirect()

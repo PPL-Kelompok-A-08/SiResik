@@ -57,9 +57,13 @@
                                     <td class="py-4 px-6 text-sm font-bold text-slate-800">{{ $index + 1 }}</td>
                                     <td class="py-4 px-6 text-sm font-semibold text-slate-900">
                                         <div class="flex items-center gap-3">
-                                            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 text-lg">
-                                                🎁
-                                            </div>
+                                            @if($item->reward?->gambar)
+                                                <img src="{{ asset('storage/' . $item->reward->gambar) }}" alt="{{ $item->reward->nama }}" class="h-10 w-10 shrink-0 rounded-xl object-cover ring-1 ring-slate-200">
+                                            @else
+                                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 text-lg">
+                                                    🎁
+                                                </div>
+                                            @endif
                                             <span>{{ $item->reward?->nama ?? 'Reward Terhapus' }}</span>
                                         </div>
                                     </td>
