@@ -4,197 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SiResik</title>
-    <meta name="description" content="Masuk ke platform SiResik — Pintu Masuk Ecosystem.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        * { font-family: 'Inter', sans-serif; }
-    </style>
 </head>
+<body class="min-h-screen bg-[radial-gradient(circle_at_top,_#d9f99d,_#ecfccb_25%,_#f8fafc_70%)] text-slate-900">
+    <main class="mx-auto grid min-h-screen max-w-6xl items-center gap-10 px-6 py-10 lg:grid-cols-[1.05fr,0.95fr]">
+        <section>
+            <a href="/" class="inline-flex rounded-full border border-emerald-200 bg-white/70 px-4 py-2 text-sm font-semibold text-emerald-700 backdrop-blur">Kembali ke beranda</a>
+            <p class="mt-8 text-sm font-semibold uppercase tracking-[0.3em] text-emerald-700">Portal Login</p>
+            <h1 class="mt-4 max-w-xl text-5xl font-black leading-tight text-slate-950">Masuk ke dashboard SiResik sesuai peran Anda.</h1>
+            <p class="mt-5 max-w-xl text-base leading-7 text-slate-600">
+                Sistem ini mendukung tiga peran: Masyarakat, Petugas, dan Admin. Admin dapat masuk ke area admin sekaligus meninjau dashboard peran lain.
+            </p>
 
-<body class="min-h-screen flex items-center justify-center px-4 py-10"
-      style="background: linear-gradient(160deg, #053d2e 0%, #065f46 40%, #047857 100%);">
-
-    <div class="w-full max-w-md">
-
-        <!-- ═══ LOGIN CARD ═══ -->
-        <div class="bg-white rounded-[2rem] shadow-2xl px-8 py-10 relative overflow-hidden">
-
-            <!-- Logo -->
-            <div class="flex flex-col items-center mb-8">
-                <div class="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-emerald-200">
-                    <i class="fas fa-leaf text-white text-xl"></i>
+            <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <div class="rounded-3xl bg-white/80 p-4 shadow-sm ring-1 ring-emerald-100">
+                    <p class="text-sm font-semibold text-slate-900">Masyarakat</p>
+                    <p class="mt-2 text-sm text-slate-500">Ajukan penjemputan dan lihat riwayat layanan.</p>
                 </div>
-                <h1 class="text-xl font-black text-slate-900 tracking-tight">SIRESIK</h1>
-                <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-slate-400 mt-1">Pintu Masuk Ecosystem</p>
+                <div class="rounded-3xl bg-white/80 p-4 shadow-sm ring-1 ring-emerald-100">
+                    <p class="text-sm font-semibold text-slate-900">Petugas</p>
+                    <p class="mt-2 text-sm text-slate-500">Pantau antrean penjemputan dan prioritas operasional.</p>
+                </div>
+                <div class="rounded-3xl bg-white/80 p-4 shadow-sm ring-1 ring-emerald-100">
+                    <p class="text-sm font-semibold text-slate-900">Admin</p>
+                    <p class="mt-2 text-sm text-slate-500">Kelola keseluruhan sistem dan akses semua area.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="rounded-[2rem] bg-slate-950 p-8 text-white shadow-2xl">
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-slate-300">
+                <p class="font-semibold text-white">Akun demo</p>
+                <p class="mt-2">Admin: `admin@siresik.local`</p>
+                <p>Petugas: `petugas@siresik.local`</p>
+                <p>Masyarakat: `masyarakat@siresik.local`</p>
+                <p class="mt-2">Password semua akun: `password`</p>
             </div>
 
-            <!-- Role Tabs -->
-            <div class="flex bg-gray-100 rounded-full p-1 mb-8">
-                <button type="button" onclick="switchTab('masyarakat')" id="tab-masyarakat"
-                        class="role-tab flex-1 py-2.5 text-xs font-black uppercase tracking-wider rounded-full transition-all duration-200 bg-white text-slate-900 shadow-sm">
-                    Masyarakat
-                </button>
-                <button type="button" onclick="switchTab('admin')" id="tab-admin"
-                        class="role-tab flex-1 py-2.5 text-xs font-black uppercase tracking-wider rounded-full transition-all duration-200 text-slate-400">
-                    Admin
-                </button>
-                <button type="button" onclick="switchTab('petugas')" id="tab-petugas"
-                        class="role-tab flex-1 py-2.5 text-xs font-black uppercase tracking-wider rounded-full transition-all duration-200 text-slate-400">
-                    Petugas
-                </button>
-            </div>
-
-            <!-- Error -->
             @if ($errors->any())
-                <div class="mb-5 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600 font-medium">
-                    <i class="fas fa-exclamation-circle mr-1"></i> {{ $errors->first() }}
+                <div class="mt-5 rounded-2xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+                    {{ $errors->first() }}
                 </div>
             @endif
 
-            <!-- Form -->
-            <form action="{{ route('login.attempt') }}" method="POST" class="space-y-5">
+            <form action="{{ route('login.attempt') }}" method="POST" class="mt-6 space-y-5">
                 @csrf
 
-                <!-- Email -->
-                <div>
-                    <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">
-                        Email / ID Pengguna
-                    </label>
-                    <div class="relative">
-                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300">
-                            <i class="far fa-user text-sm"></i>
-                        </div>
-                        <input type="email" name="email" id="email-input" value="{{ old('email') }}"
-                               class="w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3.5 text-sm text-slate-700 outline-none placeholder:text-slate-300 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition"
-                               placeholder="name@example.com" required>
-                    </div>
-                </div>
+                <label class="block">
+                    <span class="mb-2 block text-sm font-semibold text-slate-200">Email</span>
+                    <input type="email" name="email" value="{{ old('email') }}" class="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none placeholder:text-slate-400 focus:border-emerald-400" placeholder="nama@kampus.ac.id" required>
+                </label>
 
-                <!-- Password -->
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                            Kata Sandi
-                        </label>
-                        <a href="#" class="text-xs font-semibold text-emerald-500 hover:text-emerald-600 italic transition">Lupa Sandi?</a>
-                    </div>
-                    <div class="relative">
-                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300">
-                            <i class="fas fa-lock text-sm"></i>
-                        </div>
-                        <input type="password" name="password" id="password-input"
-                               class="w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-4 py-3.5 text-sm text-slate-700 outline-none placeholder:text-slate-300 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition"
-                               placeholder="••••••••" required>
-                    </div>
-                </div>
+                <label class="block">
+                    <span class="mb-2 block text-sm font-semibold text-slate-200">Password</span>
+                    <input type="password" name="password" class="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none placeholder:text-slate-400 focus:border-emerald-400" placeholder="Masukkan password" required>
+                </label>
 
-                <!-- Submit -->
-                <button type="submit"
-                        class="w-full bg-[#0f3d2e] text-white py-4 rounded-xl text-sm font-black uppercase tracking-wider hover:bg-[#0a2e22] transition-all shadow-lg flex items-center justify-center gap-2">
-                    Masuk Sekarang <i class="fas fa-arrow-right text-xs"></i>
+                <label class="flex items-center gap-3 text-sm text-slate-300">
+                    <input type="checkbox" name="remember" value="1" class="h-4 w-4 rounded border-white/20 bg-white/10 text-emerald-500">
+                    Ingat saya di perangkat ini
+                </label>
+
+                <button type="submit" class="w-full rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-emerald-400">
+                    Masuk ke Dashboard
                 </button>
             </form>
-
-            <!-- Daftar link -->
-            <p class="text-center text-sm text-slate-400 mt-6">
-                Belum punya akun?
-                <a href="#" class="font-bold text-emerald-500 hover:text-emerald-600 italic underline underline-offset-2 transition">Daftar Masyarakat</a>
-            </p>
-
-        </div>
-
-        <!-- ═══ CREDENTIAL HINTS ═══ -->
-        <div class="mt-6 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-300 mb-3 text-center">
-                <i class="fas fa-info-circle mr-1"></i> Akun Demo — Panduan Login
-            </p>
-
-            <div class="space-y-2.5">
-                <!-- Masyarakat -->
-                <div id="hint-masyarakat" class="credential-hint flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 border border-white/10 transition">
-                    <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-users text-emerald-400 text-xs"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-[10px] font-black uppercase tracking-wider text-emerald-300">Masyarakat</p>
-                        <p class="text-xs text-white/80 mt-0.5 truncate">masyarakat@siresik.local</p>
-                    </div>
-                    <div class="text-right flex-shrink-0">
-                        <p class="text-[10px] text-white/50">Password</p>
-                        <p class="text-xs font-bold text-white/80">password</p>
-                    </div>
-                </div>
-
-                <!-- Admin -->
-                <div id="hint-admin" class="credential-hint flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 border border-white/10 transition">
-                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-shield-halved text-blue-400 text-xs"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-[10px] font-black uppercase tracking-wider text-blue-300">Admin</p>
-                        <p class="text-xs text-white/80 mt-0.5 truncate">admin@siresik.local</p>
-                    </div>
-                    <div class="text-right flex-shrink-0">
-                        <p class="text-[10px] text-white/50">Password</p>
-                        <p class="text-xs font-bold text-white/80">password</p>
-                    </div>
-                </div>
-
-                <!-- Petugas -->
-                <div id="hint-petugas" class="credential-hint flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 border border-white/10 transition">
-                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-hard-hat text-amber-400 text-xs"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-[10px] font-black uppercase tracking-wider text-amber-300">Petugas</p>
-                        <p class="text-xs text-white/80 mt-0.5 truncate">petugas@siresik.local</p>
-                    </div>
-                    <div class="text-right flex-shrink-0">
-                        <p class="text-[10px] text-white/50">Password</p>
-                        <p class="text-xs font-bold text-white/80">password</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- ═══ SCRIPT ═══ -->
-    <script>
-        const credentials = {
-            masyarakat: { email: 'masyarakat@siresik.local', password: 'password' },
-            admin:      { email: 'admin@siresik.local',      password: 'password' },
-            petugas:    { email: 'petugas@siresik.local',     password: 'password' },
-        };
-
-        function switchTab(role) {
-            // Update tab styles
-            document.querySelectorAll('.role-tab').forEach(tab => {
-                tab.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
-                tab.classList.add('text-slate-400');
-            });
-            const active = document.getElementById('tab-' + role);
-            active.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
-            active.classList.remove('text-slate-400');
-
-            // Auto-fill email
-            document.getElementById('email-input').value = credentials[role].email;
-            document.getElementById('password-input').value = credentials[role].password;
-
-            // Highlight corresponding hint
-            document.querySelectorAll('.credential-hint').forEach(h => {
-                h.style.background = 'rgba(255,255,255,0.1)';
-                h.style.borderColor = 'rgba(255,255,255,0.1)';
-            });
-            const hint = document.getElementById('hint-' + role);
-            hint.style.background = 'rgba(255,255,255,0.18)';
-            hint.style.borderColor = 'rgba(255,255,255,0.25)';
-        }
-    </script>
-
+        </section>
+    </main>
 </body>
 </html>
