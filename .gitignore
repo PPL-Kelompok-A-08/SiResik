@@ -18,16 +18,20 @@
 /public/storage
 # /storage/*.key
 # /storage/pail
-/storage/framework/views
-/storage/framework/cache
-/storage/framework/sessions
-/storage/framework/testing
-/storage/app
-/storage/logs
+/storage/framework/views/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/app/*
+/storage/logs/*
+!/storage/framework/views/.gitkeep
+!/storage/framework/cache/.gitkeep
+!/storage/framework/sessions/.gitkeep
+!/storage/framework/testing/.gitkeep
+!/storage/app/private/.gitkeep
+!/storage/app/public/.gitkeep
+!/storage/logs/.gitkeep
 /vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
-storage/logs/*.log
-Thumbs.db
-/storage/logs/*.log
