@@ -1,21 +1,21 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-<div class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-inner">
+<div class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white">
     <div class="border-b border-slate-200 px-6 py-5">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-                <h2 class="text-4xl font-black tracking-tight text-slate-900">Visualisasi Zona Layanan</h2>
-                <p class="mt-1 text-lg text-slate-500">Poligon zona layanan dan titik layanan yang berada di dalamnya.</p>
+                <h2 class="text-3xl font-black tracking-tight text-slate-900">Visualisasi Zona Layanan</h2>
+                <p class="mt-1 text-sm text-slate-500">Poligon zona layanan dan titik layanan yang berada di dalamnya.</p>
             </div>
             <div class="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">
                 <label class="relative flex-1 min-w-[260px]">
                     <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400">⌕</span>
                     <input type="search" id="cari-lokasi" autocomplete="off" placeholder="Cari nama atau alamat..."
-                        class="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-base text-slate-800 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200">
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-800 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200">
                 </label>
                 <button type="button" id="peta-lokasi-saya"
-                    class="whitespace-nowrap rounded-2xl border border-emerald-600 bg-emerald-50 px-5 py-3 text-base font-semibold text-emerald-900 transition hover:bg-emerald-100">
+                    class="whitespace-nowrap rounded-xl border border-emerald-600 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100">
                     Lokasi saya
                 </button>
             </div>

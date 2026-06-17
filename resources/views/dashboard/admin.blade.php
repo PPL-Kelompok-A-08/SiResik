@@ -1281,7 +1281,7 @@
                         </div>
                         <button type="button"
                             onclick="var m=document.getElementById('modalTambahArea'); if(m){m.classList.add('open');} setTimeout(function(){ if(window.__initZonaRadiusMap) window.__initZonaRadiusMap(); },120);"
-                            class="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white">
+                            class="rounded-full bg-emerald-500 hover:bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white transition">
                             + Tambah Area
                         </button>
                     </div>
