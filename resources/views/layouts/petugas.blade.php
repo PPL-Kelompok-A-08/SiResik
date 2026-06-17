@@ -213,9 +213,10 @@
             </div>
             <div style="min-width:0;">
                 <p style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->name }}</p>
-                <p style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(167,243,208,.7);margin-top:2px;">Field Operator</p>
+                <p style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(167,243,208,.7);margin-top:2px;">Petugas Lapangan</p>
             </div>
         </div>
+
 
     </div>
 </aside>

@@ -8,7 +8,8 @@
     {{-- ══ TOP BAR ══ --}}
     <div style="background:#fff;border-bottom:1px solid #e2e8f0;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;">
         <h1 style="font-size:16px;font-weight:800;color:#0f172a;margin:0;">Riwayat Penjemputan</h1>
-        <a href="{{ route('petugas.riwayat') }}"
+        <a href="{{ route('petugas.riwayat.pdf', request()->all()) }}"
+           target="_blank"
            style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;color:#64748b;text-decoration:none;display:flex;align-items:center;gap:6px;">
             <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
             Unduh Laporan

@@ -98,7 +98,7 @@
         {{-- Badge Mode --}}
         <div style="margin-top:14px;">
             <p style="font-size:8px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:rgba(167,243,208,.55);margin:0 0 6px;">Mode Akses</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 12px;">
+            <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 12px;">
                 <span style="font-size:12px;font-weight:700;color:#fff;">
                     Akses: 
                     @if(auth()->user()->role === 'admin')
@@ -109,7 +109,6 @@
                         Masyarakat
                     @endif
                 </span>
-                <i class="fas fa-chevron-down" style="font-size:10px;color:rgba(167,243,208,.7);"></i>
             </div>
         </div>
     </div>

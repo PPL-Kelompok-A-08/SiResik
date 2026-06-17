@@ -93,6 +93,7 @@ Route::middleware('auth')->group(function () {
     // === MULTIROLE: PETUGAS & ADMIN (Tugas Lapangan) ===
     Route::middleware('role:petugas,admin')->prefix('petugas')->group(function () {
         Route::get('/riwayat', [PetugasController::class, 'riwayat'])->name('petugas.riwayat');
+        Route::get('/riwayat/pdf', [PetugasController::class, 'exportPdf'])->name('petugas.riwayat.pdf');
         Route::post('/terima/{permintaanPenjemputan}', [PetugasController::class, 'terimaTugas'])->name('petugas.terima');
         Route::get('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'showBukti'])->name('petugas.bukti.show');
         Route::post('/bukti/{permintaanPenjemputan}', [PetugasController::class, 'uploadBukti'])->name('petugas.bukti.upload');
