@@ -54,7 +54,7 @@
                             <span class="text-emerald-300 text-sm">📅</span>
                             <p class="text-[10px] font-black uppercase tracking-widest text-emerald-300">Jadwal Reguler Area</p>
                         </div>
-                        <p class="mt-1.5 text-base font-black">Setiap Senin, Rabu, Jumat</p>
+                        <p class="mt-1.5 text-base font-black">Setiap {{ collect($weeklySchedules)->pluck('hari')->unique()->implode(', ') }}</p>
                     </div>
                 </div>
 

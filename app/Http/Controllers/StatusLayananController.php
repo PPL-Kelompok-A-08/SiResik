@@ -30,26 +30,7 @@ class StatusLayananController extends Controller
             'selesai'  => $permintaan->where('status', 'Selesai')->count(),
         ];
 
-        $weeklySchedules = [
-            [
-                'hari'     => 'Senin',
-                'kategori' => 'Organik (Sisa Makanan)',
-                'jam'      => '08:00 - 10:00',
-                'zona'     => 'Zona A',
-            ],
-            [
-                'hari'     => 'Rabu',
-                'kategori' => 'Anorganik (Plastik, Kertas)',
-                'jam'      => '08:00 - 10:00',
-                'zona'     => 'Zona A',
-            ],
-            [
-                'hari'     => 'Jumat',
-                'kategori' => 'Residu (Popok, Tisu)',
-                'jam'      => '09:00 - 11:00',
-                'zona'     => 'Zona A',
-            ],
-        ];
+        $weeklySchedules = \App\Http\Controllers\JadwalOperasionalController::getWeeklySchedules();
 
         return view('status-layanan.index', compact(
             'user',

@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
 
         // Poin Tabungan & Penukaran Reward Warga
         Route::get('/poin', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'index'])->name('poin.index');
+        Route::get('/poin/riwayat-reward', [App\Http\Controllers\RiwayatpoinpenggunaController::class, 'riwayatReward'])->name('poin.riwayat-reward');
         Route::get('/reward', [App\Http\Controllers\PenukaranRewardController::class, 'index'])->name('reward.index');
         Route::post('/reward/{id}/redeem', [App\Http\Controllers\PenukaranRewardController::class, 'redeem'])->name('reward.redeem');
 
@@ -196,32 +197,37 @@ Route::middleware('auth')->group(function () {
             Route::post('/petugas', [AdminController::class, 'storePetugas'])->name('petugas.store');
             Route::put('/petugas/{petugas}', [AdminController::class, 'updatePetugas'])->name('petugas.update');
             Route::delete('/petugas/{petugas}', [AdminController::class, 'destroyPetugas'])->name('petugas.destroy');
-
-            // Verifikasi
-            Route::post('/verifikasi-laporan/{permintaan}', [AdminController::class, 'verifikasiLaporan'])->name('verifikasi-laporan');
-            Route::post('/verifikasi-laporan-sampah-liar/{sampahLiar}', [AdminController::class, 'verifikasiLaporanSampahLiar'])->name('verifikasi-laporan-sampah-liar');
-
-            Route::get('/permintaan-penjemputan/{permintaanPenjemputan}', [PermintaanPenjemputanController::class, 'show'])->name('permintaan.show');
-            Route::get('/sampah-liar/{sampahLiar}', [AdminController::class, 'showSampahLiar'])->name('sampah-liar.show');
-
-            // Poin
-            Route::post('/konfigurasi-poin', [AdminController::class, 'updateKonfigurasiPoin'])->name('konfigurasi-poin.update');
-
+            
+            // Verifikasi & Konfigurasi
+            Route::post('/verifikasi-laporan/{permintaan}', [AdminController::class, 'verifikasiLaporan'])->name('admin.verifikasi-laporan');
+            Route::post('/verifikasi-laporan-sampah-liar/{sampahLiar}', [AdminController::class, 'verifikasiLaporanSampahLiar'])->name('admin.verifikasi-laporan-sampah-liar');
+            Route::get('/permintaan-penjemputan/{permintaanPenjemputan}', [PermintaanPenjemputanController::class, 'show'])->name('admin.permintaan.show');
+            Route::get('/sampah-liar/{sampahLiar}', [AdminController::class, 'showSampahLiar'])->name('admin.sampah-liar.show');
+            Route::post('/konfigurasi-poin', [AdminController::class, 'updateKonfigurasiPoin'])->name('admin.konfigurasi-poin.update');
+           
             // Reward
             Route::post('/reward', [AdminController::class, 'storeReward'])->name('reward.store');
             Route::put('/reward/{reward}', [AdminController::class, 'updateReward'])->name('reward.update');
-            Route::delete('/reward/{reward}', [AdminController::class, 'destroyReward'])->name('reward.destroy');
-
-            // Zona Layanan
-            Route::post('/zona-layanan', [AdminController::class, 'storeZonaLayanan'])->name('zona-layanan.store');
-            Route::put('/zona-layanan/{zonaLayanan}', [AdminController::class, 'updateZonaLayanan'])->name('zona-layanan.update');
-            Route::delete('/zona-layanan/{zonaLayanan}', [AdminController::class, 'destroyZonaLayanan'])->name('zona-layanan.destroy');
+            Route::delete('/reward/{reward}', [AdminController::class, 'destroyReward'])->name('reward.destroy'); 
+          
+            // Zona Layanan (Area Cakupan)
+            Route::post('/zona-layanan', [AdminController::class, 'storeZonaLayanan'])->name('admin.zona-layanan.store');
+            Route::put('/zona-layanan/{zonaLayanan}', [AdminController::class, 'updateZonaLayanan'])->name('admin.zona-layanan.update');
+            Route::delete('/zona-layanan/{zonaLayanan}', [AdminController::class, 'destroyZonaLayanan'])->name('admin.zona-layanan.destroy');
 
             // Jadwal Operasional
             Route::get('/titik-layanan/{titikLayanan}/jadwal', [App\Http\Controllers\JadwalOperasionalController::class, 'index'])->name('jadwal.index');
             Route::post('/titik-layanan/{titikLayanan}/jadwal', [App\Http\Controllers\JadwalOperasionalController::class, 'store'])->name('jadwal.store');
             Route::put('/jadwal/{jadwal}', [App\Http\Controllers\JadwalOperasionalController::class, 'update'])->name('jadwal.update');
             Route::delete('/jadwal/{jadwal}', [App\Http\Controllers\JadwalOperasionalController::class, 'destroy'])->name('jadwal.destroy');
+            Route::post('/titik-layanan', [AdminController::class, 'storeTitikLayanan'])->name('admin.titik-layanan.store');
+            Route::put('/titik-layanan/{titikLayanan}', [AdminController::class, 'updateTitikLayanan'])->name('admin.titik-layanan.update');
+            Route::delete('/titik-layanan/{titikLayanan}', [AdminController::class, 'destroyTitikLayanan'])->name('admin.titik-layanan.destroy');
+  
+            // Jadwal Area Reguler
+            Route::post('/jadwal-area', [App\Http\Controllers\JadwalOperasionalController::class, 'storeJadwalArea'])->name('admin.jadwal-area.store');
+            Route::put('/jadwal-area/{jadwalArea}', [App\Http\Controllers\JadwalOperasionalController::class, 'updateJadwalArea'])->name('admin.jadwal-area.update');
+            Route::delete('/jadwal-area/{jadwalArea}', [App\Http\Controllers\JadwalOperasionalController::class, 'destroyJadwalArea'])->name('admin.jadwal-area.destroy');
         });
     });
 });
