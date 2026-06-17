@@ -15,6 +15,11 @@ class JadwalOperasional extends Model
         'jam_buka',
         'jam_tutup',
         'keterangan',
+        'jenis_sampah',
+    ];
+
+    protected $casts = [
+        'jenis_sampah' => 'array',
     ];
 
     protected $appends = ['status_buka'];

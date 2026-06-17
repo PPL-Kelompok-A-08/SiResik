@@ -15,7 +15,6 @@
 <div class="min-h-screen xl:grid xl:grid-cols-[260px,1fr]">
 
     {{-- ═══════════════════════ SIDEBAR ═══════════════════════ --}}
-    {{-- Sidebar Konsisten --}}
     <x-sidebar />
 
     {{-- ═══════════════════════ MAIN ═══════════════════════ --}}
@@ -49,6 +48,7 @@
                     'ringkasan' => 'Pelajari teknik komposting sederhana menggunakan keranjang Takakura atau lubang biopori untuk mengubah sisa dapur menjadi pupuk bernutrisi.',
                     'views'     => '2.481 Pembaca',
                     'img'       => 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80',
+                    'url'       => url('/edukasi-lingkungan/pengolahan-organik'),
                 ],
                 [
                     'kategori'  => 'DAUR ULANG',
@@ -56,6 +56,7 @@
                     'ringkasan' => 'Botol plastik bekas bisa menjadi pot tanaman, lampu hias, atau bahan baku kerajinan yang memiliki nilai jual tinggi.',
                     'views'     => '1.832 Pembaca',
                     'img'       => 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=700&q=80',
+                    'url'       => url('/edukasi-lingkungan/daur-ulang-plastik'),
                 ],
                 [
                     'kategori'  => 'EDUKASI',
@@ -63,13 +64,7 @@
                     'ringkasan' => 'Pemilahan sampah adalah langkah pertama dalam pengelolaan lingkungan. Pelajari perbedaan organik, anorganik, dan B3 agar daur ulang lebih efektif.',
                     'views'     => '3.140 Pembaca',
                     'img'       => 'https://images.unsplash.com/photo-1604187351574-c75ca79f5807?w=700&q=80',
-                ],
-                [
-                    'kategori'  => 'LINGKUNGAN',
-                    'judul'     => 'Dampak Sampah Plastik Terhadap Ekosistem Laut',
-                    'ringkasan' => 'Setiap tahun lebih dari 8 juta ton plastik masuk ke lautan. Pelajari bagaimana dampaknya terhadap rantai makanan dan apa yang bisa kita lakukan.',
-                    'views'     => '4.215 Pembaca',
-                    'img'       => 'https://images.unsplash.com/photo-1488531258993-0b76cd4f10d7?w=700&q=80',
+                    'url'       => url('/edukasi-lingkungan/mengenal-pemilahan'),
                 ],
             ];
             $badgeColors = [
@@ -98,10 +93,11 @@
                         <h3 class="text-xl font-black text-slate-800 leading-snug">{{ $article['judul'] }}</h3>
                         <p class="text-sm text-slate-500 leading-relaxed">{{ $article['ringkasan'] }}</p>
                         <div class="flex items-center gap-4 mt-1">
-                            <button type="button"
-                                    class="rounded-xl bg-emerald-500 px-5 py-2 text-sm font-bold text-white transition hover:bg-emerald-600">
+                            {{-- Mengubah button menjadi tag anchor (link) --}}
+                            <a href="{{ $article['url'] }}"
+                               class="inline-block rounded-xl bg-emerald-500 px-5 py-2 text-sm font-bold text-white transition hover:bg-emerald-600">
                                 Baca Selengkapnya
-                            </button>
+                            </a>
                             <span class="text-xs text-slate-400">👁 {{ $article['views'] }}</span>
                         </div>
                     </div>

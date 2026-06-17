@@ -30,3 +30,4 @@ Homestead.yaml
 Thumbs.db
 storage/logs/*.log
 Thumbs.db
+/storage/logs/*.log

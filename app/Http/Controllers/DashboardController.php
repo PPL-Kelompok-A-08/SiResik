@@ -8,6 +8,7 @@ use App\Models\Reward;
 use App\Models\TitikLayanan;
 use App\Models\ZonaLayanan;
 use App\Models\UsulanTitikLayanan;
+use App\Models\KategoriSampah;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\SampahLiar;
@@ -155,6 +156,7 @@ class DashboardController extends Controller
         $rewards = Reward::orderBy('nama')->get();
         $titikLayanan = TitikLayanan::orderBy('nama')->get();
         $zonaLayanan = ZonaLayanan::orderBy('nama')->get();
+        $kategori_sampah = KategoriSampah::orderBy('nama')->get();
         $usulanMenunggu = UsulanTitikLayanan::with('pengusul')
             ->where('status', 'diajukan')
             ->latest()

@@ -118,7 +118,6 @@
                                     @if ($item->status === 'Diproses' && $item->scheduled_at)
                                         <p class="mt-0.5 text-xs font-semibold text-blue-600">
                                             Dijadwalkan {{ \Illuminate\Support\Carbon::parse($item->scheduled_at)->translatedFormat('d M Y, H:i') }} WIB
-                                            {{ $item->petugas ? '• ' . $item->petugas->name : '' }}
                                         </p>
                                     @endif
                                 </div>
@@ -181,9 +180,7 @@
                     </div>
 
                     <div class="border-t border-emerald-100 bg-emerald-50 px-5 py-4">
-                        <p class="text-xs leading-6 text-emerald-800">
-                            ♻ Untuk sampah rutin mingguan (Organik/Anorganik), Anda tidak perlu mengajukan permintaan. Petugas akan datang sesuai jadwal di atas.
-                        </p>
+                        <p class="text-xs leading-6 text-emerald-800">                        </p>
                     </div>
                 </div>
             </div>
