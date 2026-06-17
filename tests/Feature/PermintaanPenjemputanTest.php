@@ -131,8 +131,12 @@ class PermintaanPenjemputanTest extends TestCase
             'keterangan' => $keterangan,
         ]);
 
-        // Change status to Selesai
-        $permintaan->update(['status' => 'Selesai']);
+        // Change status to Selesai and add bukti_penyelesaian
+        $permintaan->update([
+            'status' => 'Selesai',
+            'bukti_penyelesaian' => 'bukti.jpg'
+        ]);
+        \App\Models\Poin::syncFromPermintaan($permintaan);
 
         // Poin should exist now
         $this->assertDatabaseHas('poins', [
@@ -144,6 +148,7 @@ class PermintaanPenjemputanTest extends TestCase
 
         // Change status back to Diproses
         $permintaan->update(['status' => 'Diproses']);
+        \App\Models\Poin::syncFromPermintaan($permintaan);
 
         // Poin should be deleted
         $this->assertDatabaseMissing('poins', [
