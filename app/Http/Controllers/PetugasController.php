@@ -127,6 +127,36 @@ class PetugasController extends Controller
         return view('petugas.riwayat', compact('user', 'permintaan', 'stats'));
     }
 
+    public function exportPdf(Request $request)
+    {
+        $user = auth()->user();
+
+        $query = PermintaanPenjemputan::with(['pengguna', 'petugas', 'items.kategoriSampah'])
+            ->latest('created_at');
+
+        if ($user->role === 'petugas') {
+            $query->where('petugas_id', $user->id);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('dari')) {
+            $query->whereDate('tanggal', '>=', $request->dari);
+        }
+        if ($request->filled('sampai')) {
+            $query->whereDate('tanggal', '<=', $request->sampai);
+        }
+
+        // Export semua data sesuai filter (tidak di-paginate)
+        $permintaan = $query->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('petugas.riwayat-pdf', compact('user', 'permintaan'));
+        
+        return $pdf->download('Laporan_Riwayat_Penjemputan_' . date('Ymd_His') . '.pdf');
+    }
+
     // --- Sampah Liar: terima tugas oleh petugas (assign saja) ---
     public function terimaSampahLiar(\App\Models\SampahLiar $sampahLiar): RedirectResponse
     {
