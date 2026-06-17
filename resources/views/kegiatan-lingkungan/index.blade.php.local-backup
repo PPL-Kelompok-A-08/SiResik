@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kegiatan Lingkungan - SiResik</title>
+    <meta name="description" content="Kegiatan lingkungan masyarakat SiResik.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,800;1,900&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-[#f1f5f1] text-slate-900">
+<div class="min-h-screen xl:grid xl:grid-cols-[260px,1fr]">
+
+    {{-- Sidebar --}}
+    <x-sidebar />
+
+    {{-- Main Content --}}
+    <main class="flex flex-col gap-5 px-7 py-8">
+
+        {{-- Header --}}
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-black italic tracking-tight text-[#132034] uppercase">Kegiatan Lingkungan</h1>
+                <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Ikut Serta Melindungi Bumi Kita</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="text-slate-400 hover:text-slate-600"><i class="fas fa-filter text-lg"></i></button>
+                <button class="text-xs font-black text-slate-800 bg-white hover:bg-slate-50 px-5 py-2.5 rounded-full transition shadow-sm">SEMUA</button>
+                <button class="text-xs font-black text-blue-400 bg-white border border-slate-200 hover:bg-slate-50 px-5 py-2.5 rounded-full shadow-sm transition">TERDEKAT</button>
+            </div>
+        </header>
+
+        {{-- Cards Grid --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+            
+            {{-- Card 1 --}}
+            <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden flex flex-col relative pb-6 px-6 transition hover:shadow-md">
+                <div class="-mx-6 h-52 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1563242277-c30fde2c9183?w=800&q=80');"></div>
+                <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 shadow-sm">
+                    <i class="far fa-calendar-alt text-emerald-500"></i>
+                    <span class="text-xs font-black">25 APRIL 2024</span>
+                </div>
+                <h3 class="text-xl font-black text-[#132034] mt-6">Bersih Pantai Ancol</h3>
+                <div class="flex flex-col gap-2.5 mt-4 text-slate-400 text-sm font-medium">
+                    <div class="flex items-center gap-3"><i class="fas fa-map-marker-alt w-4 text-center text-slate-300"></i> Pantai Indah, Ancol</div>
+                    <div class="flex items-center gap-3"><i class="fas fa-user-friends w-4 text-center text-slate-300"></i> <span class="partisipan-count">124</span> Partisipan</div>
+                </div>
+                <div class="mt-auto pt-6">
+                    <button onclick="ikutAksi(this)" class="w-full bg-[#132034] text-white text-sm font-black py-3.5 rounded-xl hover:bg-slate-800 transition tracking-wider shadow-sm">IKUT AKSI</button>
+                </div>
+            </div>
+
+            {{-- Card 2 --}}
+            <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden flex flex-col relative pb-6 px-6 transition hover:shadow-md">
+                <div class="-mx-6 h-52 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1560416313-414b33c856a9?w=800&q=80');"></div>
+                <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 shadow-sm">
+                    <i class="far fa-calendar-alt text-emerald-500"></i>
+                    <span class="text-xs font-black">02 MEI 2024</span>
+                </div>
+                <h3 class="text-xl font-black text-[#132034] mt-6 leading-tight">Workshop Daur Ulang Kreatif</h3>
+                <div class="flex flex-col gap-2.5 mt-4 text-slate-400 text-sm font-medium">
+                    <div class="flex items-center gap-3"><i class="fas fa-map-marker-alt w-4 text-center text-slate-300"></i> Community Hub SiResik</div>
+                    <div class="flex items-center gap-3"><i class="fas fa-user-friends w-4 text-center text-slate-300"></i> <span class="partisipan-count">45</span> Partisipan</div>
+                </div>
+                <div class="mt-auto pt-6">
+                    <button onclick="ikutAksi(this)" class="w-full bg-[#132034] text-white text-sm font-black py-3.5 rounded-xl hover:bg-slate-800 transition tracking-wider shadow-sm">IKUT AKSI</button>
+                </div>
+            </div>
+
+            {{-- Card 3 --}}
+            <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden flex flex-col relative pb-6 px-6 transition hover:shadow-md">
+                <div class="-mx-6 h-52 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1499596162391-7f9382f6e522?w=800&q=80');"></div>
+                <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 shadow-sm">
+                    <i class="far fa-calendar-alt text-emerald-500"></i>
+                    <span class="text-xs font-black">10 MEI 2024</span>
+                </div>
+                <h3 class="text-xl font-black text-[#132034] mt-6 leading-tight">Penanaman 1000 Mangrove</h3>
+                <div class="flex flex-col gap-2.5 mt-4 text-slate-400 text-sm font-medium">
+                    <div class="flex items-center gap-3"><i class="fas fa-map-marker-alt w-4 text-center text-slate-300"></i> Hutan Mangrove PIK</div>
+                    <div class="flex items-center gap-3"><i class="fas fa-user-friends w-4 text-center text-slate-300"></i> <span class="partisipan-count">350</span> Partisipan</div>
+                </div>
+                <div class="mt-auto pt-6">
+                    <button onclick="ikutAksi(this)" class="w-full bg-[#132034] text-white text-sm font-black py-3.5 rounded-xl hover:bg-slate-800 transition tracking-wider shadow-sm">IKUT AKSI</button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<script>
+    function ikutAksi(button) {
+        // Cek jika sudah terdaftar
+        if (button.innerText === 'TERDAFTAR') return;
+        
+        // Ubah text
+        button.innerText = 'TERDAFTAR';
+        
+        // Ubah style jadi sukses (hijau)
+        button.classList.remove('bg-[#132034]', 'hover:bg-slate-800');
+        button.classList.add('bg-emerald-500', 'hover:bg-emerald-600', 'cursor-default');
+
+        // Tambah jumlah partisipan 1
+        let card = button.closest('.bg-white');
+        let countSpan = card.querySelector('.partisipan-count');
+        if (countSpan) {
+            countSpan.innerText = parseInt(countSpan.innerText) + 1;
+        }
+    }
+</script>
+
+</body>
+</html>
